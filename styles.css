@@ -841,6 +841,123 @@ button, input {
 }
 
 /* --------------------------------------------------------------------------
+   6b. Activity type selection
+   -------------------------------------------------------------------------- */
+.activity-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.activity-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color var(--fast), background var(--fast), color var(--fast), transform var(--fast);
+}
+
+.activity-card:active { transform: scale(0.97); }
+
+.activity-card.is-active {
+    border-color: var(--line-gold-strong);
+    background: linear-gradient(180deg, var(--glow-gold-soft), var(--panel) 70%);
+    color: var(--gold-light);
+    box-shadow: 0 0 0 1px var(--line-gold);
+}
+
+/* --------------------------------------------------------------------------
+   6c. Acquiring GPS state
+   -------------------------------------------------------------------------- */
+.acquiring {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    border: 1px solid var(--line-gold);
+    border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--glow-gold-soft), var(--panel) 70%);
+}
+
+.acquiring-pulse {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 0 var(--glow-gold);
+    animation: acquire-pulse 1.4s ease-out infinite;
+}
+
+@keyframes acquire-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 199, 44, 0.45); }
+    70%  { box-shadow: 0 0 0 9px rgba(255, 199, 44, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 199, 44, 0); }
+}
+
+.acquiring-text {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+}
+
+.acquiring-hint {
+    flex: 1 1 100%;
+    font-size: 11.5px;
+    color: var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   13b. Route panel (dependency-free SVG)
+   -------------------------------------------------------------------------- */
+.route-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--panel);
+}
+
+.route-map {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 26px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 26px),
+        var(--surface);
+    overflow: hidden;
+}
+
+.route-map svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.route-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* --------------------------------------------------------------------------
    14. Notice
    -------------------------------------------------------------------------- */
 .notice {
@@ -1029,6 +1146,7 @@ button, input {
     .stepper-value { font-size: 20px; }
     .metric-card { padding: 10px 11px; }
     .mode-card { min-height: 76px; padding: 12px; }
+    .activity-card { min-height: 48px; font-size: 11px; }
     .btn-lg { min-height: 60px; }
 }
 

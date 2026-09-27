@@ -27,25 +27,91 @@
        ====================================================================== */
 
     const CONFIG = {
-        // Reject fixes with accuracy worse than this many metres.
+        /* ---- Accuracy filtering ---- */
+        // Reject any fix whose reported accuracy is worse than this.
         MAX_ACCURACY_M: 40,
-        // Above this accuracy the athlete is told the signal is weak.
+        // Above this the athlete is told the signal is weak.
         WEAK_ACCURACY_M: 20,
-        // Above this ground speed (m/s) a "move" is treated as a GPS glitch.
-        MAX_PLAUSIBLE_SPEED_MS: 25,
-        // Current speed smoothing factor (exponential moving average).
-        SPEED_SMOOTHING: 0.35,
-        // A fix older than this stops being shown as current speed.
+        // A fix must be at least this accurate before the session is
+        // considered "locked on" and distance/speed start being recorded.
+        ACQUIRE_ACCURACY_M: 30,
+        // Number of consecutive acceptable fixes required to leave
+        // the "Acquiring GPS..." state.
+        ACQUIRE_SAMPLES: 3,
+
+        /* ---- Spike / teleport filtering (activity dependent) ---- */
+        // Absolute ceiling: a 1-second move faster than this is impossible.
+        // The per-activity ceiling is ACTIVITY[x].spikeSpeedMs.
+        TELEPORT_SPEED_MS: 30,
+        // A single fix must not be trusted for a max-speed record.
+        MAX_SPEED_SAMPLES: 3,
+
+        /* ---- Stationary / drift handling (activity dependent) ---- */
+        // When stationary, current speed decays to 0 within this window.
+        SPEED_DECAY_MS: 4000,
+
+        /* ---- Movement window ----
+           A single fix cannot separate drift from movement, so real
+           movement is judged over a short sequence of accepted fixes.
+           Walking grows the window steadily; a resting phone only jitters
+           inside it. */
+        WINDOW_MS: 5000,
+        WINDOW_MIN_SAMPLES: 3,
+        WINDOW_MAX_SAMPLES: 8,
+        // Straight-line distance across the window needed to declare movement.
+        MIN_WINDOW_DISTANCE_M: 5,
+        // net displacement / travelled path. Real motion approaches 1,
+        // random drift collapses towards 0.
+        MIN_PATH_EFFICIENCY: 0.5,
+        // Consecutive agreeing windows needed to switch state, so a border
+        // case cannot make the state flicker.
+        MOVEMENT_CONFIRM: 2,
+        STILL_CONFIRM: 2,
+
+        /* ---- Statistics guards ---- */
+        // Below this distance, speed/pace statistics are meaningless
+        // because GPS error dominates the signal.
+        MIN_STATS_DISTANCE_M: 20,
+        // Speed above which current speed is considered stale.
         SPEED_STALE_MS: 6000,
-        // Below this speed the athlete is considered standing still.
-        MIN_MOVING_SPEED_MS: 0.5,
-        // UI refresh rate while a workout is live.
+        // Smoothing factor for current speed (0 = frozen, 1 = no smoothing).
+        SPEED_SMOOTHING: 0.4,
+
+        /* ---- Misc ---- */
         TICK_MS: 250,
-        // No fix for this long while running => show "waiting for GPS".
         NO_FIX_WARNING_MS: 15000,
-        // Longest plausible session, guards against runaway elapsed values.
         MAX_SESSION_MS: 24 * 60 * 60 * 1000,
-        EARTH_RADIUS_M: 6371008.8
+        EARTH_RADIUS_M: 6371008.8,
+
+        // Console diagnostics are opt-in to avoid flooding the log.
+        DEBUG: false
+    };
+
+    /**
+     * Per-activity limits.
+     *   spikeSpeedMs     one-second jump above this is a GPS glitch
+     *   movementSpeedMs  window speed above this counts as real travel
+     *   maxSpeedMs       physical ceiling, so one bad fix cannot be reported
+     */
+    const ACTIVITY = {
+        walk: {
+            label: "Walk",
+            spikeSpeedMs: 6,       // 21.6 km/h
+            movementSpeedMs: 0.6, // 2.2 km/h
+            maxSpeedMs: 8          // 28.8 km/h
+        },
+        run: {
+            label: "Run",
+            spikeSpeedMs: 11,      // 39.6 km/h
+            movementSpeedMs: 0.8, // 2.9 km/h
+            maxSpeedMs: 14         // 50.4 km/h
+        },
+        cycle: {
+            label: "Cycling",
+            spikeSpeedMs: 25,      // 90 km/h
+            movementSpeedMs: 1.0, // 3.6 km/h
+            maxSpeedMs: 32         // 115 km/h
+        }
     };
 
     const GEO_OPTIONS = {
@@ -121,7 +187,7 @@
      */
     function paceFromSpeed(metresPerSecond) {
         const v = finite(metresPerSecond, 0);
-        if (v < CONFIG.MIN_MOVING_SPEED_MS) return null;
+        if (v <= 0) return null;
         const secPerKm = 1000 / v;
         if (!isFinite(secPerKm) || secPerKm <= 0 || secPerKm > 7200) return null;
         return secPerKm;
@@ -129,9 +195,9 @@
 
     /** seconds per km -> "m:ss /km", or "--:-- /km" when unknown. */
     function formatPace(secPerKm) {
-        if (secPerKm === null || secPerKm === undefined) return "--:-- /km";
+        if (secPerKm === null || secPerKm === undefined) return "--";
         const total = Math.round(finite(secPerKm, 0));
-        if (total <= 0) return "--:-- /km";
+        if (total <= 0) return "--";
         const minutes = Math.floor(total / 60);
         const seconds = total % 60;
         return minutes + ":" + pad2(seconds) + " /km";
@@ -183,6 +249,16 @@
         modeCards: Array.prototype.slice.call(
             document.querySelectorAll(".mode-card")
         ),
+        activityCards: Array.prototype.slice.call(
+            document.querySelectorAll(".activity-card")
+        ),
+        acquiring: document.getElementById("acquiring"),
+        acquiringHint: document.getElementById("acquiringHint"),
+        routeMap: document.getElementById("routeMap"),
+        routeLine: document.getElementById("routeLine"),
+        routeStart: document.getElementById("routeStart"),
+        routeEnd: document.getElementById("routeEnd"),
+        routeNote: document.getElementById("routeNote"),
         intervalConfig: document.getElementById("intervalConfig"),
         inputWork: document.getElementById("inputWork"),
         inputRest: document.getElementById("inputRest"),
@@ -241,23 +317,34 @@
     /** Selected training mode: "free" | "interval". */
     let sessionType = "free";
 
+    /** Selected activity: "walk" | "run" | "cycle". */
+    let activityType = "run";
+
+    /** Active per-activity thresholds for the current session. */
+    let limits = ACTIVITY.run;
+
     /**
      * Session record. Shaped so it can be serialised straight into
      * Firebase later without restructuring.
      */
     const session = {
+        activityType: "run",
         sessionType: "free",
         state: STATE.READY,
         startTime: null,
         endTime: null,
-        activeDuration: 0,        // ms, excludes paused time
-        totalDistance: 0,         // metres
-        currentSpeed: 0,          // m/s, smoothed
+        startTimestamp: null,     // epoch ms, for duration maths
+        endTimestamp: null,
+        activeDuration: 0,        // ms of non-paused time
+        movingMs: 0,              // ms spent actually moving
+        totalDistance: 0,         // metres, accepted movement only
+        currentSpeed: 0,          // m/s, smoothed and drift-suppressed
         averageSpeed: 0,          // m/s
-        maxSpeed: 0,              // m/s
+        maxSpeed: 0,              // m/s, confirmed by several samples
         currentPace: null,        // seconds per km
         averagePace: null,        // seconds per km
-        gpsPoints: [],            // { lat, lng, timestamp, accuracy, speed }
+        route: [],                // ACCEPTED coordinates only
+        gpsPoints: [],            // every raw fix, internal/debug only
         intervalSettings: { workSec: 20, restSec: 10, rounds: 8 },
         completedRounds: 0
     };
@@ -266,11 +353,21 @@
     const gps = {
         watchId: null,
         lastPoint: null,      // last accepted fix used for distance chaining
-        lastFixAt: 0,         // timestamp of the most recent accepted fix
-        lastSpeedAt: 0,       // timestamp used for current-speed staleness
+        lastFixAt: 0,         // wall-clock of the most recent accepted fix
+        lastSpeedAt: 0,       // wall-clock of the most recent real movement
         accuracy: null,       // most recent reported accuracy (metres)
         hasFix: false,
-        rejected: 0
+        acquired: false,      // passed the acquisition gate
+        acquireStreak: 0,     // consecutive acceptable fixes
+        rejected: 0,          // dropped: bad accuracy
+        spikes: 0,            // dropped: impossible jump
+        stationary: true,     // currently considered not moving
+        speedSamples: 0,      // consecutive confirmations for max speed
+        movingSince: 0,       // wall-clock when the current movement began
+        window: [],           // recent accepted fixes used to judge movement
+        movingStreak: 0,      // consecutive windows that look like movement
+        stillStreak: 0,       // consecutive windows that look like stillness
+        routeBreak: false     // next accepted point starts a new route segment
     };
 
     /** Elapsed-clock internals (timestamp based, so it cannot drift) */
@@ -354,29 +451,47 @@
     }
 
     function renderGpsLine() {
-        const now = Date.now();
-        const accuracy = gps.accuracy;
-
         if (!gps.hasFix) {
-            const waited = gps.watchId !== null && (now - gps.lastFixAt) > CONFIG.NO_FIX_WARNING_MS;
+            // Only escalate to "no signal" if a fix was received before and
+            // has now been lost; before the very first fix we are still
+            // inside the normal search window.
+            const waited = gps.lastFixAt > 0 &&
+                (Date.now() - gps.lastFixAt) > CONFIG.NO_FIX_WARNING_MS;
             el.gpsLine.textContent = waited ? "Waiting for GPS signal…" : "Waiting for GPS…";
             el.gpsLine.className = "gps-line is-warn";
             return;
         }
 
-        const weak = !isFinite(accuracy) || accuracy > CONFIG.WEAK_ACCURACY_M;
+        if (!gps.acquired) {
+            el.gpsLine.textContent = "Acquiring GPS…";
+            el.gpsLine.className = "gps-line is-warn";
+            return;
+        }
+
+        const weak = !isFinite(gps.accuracy) || gps.accuracy > CONFIG.WEAK_ACCURACY_M;
         el.gpsLine.className = "gps-line " + (weak ? "is-warn" : "is-ok");
-        el.gpsLine.textContent = (weak ? "Weak GPS · " : "GPS active · ") +
-            "Accuracy " + formatAccuracy(accuracy);
+        el.gpsLine.textContent = (gps.stationary ? "Standing still · " : "GPS active · ") +
+            "Accuracy " + formatAccuracy(gps.accuracy);
+    }
+
+    /** The "Acquiring GPS..." banner shown until the signal is trustworthy. */
+    function renderAcquiring() {
+        const acquiring = gps.watchId !== null && !gps.acquired;
+        el.acquiring.hidden = !acquiring;
+        if (acquiring && gps.acquireStreak > 0) {
+            el.acquiringHint.textContent = "Signal " + gps.acquireStreak + " of " +
+                CONFIG.ACQUIRE_SAMPLES + " · step outside for a clear fix";
+        } else if (acquiring) {
+            el.acquiringHint.textContent = "Step outside for a clear signal";
+        }
     }
 
     /** Live metric tiles. */
     function renderMetrics() {
-        const moving = state === STATE.RUNNING && hasFreshSpeed();
-
-        const currentSpeed = moving ? session.currentSpeed : 0;
+        const fresh = hasFreshSpeed() && !gps.stationary;
+        const currentSpeed = fresh ? session.currentSpeed : 0;
         const avgSpeed = averageSpeed();
-        const currentPace = moving ? paceFromSpeed(session.currentSpeed) : null;
+        const currentPace = fresh ? paceFromSpeed(session.currentSpeed) : null;
         const avgPace = averagePace();
 
         session.averageSpeed = avgSpeed;
@@ -425,22 +540,145 @@
        ====================================================================== */
 
     /** Accuracy above this reads as "weak" to the athlete. */
+    /** True when the athlete is currently producing a believable speed. */
     function hasFreshSpeed() {
         if (gps.lastSpeedAt === 0) return false;
+        if (gps.stationary) return false;
         return (Date.now() - gps.lastSpeedAt) < CONFIG.SPEED_STALE_MS;
     }
 
+    /**
+     * Average speed uses MOVING time rather than total elapsed time, so
+     * standing still at a traffic light cannot deflate it, and returns 0
+     * until there is enough real distance to be meaningful.
+     */
+    function movingDurationMs() {
+        let total = session.movingMs;
+        if (state === STATE.RUNNING && gps.movingSince) {
+            const delta = Date.now() - gps.movingSince;
+            if (delta > 0) total += Math.min(delta, CONFIG.MAX_SESSION_MS);
+        }
+        return total;
+    }
+
+    function hasMeaningfulDistance() {
+        return session.totalDistance >= CONFIG.MIN_STATS_DISTANCE_M;
+    }
+
     function averageSpeed() {
-        const seconds = activeDurationMs() / 1000;
-        if (seconds <= 0 || session.totalDistance <= 0) return 0;
+        if (!hasMeaningfulDistance()) return 0;
+        const seconds = movingDurationMs() / 1000;
+        if (seconds <= 0) return 0;
         const v = session.totalDistance / seconds;
         return isFinite(v) && v > 0 ? v : 0;
     }
 
+    /**
+     * Average pace in seconds per kilometre, derived from the same
+     * moving-time figure as average speed, so pace and speed can never
+     * disagree. Returns null (displayed as "--") when there is not enough
+     * real distance to be meaningful.
+     */
     function averagePace() {
-        const seconds = activeDurationMs() / 1000;
-        if (seconds <= 0 || session.totalDistance <= 0) return null;
-        return (seconds * 1000) / session.totalDistance;
+        if (!hasMeaningfulDistance()) return null;
+        const seconds = movingDurationMs() / 1000;
+        if (seconds <= 0) return null;
+        const secPerKm = (seconds * 1000) / session.totalDistance;
+        if (!isFinite(secPerKm) || secPerKm <= 0 || secPerKm > 3600) return null;
+        return secPerKm;
+    }
+
+    /**
+     * Decide whether the athlete is really moving by looking at a short
+     * window of accepted fixes instead of one fix.
+     *
+     *   net       straight-line distance across the window
+     *   speed     net / elapsed window time
+     *   path      total distance actually travelled through the window
+     *   efficiency net / path  -> ~1.0 when going straight, ~0 when drifting
+     *
+     * Real travel satisfies net distance, speed and efficiency. A phone
+     * lying still fails all three, however violently its coordinates twitch.
+     */
+    function movementFromWindow() {
+        const w = gps.window;
+        const still = { moving: false, speed: 0, net: 0, efficiency: 0 };
+
+        if (w.length < CONFIG.WINDOW_MIN_SAMPLES) return still;
+
+        const first = w[0];
+        const last = w[w.length - 1];
+        const seconds = (last.timestamp - first.timestamp) / 1000;
+        if (!isFinite(seconds) || seconds <= 0) return still;
+
+        const net = haversineMetres(first.lat, first.lng, last.lat, last.lng);
+        if (net === null || !isFinite(net)) return still;
+
+        let path = 0;
+        for (let i = 1; i < w.length; i++) {
+            const d = haversineMetres(
+                w[i - 1].lat, w[i - 1].lng, w[i].lat, w[i].lng
+            );
+            if (d === null || !isFinite(d)) return still;
+            path += d;
+        }
+
+        const speed = net / seconds;
+        const efficiency = path > 0 ? net / path : 0;
+        if (!isFinite(speed) || !isFinite(efficiency)) return still;
+
+        return {
+            moving: net >= CONFIG.MIN_WINDOW_DISTANCE_M &&
+                speed >= limits.movementSpeedMs &&
+                efficiency >= CONFIG.MIN_PATH_EFFICIENCY,
+            speed: speed,
+            net: net,
+            efficiency: efficiency
+        };
+    }
+
+    /** Append an accepted fix to the movement window and trim it. */
+    function pushWindow(lat, lon, timestamp) {
+        gps.window.push({ lat: lat, lng: lon, timestamp: timestamp });
+        while (gps.window.length > CONFIG.WINDOW_MAX_SAMPLES) {
+            gps.window.shift();
+        }
+        while (gps.window.length > CONFIG.WINDOW_MIN_SAMPLES &&
+            timestamp - gps.window[0].timestamp > CONFIG.WINDOW_MS) {
+            gps.window.shift();
+        }
+    }
+
+    /** A rejected or teleported fix must not poison the window. */
+    function resetWindow(lat, lon, timestamp) {
+        gps.window = [];
+        gps.movingStreak = 0;
+        gps.stillStreak = 0;
+        if (isFinite(lat) && isFinite(lon) && isFinite(timestamp)) {
+            gps.window.push({ lat: lat, lng: lon, timestamp: timestamp });
+        }
+    }
+
+    /**
+     * Hysteresis: a single ambiguous window can never flip the state, which
+     * stops distance and moving-time flickering at the threshold.
+     */
+    function updateMovementState(reading) {
+        if (reading.moving) {
+            gps.movingStreak += 1;
+            gps.stillStreak = 0;
+        } else {
+            gps.stillStreak += 1;
+            gps.movingStreak = 0;
+        }
+
+        const wasStationary = gps.stationary;
+        if (wasStationary && gps.movingStreak >= CONFIG.MOVEMENT_CONFIRM) {
+            gps.stationary = false;
+        } else if (!wasStationary && gps.stillStreak >= CONFIG.STILL_CONFIRM) {
+            gps.stationary = true;
+        }
+        return !gps.stationary;
     }
 
     function startGps() {
@@ -478,125 +716,243 @@
     }
 
     /**
-     * Decide whether a fix is usable, then fold it into the session.
-     * Every rejection path is explicit so a bad fix can never inflate distance.
+     * Fold a single GPS fix into the session.
+     *
+     * Pipeline, in order:
+     *   1. coordinate sanity        -> dropped as "invalid"
+     *   2. accuracy gate            -> dropped as "rejected"
+     *   3. acquisition gate         -> anchored, but nothing is measured yet
+     *   4. time delta sanity        -> dropped as "rejected"
+     *   5. distance + implied speed
+     *   6. spike / teleport gate    -> dropped as "spike", chain re-anchored,
+     *                                 route marked to break so no false line
+     *                                 is drawn across the jump
+     *   7. movement decision over a short window of accepted fixes
+     *   8. speed smoothing from the window speed + confirmed max speed
+     *
+     * A rejected fix never reaches the route and never touches distance, so
+     * GPS noise cannot inflate the workout.
      */
     function onGpsSuccess(position) {
         const coords = position && position.coords;
         if (!coords) return;
 
+        /* 1. coordinate sanity */
         const lat = finite(coords.latitude, NaN);
         const lon = finite(coords.longitude, NaN);
         if (!isValidCoordinate(lat, lon)) {
-            rejectFix();
+            rejectFix("invalid");
             return;
         }
 
         const accuracy = finite(coords.accuracy, NaN);
         const timestamp = finite(position.timestamp, Date.now());
 
-        // Track reported accuracy for display, even when the fix is unusable.
+        // Keep the newest reported accuracy for the UI, even when rejected.
         if (isFinite(accuracy) && accuracy >= 0) {
             gps.accuracy = accuracy;
         }
 
-        if (isFinite(accuracy) && accuracy > CONFIG.MAX_ACCURACY_M) {
-            rejectFix();
+        // Every raw fix is retained internally for debugging only.
+        storeRawPoint(lat, lon, timestamp, accuracy, coords.speed);
+
+        /* 2. accuracy gate */
+        if (!isFinite(accuracy) || accuracy > CONFIG.MAX_ACCURACY_M) {
+            rejectFix("accuracy");
+            updateGpsStatus();
             return;
         }
 
+        /* 3. acquisition gate: GPS needs to settle before we trust it */
+        if (!gps.acquired) {
+            if (accuracy <= CONFIG.ACQUIRE_ACCURACY_M) {
+                gps.acquireStreak += 1;
+                if (gps.acquireStreak >= CONFIG.ACQUIRE_SAMPLES) {
+                    gps.acquired = true;
+                }
+            } else {
+                gps.acquireStreak = 0;
+            }
+            if (!gps.acquired) {
+                // Anchor the chain but measure nothing yet.
+                gps.lastPoint = { lat: lat, lng: lon, timestamp: timestamp };
+                gps.hasFix = true;
+                updateGpsStatus();
+                return;
+            }
+        }
+
+        /* 4-6. movement segment */
         const previous = gps.lastPoint;
         let stepDistance = 0;
         let stepSeconds = 0;
-        let derivedSpeed = null;
+        let impliedSpeed = null;
 
         if (previous) {
-            const deltaSeconds = (timestamp - previous.timestamp) / 1000;
-            if (!isFinite(deltaSeconds) || deltaSeconds <= 0) {
-                rejectFix();
+            stepSeconds = (timestamp - previous.timestamp) / 1000;
+            const metres = haversineMetres(previous.lat, previous.lng, lat, lon);
+
+            if (!isFinite(stepSeconds) || stepSeconds <= 0 || metres === null) {
+                rejectFix("timing");
+                updateGpsStatus();
                 return;
             }
-            const metres = haversineMetres(
-                previous.lat, previous.lng, lat, lon
-            );
-            if (metres === null) {
-                rejectFix();
-                return;
-            }
-            const impliedSpeed = metres / deltaSeconds;
+
+            impliedSpeed = metres / stepSeconds;
             if (!isFinite(impliedSpeed) || impliedSpeed < 0) {
-                rejectFix();
+                rejectFix("speed");
+                updateGpsStatus();
                 return;
             }
-            // Unrealistic jump: resync the chain but do not add distance.
-            if (impliedSpeed > CONFIG.MAX_PLAUSIBLE_SPEED_MS) {
-                rejectFix(lat, lon, timestamp);
+
+            // Impossible jump: re-anchor the chain but never add distance.
+            if (impliedSpeed > limits.spikeSpeedMs ||
+                impliedSpeed > CONFIG.TELEPORT_SPEED_MS) {
+                gps.spikes += 1;
+                gps.lastPoint = { lat: lat, lng: lon, timestamp: timestamp };
+                resetWindow(lat, lon, timestamp);
+                // The next accepted point starts a new route segment, so the
+                // drawn track never shows a false straight line across the
+                // teleport.
+                gps.routeBreak = true;
+                rejectFix("spike");
+                updateGpsStatus();
                 return;
             }
+
             stepDistance = metres;
-            stepSeconds = deltaSeconds;
-            derivedSpeed = impliedSpeed;
         }
 
-        // Prefer the device-reported speed, fall back to derived speed.
-        const nativeSpeed = finite(coords.speed, null);
-        let reported = null;
-        if (nativeSpeed !== null && nativeSpeed >= 0 &&
-            nativeSpeed <= CONFIG.MAX_PLAUSIBLE_SPEED_MS) {
-            reported = nativeSpeed;
-        } else if (derivedSpeed !== null &&
-                   derivedSpeed <= CONFIG.MAX_PLAUSIBLE_SPEED_MS) {
-            reported = derivedSpeed;
-        }
-
-        // Chain this fix for the next distance computation.
+        // Accepted fix: it becomes the anchor for the next segment.
         gps.lastPoint = { lat: lat, lng: lon, timestamp: timestamp };
-        gps.lastFixAt = Date.now();
         gps.hasFix = true;
+        gps.lastFixAt = Date.now();
 
-        if (state !== STATE.RUNNING) {
-            // Paused: record the fix, but never extend the workout.
-            storePoint(lat, lon, timestamp, accuracy, reported);
+        /* 7. movement decision over a short window of accepted fixes */
+        pushWindow(lat, lon, timestamp);
+        const reading = movementFromWindow();
+        const isMoving = updateMovementState(reading);
+
+        /*
+         * Moving time may only accrue while the session is actually running,
+         * otherwise a paused session would still bank "moving" time and the
+         * average would jump on resume.
+         */
+        const isRunning = state === STATE.RUNNING;
+        if (isMoving) {
+            if (isRunning && !gps.movingSince) gps.movingSince = Date.now();
+        } else {
+            if (gps.movingSince) {
+                if (isRunning) session.movingMs += Date.now() - gps.movingSince;
+                gps.movingSince = 0;
+            }
+        }
+
+        // Only real movement extends the accepted route and distance.
+        if (isMoving && isRunning && stepDistance > 0) {
+            session.totalDistance += stepDistance;
+            session.route.push({
+                lat: lat,
+                lng: lon,
+                timestamp: timestamp,
+                accuracy: accuracy,
+                speed: impliedSpeed,
+                // true => start a new drawn segment (a gap was detected)
+                newSegment: gps.routeBreak === true
+            });
+            gps.routeBreak = false;
+        }
+
+        /* 8. speed smoothing + confirmed max speed */
+        updateSpeed(impliedSpeed, stepSeconds, isMoving, reading.speed);
+
+        updateGpsStatus();
+    }
+
+    /**
+     * Smooth the current speed and protect the max-speed record from
+     * single-sample spikes.
+     *
+     * The reading is the WINDOW speed (net displacement over the analysis
+     * window) rather than one fix, so a momentary coordinate jump can never
+     * become a speed record. While stationary the value decays to 0.
+     */
+    function updateSpeed(impliedSpeed, stepSeconds, isMoving, windowSpeed) {
+        const now = Date.now();
+        const reading = finite(windowSpeed, 0);
+
+        // Only measure speed while actually running and moving.
+        if (state !== STATE.RUNNING || !isMoving || reading <= 0) {
+            if (now - gps.lastSpeedAt > CONFIG.SPEED_DECAY_MS) {
+                session.currentSpeed = 0;
+            }
             return;
         }
 
-        if (reported !== null) {
-            const smoothed = CONFIG.SPEED_SMOOTHING * reported +
-                (1 - CONFIG.SPEED_SMOOTHING) * session.currentSpeed;
-            session.currentSpeed = clamp(smoothed, 0, CONFIG.MAX_PLAUSIBLE_SPEED_MS);
-            if (session.currentSpeed > session.maxSpeed) {
+        // Cap at the physically plausible limit for this activity.
+        const capped = Math.min(reading, limits.maxSpeedMs);
+        const smoothed = CONFIG.SPEED_SMOOTHING * capped +
+            (1 - CONFIG.SPEED_SMOOTHING) * session.currentSpeed;
+
+        session.currentSpeed = clamp(smoothed, 0, limits.maxSpeedMs);
+        gps.lastSpeedAt = now;
+
+        /*
+         * Max speed needs MAX_SPEED_SAMPLES consecutive windows above the
+         * current record before it is accepted, so one bad stretch of
+         * coordinates can never create a bogus record.
+         */
+        if (session.currentSpeed > session.maxSpeed) {
+            gps.speedSamples += 1;
+            if (gps.speedSamples >= CONFIG.MAX_SPEED_SAMPLES) {
                 session.maxSpeed = session.currentSpeed;
+                gps.speedSamples = 0;
             }
-            gps.lastSpeedAt = Date.now();
+        } else {
+            gps.speedSamples = 0;
         }
-
-        if (stepDistance > 0 && stepSeconds > 0) {
-            session.totalDistance += stepDistance;
-        }
-
-        storePoint(lat, lon, timestamp, accuracy, reported);
-
-        const weak = !isFinite(accuracy) || accuracy > CONFIG.WEAK_ACCURACY_M;
-        setGpsStatus(weak ? "weak" : "active");
-        renderGpsLine();
     }
 
-    /** Optional resync after a rejected fix so the chain cannot stay stale. */
-    function rejectFix(lat, lon, timestamp) {
+    /** Drop a fix and record why (internal counters only). */
+    function rejectFix(reason) {
         gps.rejected += 1;
-        if (lat !== undefined && lon !== undefined && timestamp !== undefined) {
-            gps.lastPoint = { lat: lat, lng: lon, timestamp: timestamp };
+        if (CONFIG.DEBUG) {
+            console.debug("[gps] rejected:", reason);
         }
     }
 
-    function storePoint(lat, lon, timestamp, accuracy, speed) {
+    /** Every raw fix, kept internally for debugging. Never shown to the athlete. */
+    function storeRawPoint(lat, lon, timestamp, accuracy, speed) {
         session.gpsPoints.push({
             lat: lat,
             lng: lon,
             timestamp: timestamp,
             accuracy: isFinite(accuracy) ? accuracy : null,
-            speed: speed === null || speed === undefined ? null : speed
+            speed: isFinite(speed) ? speed : null
         });
+    }
+
+    /**
+     * Central place that maps GPS internals onto the header chip + live line.
+     * The chip reflects SIGNAL QUALITY only. Standing still is a normal,
+     * healthy state and is reported by the live line, not by degrading the
+     * chip to "weak".
+     */
+    function updateGpsStatus() {
+        if (gps.watchId === null) return;
+
+        if (!gps.hasFix) {
+            setGpsStatus("searching");
+        } else if (!gps.acquired) {
+            setGpsStatus("searching");
+        } else if (!isFinite(gps.accuracy) || gps.accuracy > CONFIG.WEAK_ACCURACY_M) {
+            setGpsStatus("weak");
+        } else {
+            setGpsStatus("active");
+        }
+
+        renderAcquiring();
+        renderGpsLine();
     }
 
     function onGpsError(error) {
@@ -893,20 +1249,45 @@
        ====================================================================== */
 
     function createSession() {
+        session.activityType = activityType;
         session.sessionType = sessionType;
         session.state = state;
         session.startTime = new Date().toISOString();
         session.endTime = null;
+        session.startTimestamp = Date.now();
+        session.endTimestamp = null;
         session.activeDuration = 0;
+        session.movingMs = 0;
         session.totalDistance = 0;
         session.currentSpeed = 0;
         session.averageSpeed = 0;
         session.maxSpeed = 0;
         session.currentPace = null;
         session.averagePace = null;
+        session.route = [];
         session.gpsPoints = [];
         session.completedRounds = 0;
         session.intervalSettings = readIntervalSettings();
+    }
+
+    /** Reset every piece of GPS state so a new session starts completely clean. */
+    function resetGpsState() {
+        gps.lastPoint = null;
+        gps.lastFixAt = 0;
+        gps.lastSpeedAt = 0;
+        gps.accuracy = null;
+        gps.hasFix = false;
+        gps.acquired = false;
+        gps.acquireStreak = 0;
+        gps.rejected = 0;
+        gps.spikes = 0;
+        gps.stationary = true;
+        gps.speedSamples = 0;
+        gps.movingSince = 0;
+        gps.window = [];
+        gps.movingStreak = 0;
+        gps.stillStreak = 0;
+        gps.routeBreak = false;
     }
 
     function readIntervalSettings() {
@@ -931,14 +1312,10 @@
 
         // Reset any leftovers from a previous session.
         resetClock();
-        gps.lastPoint = null;
-        gps.lastFixAt = 0;
-        gps.lastSpeedAt = 0;
-        gps.hasFix = false;
-        gps.accuracy = null;
-        gps.rejected = 0;
+        resetGpsState();
         stopInterval();
         el.completeFlag.hidden = true;
+        limits = ACTIVITY[activityType] || ACTIVITY.run;
 
         state = STATE.STARTING;
         createSession();
@@ -966,6 +1343,7 @@
         renderElapsed();
         renderMetrics();
         renderGpsLine();
+        renderAcquiring();
         renderInterval();
     }
 
@@ -974,6 +1352,11 @@
         // Bank the active segment BEFORE changing state: stopClock() only
         // accumulates while the session is still RUNNING.
         stopClock();
+        // Moving time must not run while paused either.
+        if (gps.movingSince) {
+            session.movingMs += Date.now() - gps.movingSince;
+            gps.movingSince = 0;
+        }
         state = STATE.PAUSED;
         session.state = state;
         pauseInterval();
@@ -1020,15 +1403,27 @@
         stopInterval();
         releaseWakeLock();
 
+        // Close out the moving-time accumulator before freezing values.
+        if (gps.movingSince) {
+            session.movingMs += Date.now() - gps.movingSince;
+            gps.movingSince = 0;
+        }
+
         state = STATE.FINISHED;
         session.state = state;
         session.endTime = new Date().toISOString();
+        session.endTimestamp = Date.now();
         session.activeDuration = activeDurationMs();
         session.currentSpeed = 0;
         session.averageSpeed = averageSpeed();
         session.averagePace = averagePace();
 
+        // Freeze the results: ignore any late GPS callback.
+        gps.watchId = null;
+        gps.stationary = true;
+
         el.completeFlag.hidden = true;
+        el.acquiring.hidden = true;
         hideModal();
         showScreen("summary");
         renderSummary();
@@ -1044,18 +1439,19 @@
 
         state = STATE.READY;
         session.state = state;
+        session.route = [];
         session.gpsPoints = [];
         session.totalDistance = 0;
+        session.movingMs = 0;
         session.maxSpeed = 0;
         session.currentSpeed = 0;
         session.completedRounds = 0;
+        session.startTime = null;
+        session.endTime = null;
+        session.startTimestamp = null;
+        session.endTimestamp = null;
 
-        gps.lastPoint = null;
-        gps.lastFixAt = 0;
-        gps.lastSpeedAt = 0;
-        gps.hasFix = false;
-        gps.accuracy = null;
-        gps.rejected = 0;
+        resetGpsState();
 
         el.completeFlag.hidden = true;
         el.intervalPanel.hidden = true;
@@ -1070,6 +1466,8 @@
         renderElapsed();
         renderMetrics();
         renderGpsLine();
+        renderAcquiring();
+        renderRoute();
         refreshPermissionStatus();
     }
 
@@ -1077,15 +1475,17 @@
        Summary rendering
        ---------------------------------------------------------------------- */
 
+    /**
+     * Athlete-facing result. Deliberately contains no technical/debug
+     * values such as the raw GPS point count.
+     */
     function summaryItems() {
         const items = [
             { label: "Distance", value: formatDistance(session.totalDistance), hero: true },
             { label: "Duration", value: formatClock(session.activeDuration) },
             { label: "Average pace", value: formatPace(session.averagePace) },
             { label: "Average speed", value: formatSpeed(session.averageSpeed) },
-            { label: "Maximum speed", value: formatSpeed(session.maxSpeed) },
-            { label: "GPS points", value: String(session.gpsPoints.length) },
-            { label: "Training type", value: sessionType === "interval" ? "Interval" : "Free run" }
+            { label: "Maximum speed", value: formatSpeed(session.maxSpeed) }
         ];
 
         if (session.sessionType === "interval") {
@@ -1100,7 +1500,9 @@
     }
 
     function renderSummary() {
-        el.summaryType.textContent = sessionType === "interval" ? "Interval" : "Free run";
+        const activity = ACTIVITY[session.activityType] || ACTIVITY.run;
+        el.summaryType.textContent = activity.label +
+            (session.sessionType === "interval" ? " · Interval" : " · Free run");
         el.summaryTitle.textContent = "Workout complete";
         el.summaryGrid.textContent = "";
 
@@ -1120,6 +1522,100 @@
             wrapper.appendChild(value);
             el.summaryGrid.appendChild(wrapper);
         });
+
+        renderRoute();
+    }
+
+    /**
+     * Draw the accepted route using a dependency-free inline SVG.
+     * A tile-based map (Leaflet + OpenStreetMap) can be layered in later
+     * because the clean route array is already stored; no API key or paid
+     * service is introduced here, and nothing can break if tiles fail.
+     */
+    function renderRoute() {
+        const route = session.route;
+
+        if (route.length < 2) {
+            el.routeMap.hidden = true;
+            // Clear the previous drawing so a stale track can never flash up.
+            el.routeLine.setAttribute("d", "");
+            el.routeStart.removeAttribute("cx");
+            el.routeStart.removeAttribute("cy");
+            el.routeEnd.removeAttribute("cx");
+            el.routeEnd.removeAttribute("cy");
+            el.routeNote.textContent = route.length === 0
+                ? "No route recorded."
+                : "Not enough valid GPS points to draw a route.";
+            return;
+        }
+
+        let minLat = Infinity, maxLat = -Infinity;
+        let minLng = Infinity, maxLng = -Infinity;
+
+        for (let i = 0; i < route.length; i++) {
+            const p = route[i];
+            if (p.lat < minLat) minLat = p.lat;
+            if (p.lat > maxLat) maxLat = p.lat;
+            if (p.lng < minLng) minLng = p.lng;
+            if (p.lng > maxLng) maxLng = p.lng;
+        }
+
+        // A route that spans almost nothing is stationary scribble.
+        const spanLat = maxLat - minLat;
+        const spanLng = maxLng - minLng;
+        if (spanLat < 1e-6 && spanLng < 1e-6) {
+            el.routeMap.hidden = true;
+            el.routeLine.setAttribute("d", "");
+            el.routeStart.removeAttribute("cx");
+            el.routeStart.removeAttribute("cy");
+            el.routeEnd.removeAttribute("cx");
+            el.routeEnd.removeAttribute("cy");
+            el.routeNote.textContent = "Route too small to display (stayed in one place).";
+            return;
+        }
+
+        // Equal-area-ish scaling: correct longitude by latitude so the
+        // shape is not stretched, and keep a margin around the path.
+        const midLat = (minLat + maxLat) / 2;
+        const lngScale = Math.cos(midLat * Math.PI / 180) || 1;
+        const width = Math.max(spanLng * lngScale, 1e-6);
+        const height = Math.max(spanLat, 1e-6);
+        const pad = 0.08;
+
+        const usable = 1 - pad * 2;
+        const coords = [];
+        for (let i = 0; i < route.length; i++) {
+            const p = route[i];
+            const x = ((p.lng - minLng) * lngScale) / width;
+            const y = (p.lat - minLat) / height;
+            coords.push({
+                x: (pad + x * usable).toFixed(2),
+                y: (1 - pad - y * usable).toFixed(2)
+            });
+        }
+
+        /*
+         * One SVG path, several subpaths. A "newSegment" point starts a new
+         * M command, which lifts the pen: a rejected GPS jump therefore shows
+         * as a gap in the track instead of a false straight line.
+         */
+        let d = "";
+        for (let i = 0; i < coords.length; i++) {
+            const c = coords[i];
+            if (i === 0 || route[i].newSegment) d += "M" + c.x + "," + c.y + " ";
+            else d += "L" + c.x + "," + c.y + " ";
+        }
+        el.routeLine.setAttribute("d", d.trim());
+        el.routeStart.setAttribute("cx", coords[0].x);
+        el.routeStart.setAttribute("cy", coords[0].y);
+        el.routeEnd.setAttribute("cx", coords[coords.length - 1].x);
+        el.routeEnd.setAttribute("cy", coords[coords.length - 1].y);
+
+        const segments = route.filter(function (p) { return p.newSegment; }).length + 1;
+        el.routeMap.hidden = false;
+        el.routeNote.textContent = segments > 1
+            ? route.length + " points · " + segments + " segments (GPS gap filtered)"
+            : route.length + " recorded points";
     }
 
     /* ----------------------------------------------------------------------
@@ -1188,6 +1684,16 @@
         el.intervalConfig.hidden = sessionType !== "interval";
     }
 
+    /** Activity type drives the per-activity filtering thresholds. */
+    function setActivity(type) {
+        activityType = ACTIVITY[type] ? type : "run";
+        el.activityCards.forEach(function (card) {
+            const active = card.dataset.activity === activityType;
+            card.classList.toggle("is-active", active);
+            card.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+    }
+
     function applyStep(button) {
         const spec = button.dataset.step;
         if (!spec) return;
@@ -1245,6 +1751,12 @@
             });
         });
 
+        el.activityCards.forEach(function (card) {
+            card.addEventListener("click", function () {
+                setActivity(card.dataset.activity);
+            });
+        });
+
         el.stepperButtons.forEach(function (button) {
             button.addEventListener("click", function () {
                 applyStep(button);
@@ -1281,19 +1793,24 @@
         getState: function () {
             return state;
         },
+        /**
+         * Clean, serialisable session record. This is the shape intended
+         * for later upload into ProAthleteCare / Firebase.
+         */
         getSession: function () {
             return {
+                activityType: session.activityType,
                 sessionType: session.sessionType,
                 startTime: session.startTime,
                 endTime: session.endTime,
-                activeDuration: session.activeDuration,
-                totalDistance: session.totalDistance,
-                currentSpeed: session.currentSpeed,
-                averageSpeed: session.averageSpeed,
-                maxSpeed: session.maxSpeed,
-                currentPace: session.currentPace,
-                averagePace: session.averagePace,
-                gpsPoints: session.gpsPoints.slice(),
+                durationSeconds: Math.round(session.activeDuration / 1000),
+                distanceMeters: Math.round(session.totalDistance),
+                averageSpeedKmh: round1(session.averageSpeed * MS_TO_KMH),
+                maxSpeedKmh: round1(session.maxSpeed * MS_TO_KMH),
+                averagePaceSecondsPerKm: session.averagePace === null
+                    ? null
+                    : Math.round(session.averagePace),
+                route: session.route.slice(),
                 intervalSettings: {
                     workSec: session.intervalSettings.workSec,
                     restSec: session.intervalSettings.restSec,
@@ -1301,8 +1818,26 @@
                 },
                 completedRounds: session.completedRounds
             };
+        },
+        /** Internal diagnostics, deliberately not shown in the athlete UI. */
+        getDebug: function () {
+            return {
+                acceptedGpsPointCount: session.route.length,
+                rawGpsPointCount: session.gpsPoints.length,
+                rejected: gps.rejected,
+                spikes: gps.spikes,
+                acquired: gps.acquired,
+                stationary: gps.stationary,
+                accuracy: gps.accuracy,
+                movingSeconds: Math.round(movingDurationMs() / 1000)
+            };
         }
     };
+
+    function round1(value) {
+        const v = finite(value, 0);
+        return Math.round(v * 10) / 10;
+    }
 
     window.PAC = PAC;
 
@@ -1311,6 +1846,7 @@
        ====================================================================== */
 
     function boot() {
+        setActivity("run");
         setMode("free");
         init();
         showScreen("home");
@@ -1318,6 +1854,7 @@
         renderWorkoutState();
         renderElapsed();
         renderMetrics();
+        renderAcquiring();
         refreshPermissionStatus();
     }
 

@@ -46,6 +46,19 @@
                 </div>
             </div>
 
+            <h2 class="section-title">Activity</h2>
+            <div class="activity-grid" id="activityGrid" role="group" aria-label="Activity type">
+                <button type="button" class="activity-card is-active" data-activity="walk" aria-pressed="true">
+                    <span class="activity-tag">Walk</span>
+                </button>
+                <button type="button" class="activity-card" data-activity="run" aria-pressed="false">
+                    <span class="activity-tag">Run</span>
+                </button>
+                <button type="button" class="activity-card" data-activity="cycle" aria-pressed="false">
+                    <span class="activity-tag">Cycling</span>
+                </button>
+            </div>
+
             <h2 class="section-title">Training mode</h2>
             <div class="mode-grid" role="group" aria-label="Training mode">
                 <button type="button" class="mode-card is-active" data-mode="free" aria-pressed="true">
@@ -100,6 +113,12 @@
                 <span class="gps-line" id="gpsLine">Waiting for GPS&hellip;</span>
             </div>
 
+            <div class="acquiring" id="acquiring" hidden>
+                <span class="acquiring-pulse" aria-hidden="true"></span>
+                <span class="acquiring-text">Acquiring GPS&hellip;</span>
+                <span class="acquiring-hint" id="acquiringHint">Step outside for a clear signal</span>
+            </div>
+
             <div class="elapsed-card">
                 <span class="elapsed-label">Elapsed time</span>
                 <span class="elapsed-value" id="elapsedValue">00:00:00</span>
@@ -137,11 +156,11 @@
                 </div>
                 <div class="metric-card">
                     <span class="metric-label">Current pace</span>
-                    <span class="metric-value" id="mPace">--:-- /km</span>
+                    <span class="metric-value" id="mPace">--</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-label">Average pace</span>
-                    <span class="metric-value" id="mAvgPace">--:-- /km</span>
+                    <span class="metric-value" id="mAvgPace">--</span>
                 </div>
             </div>
 
@@ -154,6 +173,20 @@
                 <h2 class="summary-title" id="summaryTitle">Workout complete</h2>
             </div>
             <div class="summary-grid" id="summaryGrid"></div>
+
+            <div class="route-panel">
+                <span class="section-title">Route</span>
+                <div class="route-map" id="routeMap" hidden>
+                    <svg id="routeSvg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-label="Recorded route">
+                        <path id="routeLine" fill="none" stroke="#FFC72C" stroke-width="1.6"
+                              stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+                        <circle id="routeStart" r="1.8" fill="#35D288" stroke="#060606" stroke-width="0.6"></circle>
+                        <circle id="routeEnd" r="1.8" fill="#FF5762" stroke="#060606" stroke-width="0.6"></circle>
+                    </svg>
+                </div>
+                <p class="route-note" id="routeNote">Route not available.</p>
+            </div>
+
             <button type="button" class="btn btn-gold btn-block" id="btnNewTraining">New training</button>
         </section>
 
@@ -190,5 +223,4 @@
 
 <script src="data.js"></script>
 </body>
-    
 </html>

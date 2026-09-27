@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060606">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="ProAthleteCare GPS Training - live workout tracking and interval timer.">
+<title>GPS Training | ProAthleteCare</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- ================= HEADER ================= -->
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-bar" aria-hidden="true"></span>
+            <span class="brand-text">
+                <span class="brand-name">ProAthleteCare</span>
+                <span class="brand-sub">GPS Training</span>
+            </span>
+        </div>
+        <div class="gps-chip" id="gpsChip" data-status="idle" role="status" aria-live="polite">
+            <span class="gps-chip-dot" aria-hidden="true"></span>
+            <span class="gps-chip-label" id="gpsChipLabel">Checking GPS</span>
+        </div>
+    </header>
+
+    <main class="stage">
+
+        <!-- ================= HOME ================= -->
+        <section class="screen screen-home" id="screenHome" aria-label="Training setup">
+
+            <div class="panel status-panel" id="statusPanel">
+                <div class="status-row">
+                    <span class="status-key">GPS</span>
+                    <span class="status-value" id="homeGpsStatus">Checking&hellip;</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-key">Accuracy</span>
+                    <span class="status-value" id="homeGpsAccuracy">--</span>
+                </div>
+            </div>
+
+            <h2 class="section-title">Training mode</h2>
+            <div class="mode-grid" role="group" aria-label="Training mode">
+                <button type="button" class="mode-card is-active" data-mode="free" aria-pressed="true">
+                    <span class="mode-tag">Free Run</span>
+                    <span class="mode-desc">Open session</span>
+                </button>
+                <button type="button" class="mode-card" data-mode="interval" aria-pressed="false">
+                    <span class="mode-tag">Interval</span>
+                    <span class="mode-desc">Tabata</span>
+                </button>
+            </div>
+
+            <div class="panel config-panel" id="intervalConfig" hidden>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <span class="config-label">Work</span>
+                        <div class="stepper">
+                            <button type="button" class="stepper-btn" data-step="work:-5" aria-label="Decrease work time">&minus;</button>
+                            <input type="number" id="inputWork" class="stepper-value" value="20" min="5" max="600" step="5" inputmode="numeric" aria-label="Work seconds">
+                            <button type="button" class="stepper-btn" data-step="work:5" aria-label="Increase work time">+</button>
+                        </div>
+                        <span class="config-unit">sec</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Rest</span>
+                        <div class="stepper">
+                            <button type="button" class="stepper-btn" data-step="rest:-5" aria-label="Decrease rest time">&minus;</button>
+                            <input type="number" id="inputRest" class="stepper-value" value="10" min="5" max="600" step="5" inputmode="numeric" aria-label="Rest seconds">
+                            <button type="button" class="stepper-btn" data-step="rest:5" aria-label="Increase rest time">+</button>
+                        </div>
+                        <span class="config-unit">sec</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Rounds</span>
+                        <div class="stepper">
+                            <button type="button" class="stepper-btn" data-step="rounds:-1" aria-label="Decrease rounds">&minus;</button>
+                            <input type="number" id="inputRounds" class="stepper-value" value="8" min="1" max="99" step="1" inputmode="numeric" aria-label="Number of rounds">
+                            <button type="button" class="stepper-btn" data-step="rounds:1" aria-label="Increase rounds">+</button>
+                        </div>
+                        <span class="config-unit">rounds</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= LIVE ================= -->
+        <section class="screen screen-live" id="screenLive" aria-label="Live workout" hidden>
+
+            <div class="live-head">
+                <span class="workout-state" id="workoutState" data-state="running">Running</span>
+                <span class="gps-line" id="gpsLine">Waiting for GPS&hellip;</span>
+            </div>
+
+            <div class="elapsed-card">
+                <span class="elapsed-label">Elapsed time</span>
+                <span class="elapsed-value" id="elapsedValue">00:00:00</span>
+            </div>
+
+            <div class="interval-panel" id="intervalPanel" data-phase="idle" hidden>
+                <div class="phase-row">
+                    <span class="phase-name" id="phaseName">Work</span>
+                    <span class="phase-round" id="phaseRound">Round 1 / 8</span>
+                </div>
+                <div class="phase-countdown" id="phaseCountdown">00:20</div>
+                <div class="phase-bar" aria-hidden="true">
+                    <span class="phase-bar-fill" id="phaseBarFill"></span>
+                </div>
+            </div>
+
+            <div class="complete-flag" id="completeFlag" hidden>Workout complete</div>
+
+            <div class="metric-grid">
+                <div class="metric-card metric-card-wide">
+                    <span class="metric-label">Distance</span>
+                    <span class="metric-value" id="mDistance">0.00 km</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Current speed</span>
+                    <span class="metric-value" id="mSpeed">0.0 km/h</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Average speed</span>
+                    <span class="metric-value" id="mAvgSpeed">0.0 km/h</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Max speed</span>
+                    <span class="metric-value" id="mMaxSpeed">0.0 km/h</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Current pace</span>
+                    <span class="metric-value" id="mPace">--:-- /km</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Average pace</span>
+                    <span class="metric-value" id="mAvgPace">--:-- /km</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= SUMMARY ================= -->
+        <section class="screen screen-summary" id="screenSummary" aria-label="Workout summary" hidden>
+            <div class="summary-head">
+                <span class="summary-kicker" id="summaryType">Free Run</span>
+                <h2 class="summary-title" id="summaryTitle">Workout complete</h2>
+            </div>
+            <div class="summary-grid" id="summaryGrid"></div>
+            <button type="button" class="btn btn-gold btn-block" id="btnNewTraining">New training</button>
+        </section>
+
+        <!-- ================= NOTICE ================= -->
+        <div class="notice" id="notice" data-tone="info" role="alert" hidden>
+            <span class="notice-text" id="noticeText"></span>
+            <button type="button" class="notice-close" id="noticeClose" aria-label="Dismiss">&times;</button>
+        </div>
+
+    </main>
+
+    <!-- ================= CONTROLS ================= -->
+    <footer class="controls">
+        <button type="button" class="btn btn-gold btn-block btn-lg" id="btnStart">Start training</button>
+        <div class="btn-row" id="runControls" hidden>
+            <button type="button" class="btn btn-outline btn-lg" id="btnPause">Pause</button>
+            <button type="button" class="btn btn-danger btn-lg" id="btnFinish">Finish</button>
+        </div>
+    </footer>
+
+</div>
+
+<!-- ================= CONFIRM MODAL ================= -->
+<div class="modal" id="confirmModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <h3 class="modal-title" id="modalTitle">Finish workout?</h3>
+        <p class="modal-text">Your session will be saved and the summary shown.</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="btnCancelFinish">Keep going</button>
+            <button type="button" class="btn btn-danger" id="btnConfirmFinish">Finish</button>
+        </div>
+    </div>
+</div>
+
+<script src="data.js"></script>
+</body>
+</html>

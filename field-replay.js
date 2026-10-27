@@ -120,7 +120,7 @@
     $('fieldTimeline').max=String(model.durationMs);setView();updateMarker();selectTab(tab);
   }
   $('fieldRouteTab').onclick=()=>selectTab('route');$('fieldReplayTab').onclick=()=>selectTab('field');
-  function openCalibration(edit=false){
+  function openCalibration(edit=false,fromHome=false){
     stop();
     if(!root.PACFieldMap){$('fieldCalibrationMessage').textContent='Interactive map unavailable. Check local map resources; GPS replay is unaffected.';return;}
     const selected=edit?records.find(r=>r?.id===$('fieldSaved').value):null;
@@ -131,10 +131,23 @@
       const record={id,calibrationId:id,name,createdAt:now,updatedAt:now,validationStatus:result.validationStatus||'VALID',quality:result.quality,warnings:result.warnings||[],approximateAcknowledged:!!result.approximateAcknowledged,approximateAcknowledgedAt:result.approximateAcknowledgedAt||null,
         calibrationAccuracy:result.calibrationAccuracy||null,calibration:result,
         ...(selected?{previousCalibrationId:selected.id}:{})};
-      saveStore([...records,record],{...bindings,[session.sessionId]:id});
+      saveStore([...records,record],fromHome?bindings:{...bindings,[session.sessionId]:id});
+      if(fromHome){localStorage.setItem('pac-gps-preferred-field-v1',id);$('homeRunLocation').value='field';localStorage.setItem('pac-gps-run-location-v1','field');fillHomeFields(id);syncHome();$('homeFieldMessage').textContent='Saved field: '+name+' · ready for your next Running session.';return;}
       calibration=result;fillSaved(id);$('fieldCalibrationMessage').textContent='Field saved locally. Previous calibrations are retained.';tab='field';render();
     }});
   }
+  function fillHomeFields(id=localStorage.getItem('pac-gps-preferred-field-v1')||''){
+    $('homeFieldSaved').replaceChildren(new Option('Choose field / Виберіть поле',''));
+    records.forEach(r=>{try{G.validateCalibration(r.calibration);$('homeFieldSaved').add(new Option(r.name+' · '+r.calibration.sport,r.id))}catch(_){}});$('homeFieldSaved').value=id;
+  }
+  function syncHome(){const run=document.querySelector('[data-activity="run"]').getAttribute('aria-pressed')==='true';$('homeFieldSetup').hidden=!run;$('homeFieldOptions').hidden=$('homeRunLocation').value!=='field';}
+  $('homeRunLocation').value=localStorage.getItem('pac-gps-run-location-v1')==='field'?'field':'route';fillHomeFields();syncHome();
+  $('homeRunLocation').onchange=()=>{localStorage.setItem('pac-gps-run-location-v1',$('homeRunLocation').value);$('homeFieldMessage').textContent='';syncHome()};
+  $('homeFieldSaved').onchange=()=>{localStorage.setItem('pac-gps-preferred-field-v1',$('homeFieldSaved').value);$('homeFieldMessage').textContent='Field selected for your next Running session.'};
+  new MutationObserver(syncHome).observe($('activityGrid'),{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+  $('btnStart').addEventListener('click',e=>{if(!$('screenHome').hidden&&!$('homeFieldSetup').hidden&&$('homeRunLocation').value==='field'&&!$('homeFieldSaved').value){e.preventDefault();e.stopImmediatePropagation();$('homeFieldMessage').textContent='Choose or calibrate a field before Start / Спочатку виберіть або додайте поле.';$('homeFieldSaved').focus();}},true);
+  new MutationObserver(()=>{if(!$('screenHome').hidden||root.PAC?.getState()!=='running')return;const value=root.PAC?.getSession();if(!value?.sessionId||!value.startTime||Object.hasOwn(bindings,value.sessionId))return;const id=value.activityType==='run'&&$('homeRunLocation').value==='field'?$('homeFieldSaved').value:null;try{saveStore(records,{...bindings,[value.sessionId]:id||null})}catch(_){$('homeFieldMessage').textContent='Field selection could not be saved locally.'}}).observe($('screenHome'),{attributes:true,attributeFilter:['hidden']});
+  $('homeAddField').onclick=()=>openCalibration(false,true);
   $('fieldCalibrate').onclick=()=>openCalibration();
   $('fieldRecalibrate').onclick=()=>openCalibration(true);
   $('fieldSaved').onchange=()=>{
@@ -161,7 +174,7 @@
         startTime:value.startTime,endTime:value.endTime,replaySchemaVersion:value.replaySchemaVersion,
         replayPoints:value.replayPoints,route:value.route};
       host.hidden=value.activityType!=='run';if(host.hidden)return;
-      const r=records.find(r=>r?.id===bindings[session.sessionId]);calibration=null;
+      const chosen=bindings[session.sessionId];const r=records.find(r=>r?.id===chosen);calibration=null;
       if(r){try{calibration=G.validateCalibration(r.calibration)}catch(_){}}
       fillSaved(r?r.id:'');tab='route';render();
     },

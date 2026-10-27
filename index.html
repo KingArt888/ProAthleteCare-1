@@ -22,7 +22,7 @@
             <span class="brand-bar" aria-hidden="true"></span>
             <span class="brand-text">
                 <span class="brand-name">ProAthleteCare</span>
-                <span class="brand-sub">GPS Training</span>
+                <span class="brand-sub">GPS Training · iPhone v10</span>
             </span>
         </div>
         <div class="gps-chip" id="gpsChip" data-status="idle" role="status" aria-live="polite">
@@ -60,6 +60,11 @@
                 </button>
             </div>
 
+            <section id="homeFieldSetup" class="panel">
+              <label class="field-label">Running location / Де бігаємо?<select id="homeRunLocation"><option value="route">Regular run / Звичайний біг</option><option value="field">On a field / Біг на полі</option></select></label>
+              <div id="homeFieldOptions" hidden><label class="field-label">Saved field / Збережене поле<select id="homeFieldSaved"></select></label><button id="homeAddField" type="button" class="btn btn-outline btn-block">＋ Add / calibrate field · Додати поле</button></div>
+              <p id="homeFieldMessage" role="status"></p>
+            </section>
             <h2 class="section-title">Training mode</h2>
             <div class="mode-grid" role="group" aria-label="Training mode">
                 <button type="button" class="mode-card is-active" data-mode="free" aria-pressed="true">

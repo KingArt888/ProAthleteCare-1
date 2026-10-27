@@ -219,6 +219,27 @@
     const w=maxX-minX,h=maxY-minY,z=Math.min(4,Math.max(1,zoom));
     return {x:minX+w/2-w/(2*z),y:minY+h/2-h/(2*z),width:w/z,height:h/z};
   }
-  const api={profiles,coordinate,ecef,localMeters,calibrate,measurePolygon,calibratePolygon,assessPolygon,validateCalibration,toField,fieldToArtwork,artworkSegment,buildReplay,sampleAt,viewport};
+  // Experimental phone-position analytics: no planned arrows or sensor-speed claims.
+  function analyzeReplay(model){
+    const zones=[['Easy <7',0,7,'#55b6ff'],['Run 7–14',7,14,'#45d994'],['Fast 14–19',14,19,'#ffd04b'],['HSR 19–25',19,25,'#ff963c'],['Sprint ≥25',25,Infinity,'#ff5473']].map(([name,min,max,color])=>({name,min,max,color,seconds:0,metres:0}));
+    const segments=[],episodes=[];let window=[],active=null,excludedSeconds=0;
+    function finish(){if(active&&active.seconds>=2)episodes.push(active);active=null}
+    for(let i=1;i<model.points.length;i++){
+      const a=model.points[i-1],b=model.points[i],dt=(b.t-a.t)/1000;
+      if(b.newSegment||dt<.5||dt>3||a.accuracy>10||b.accuracy>10){window=[];finish();if(!b.newSegment&&dt>0)excludedSeconds+=dt;continue;}
+      const metres=Math.hypot(b.x-a.x,b.y-a.y);window.push({a,b,dt,metres});
+      while(window.length>1&&(b.t-window[1].a.t)>6000)window.shift();
+      const elapsed=(b.t-window[0].a.t)/1000,distance=window.reduce((n,v)=>n+v.metres,0),uncertainty=Math.hypot(window[0].a.accuracy,b.accuracy)/elapsed;
+      const kmh=elapsed>=3&&uncertainty<=1.5?distance/elapsed*3.6:null;
+      const zone=kmh!==null&&kmh<=45?zones.findIndex(z=>kmh>=z.min&&kmh<z.max):-1;
+      segments.push({index:i,zone,kmh:zone<0?null:kmh,color:zone<0?'#8e939c':zones[zone].color});
+      if(zone<0){excludedSeconds+=dt;finish();continue;}
+      zones[zone].seconds+=dt;zones[zone].metres+=metres;
+      if(zone>=3){if(!active||active.zone!==zone){finish();active={zone,start:a.t,end:b.t,seconds:0,metres:0,maxKmh:0}}active.end=b.t;active.seconds+=dt;active.metres+=metres;active.maxKmh=Math.max(active.maxKmh,kmh)}else finish();
+    }finish();
+    const analysedSeconds=zones.reduce((n,z)=>n+z.seconds,0);
+    return {zones,segments,episodes,analysedSeconds,excludedSeconds,gapSeconds:model.gaps.reduce((n,g)=>n+(g.end-g.start)/1000,0),hsrCount:episodes.filter(e=>e.zone===3).length,sprintCount:episodes.filter(e=>e.zone===4).length,accelerationCount:null,decelerationCount:null,accelerationReason:'Unavailable: this recording stores phone positions and accuracy, without validated high-rate velocity/IMU. GPS noise can mimic acceleration.'};
+  }
+  const api={analyzeReplay,profiles,coordinate,ecef,localMeters,calibrate,measurePolygon,calibratePolygon,assessPolygon,validateCalibration,toField,fieldToArtwork,artworkSegment,buildReplay,sampleAt,viewport};
   if(typeof module==='object' && module.exports)module.exports=api;else root.PACFieldGeometry=api;
 })(globalThis);

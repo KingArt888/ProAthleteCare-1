@@ -11,7 +11,7 @@
     </div>
     <section id="fieldReplayPanel" hidden aria-label="Actual GPS Field Replay">
       <h3>Field Performance Replay</h3>
-      <p class="field-muted">Actual phone GPS · approximate positions. Neutral gold shows actual data, not planned drills or validated speed zones.</p>
+      <p class="field-muted">Actual phone GPS · approximate positions. Route colors show experimental GPS speed estimates; grey means insufficient quality. Actual data only.</p>
       <label class="field-label">Saved field <select id="fieldSaved"><option value="">Choose a calibrated field</option></select></label>
       <p id="fieldStatus" role="status"></p>
       <div class="field-calibrate-actions"><button id="fieldCalibrate" class="btn btn-gold" type="button">Calibrate field</button><button id="fieldRecalibrate" class="btn btn-outline" type="button" disabled>Recalibrate selected</button></div>
@@ -33,7 +33,7 @@
         <p class="field-muted">Green = first valid sample · red = last valid sample · white = replay marker. Blank timeline bands = no continuous GPS data.</p>
         <div id="fieldGapBar" class="field-gap-bar" aria-label="Missing GPS intervals"></div>
         <label class="field-label">Elapsed timeline <input id="fieldTimeline" type="range" min="0" max="1" step="100" value="0"></label>
-        <div class="field-play-controls"><button type="button" class="btn btn-gold" id="fieldPlay">Play</button><output id="fieldTime">0:00</output></div>
+        <div class="field-play-controls"><button type="button" class="btn btn-gold" id="fieldPlay">Play</button><output id="fieldTime">0:00</output><label>Replay <select id="fieldRate"><option value="1">1×</option><option value="4">4×</option><option value="10">10×</option></select></label></div>
         <p id="fieldMarkerStatus" role="status"></p>
         <p id="fieldQuality"></p>
       </div>
@@ -46,6 +46,7 @@
   panel.appendChild(details);
   const headline=document.createElement('p');headline.id='fieldHeadline';headline.className='field-headline';panel.insertBefore(headline,$('fieldCanvasPanel'));
   const metrics=document.createElement('p');metrics.id='fieldMetrics';metrics.className='field-headline';$('fieldCanvasPanel').appendChild(metrics);
+  const analyticsPanel=document.createElement('section');analyticsPanel.id='fieldAnalytics';analyticsPanel.className='field-details';$('fieldCanvasPanel').appendChild(analyticsPanel);
   const KEY='pac-gps-field-calibrations-v1';
   let records=[],bindings={},storageError=false,storeNeedsRecovery=false,session=null,model=null,calibration=null,tab='route';
   let playing=false,frame=0,time=0,started=0,startTime=0,zoom=1,pan={x:0,y:0};
@@ -81,10 +82,11 @@
   function clock(ms){const sec=Math.floor(ms/1000);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
   function updateMarker(){
     if(!model)return;
-    const p=G.sampleAt(model,time);$('fieldMarker').style.display=p?'':'none';
+    const p=G.sampleAt(model,time);
+    const index=model.points.findIndex(v=>v.t>=time),speed=model.analytics?.segments.find(v=>v.index===index);$('fieldMarker').setAttribute('stroke',speed?.color||'#8e939c');$('fieldMarker').style.display=p?'':'none';
     if(p){$('fieldMarker').setAttribute('cx',p.art.x);$('fieldMarker').setAttribute('cy',p.art.y);}
     $('fieldTimeline').value=String(time);$('fieldTime').value=clock(time)+' / '+clock(model.durationMs);
-    $('fieldMarkerStatus').textContent=p?('GPS accuracy ±'+Math.round(p.accuracy)+' m · '+(p.interpolated?'visual interpolation between valid fixes':'recorded fix')):'No GPS position at this time · gap / recording pause / no data';
+    $('fieldMarkerStatus').textContent=p?('GPS accuracy ±'+Math.round(p.accuracy)+' m · '+(p.interpolated?'visual interpolation between valid fixes':'recorded fix')+(speed?.kmh!==null&&speed?.kmh!==undefined?' · estimated '+speed.kmh.toFixed(1)+' km/h':' · speed unclassified')):'No GPS position at this time · gap / recording pause / no data';
   }
   function positionMarker(id,p){const node=$(id);node.style.display=p?'':'none';if(p){node.setAttribute('cx',p.art.x);node.setAttribute('cy',p.art.y);}}
   function render(){
@@ -108,10 +110,18 @@
     $('fieldCanvasPanel').hidden=false;$('fieldSvg').hidden=false;$('fieldPlay').disabled=!model.points.length||model.durationMs<=0;$('fieldTimeline').disabled=!model.points.length||model.durationMs<=0;
     const image=$('fieldBackground');image.setAttribute('href',G.profiles[c.sport].asset);
     $('fieldPaths').replaceChildren();
+    const analytics=G.analyzeReplay(model);model.analytics=analytics;const byIndex=new Map(analytics.segments.map(v=>[v.index,v]));
+    $('fieldAnalytics').replaceChildren();
+    const note=document.createElement('p');note.textContent='Phone GPS estimates · 3–6 s smoothing · '+analytics.analysedSeconds.toFixed(0)+' s analysed · '+analytics.excludedSeconds.toFixed(0)+' s unclassified · '+analytics.gapSeconds.toFixed(0)+' s gaps. Grey = uncertain. Zone totals describe analysed GPS samples, not the engine distance.';$('fieldAnalytics').appendChild(note);
+    for(const z of analytics.zones){const row=document.createElement('p');row.style.borderLeft='4px solid '+z.color;row.style.paddingLeft='10px';row.textContent=z.name+' km/h · '+z.seconds.toFixed(0)+' s · '+z.metres.toFixed(0)+' m';$('fieldAnalytics').appendChild(row)}
+    const counts=document.createElement('p');counts.textContent='HSR episodes: '+(analytics.analysedSeconds?analytics.hsrCount:'unavailable')+' · Sprints: '+(analytics.analysedSeconds?analytics.sprintCount:'unavailable')+' (continuous ≥2 s; adjacent HSR/Sprint counted separately).';$('fieldAnalytics').appendChild(counts);
+    const acc=document.createElement('p');acc.textContent='ACC / DEC: '+analytics.accelerationReason;$('fieldAnalytics').appendChild(acc);
     let path=null,d='';
     function flush(){if(path)path.setAttribute('d',d);}
     model.points.forEach((p,i)=>{
-      if(p.newSegment||!path){flush();path=document.createElementNS(NS,'path');path.setAttribute('vector-effect','non-scaling-stroke');$('fieldPaths').appendChild(path);d='M'+p.art.x+','+p.art.y;}
+      const segment=byIndex.get(i),color=segment?.color||'#8e939c';
+      if(p.newSegment||!path||path.getAttribute('stroke')!==color){flush();path=document.createElementNS(NS,'path');path.setAttribute('vector-effect','non-scaling-stroke');path.setAttribute('stroke',color);$('fieldPaths').appendChild(path);const previous=!p.newSegment&&i>0?model.points[i-1]:p;d='M'+previous.art.x+','+previous.art.y;
+        if(previous!==p)G.artworkSegment(previous,p,c).slice(1).forEach(a=>{d+=' L'+a.x+','+a.y});}
       else G.artworkSegment(model.points[i-1],p,c).slice(1).forEach(a=>{d+=' L'+a.x+','+a.y});
     });flush();
     positionMarker('fieldStart',model.points[0]);positionMarker('fieldEnd',model.points.at(-1));
@@ -158,7 +168,8 @@
     }catch(_){$('fieldStatus').textContent='Cannot apply/save this field. Check local storage and recalibrate.';}
   };
   $('fieldTimeline').oninput=()=>{stop();time=Number($('fieldTimeline').value);updateMarker();};
-  function tick(now){if(!playing||!model)return;time=Math.min(model.durationMs,startTime+now-started);updateMarker();if(time>=model.durationMs)stop();else frame=requestAnimationFrame(tick);}
+  function tick(now){if(!playing||!model)return;time=Math.min(model.durationMs,startTime+(now-started)*Number($('fieldRate').value));updateMarker();if(time>=model.durationMs)stop();else frame=requestAnimationFrame(tick);}
+  $('fieldRate').onchange=stop;
   $('fieldPlay').onclick=()=>{if(playing){stop();return}if(!model||!model.points.length)return;if(time>=model.durationMs)time=0;startTime=time;started=performance.now();playing=true;$('fieldPlay').textContent='Pause';frame=requestAnimationFrame(tick);};
   $('fieldZoomIn').onclick=()=>{zoom=Math.min(4,zoom*1.4);setView()};$('fieldZoomOut').onclick=()=>{zoom=Math.max(1,zoom/1.4);setView()};$('fieldFit').onclick=()=>{zoom=1;pan={x:0,y:0};setView()};
   let drag=null;const svg=$('fieldSvg');
@@ -176,7 +187,7 @@
       host.hidden=value.activityType!=='run';if(host.hidden)return;
       const chosen=bindings[session.sessionId];const r=records.find(r=>r?.id===chosen);calibration=null;
       if(r){try{calibration=G.validateCalibration(r.calibration)}catch(_){}}
-      fillSaved(r?r.id:'');tab='route';render();
+      fillSaved(r?r.id:'');tab=calibration?'field':'route';render();
     },
     hide(){stop();if(root.PACFieldMap)root.PACFieldMap.close();host.hidden=true;}
   };

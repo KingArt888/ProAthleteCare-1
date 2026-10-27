@@ -1211,3 +1211,104 @@ button, input {
         --line-gold: rgba(255, 199, 44, 0.7);
     }
 }
+
+/* Respect hidden regardless of component display rules. */
+[hidden] { display: none !important; }
+
+/* Standalone read-only Field Replay. Original 3:2 artwork is never stretched. */
+.field-tabs,.field-zoom,.field-play-controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.field-tabs { margin-top:14px; }
+.field-tabs .btn { flex:1; font-size:11px; min-height:48px; padding:8px; }
+.field-tabs [aria-pressed="true"] { border-color:var(--gold); color:var(--gold); }
+#fieldReplayPanel { display:grid; gap:12px; min-width:0; padding:14px 0; }
+#fieldReplayPanel p { font-size:12px; line-height:1.55; overflow-wrap:anywhere; }
+#fieldReplayPanel a { color:var(--gold); }
+.field-muted { color:var(--muted); }
+.field-label { display:grid; gap:6px; font-size:12px; min-width:0; }
+.field-label input,.field-label select { box-sizing:border-box; width:100%; min-width:0; min-height:44px; padding:9px; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:16px; }
+.field-label input[type="range"] { padding:0; accent-color:var(--gold); }
+.field-form { display:grid; gap:12px; padding-top:12px; }
+.field-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.field-confirm { display:flex; gap:10px; align-items:flex-start; font-size:12px; line-height:1.5; }
+.field-confirm input { margin-top:4px; }
+.field-corner-diagram { width:100%; max-height:160px; fill:var(--gold); font-size:13px; }
+#fieldCalibrationDetails { border:1px solid var(--line); border-radius:12px; padding:12px; }
+#fieldCalibrationDetails summary { cursor:pointer; font-weight:700; }
+#fieldCanvasPanel { display:grid; gap:12px; min-width:0; }
+.field-svg { display:block; width:100%; aspect-ratio:3/2; background:#101810; border:1px solid var(--line-gold); border-radius:12px; touch-action:none; }
+.field-zoom .btn { min-height:44px; padding:8px 16px; font-size:12px; }
+.field-play-controls .btn { min-height:48px; }
+.field-play-controls output { font-size:14px; font-variant-numeric:tabular-nums; }
+.field-gap-bar { position:relative; height:8px; border-radius:3px; background:var(--gold); overflow:hidden; }
+.field-gap-bar span { position:absolute; top:0; bottom:0; background:#3c3c3c; }
+
+/* Embedded geographic calibration: map owns the viewport, GPS UI stays intact. */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.field-calibrate-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.field-calibrate-actions .btn { flex:1; padding:10px; font-size:11px; min-height:48px; }
+body.field-map-open { overflow:hidden; }
+.field-map-view { position:fixed; inset:0; z-index:2000; height:100vh; height:100dvh; display:flex; flex-direction:column; gap:8px; box-sizing:border-box; background:#080a08; color:#fff; padding:calc(8px + env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left)); overflow:hidden; }
+.field-map-view * { box-sizing:border-box; }
+.map-header { display:flex; align-items:center; gap:12px; flex:none; }
+.map-header strong { display:block; font-size:17px; }
+.map-header small { display:block; color:#a8ada8; font-size:11px; margin-top:2px; }
+.field-map-view .btn { min-height:44px; font-size:11px; padding:8px 12px; letter-spacing:.04em; }
+.field-map-view input:not([type="checkbox"]),.field-map-view select { min-width:0; min-height:44px; border:1px solid #393e35; border-radius:9px; background:#161a14; color:#fff; padding:9px; font:inherit; font-size:16px; }
+.map-search { display:flex; gap:8px; flex:none; }
+.map-search input { flex:1; width:0; }
+.map-tools { display:flex; gap:8px; align-items:center; flex:none; flex-wrap:wrap; }
+.map-tools select { flex:1; width:0; }
+.map-step { margin:0; font-size:12px; color:#f0dca4; line-height:1.4; flex:none; }
+#calibrationMap { flex:1; min-height:180px; width:100%; background:#192019; border:1px solid #514326; border-radius:12px; isolation:isolate; }
+#calibrationMap .leaflet-control-attribution { font-size:10px; color:#111; background:rgba(255,255,255,.94); max-width:100%; }
+#calibrationMap .leaflet-control-attribution a { color:#075274; }
+#calibrationMap .leaflet-control-zoom a { width:44px; height:44px; line-height:44px; color:#111; }
+.map-corner { border:0; background:none; display:grid; place-items:center; cursor:grab; }
+.map-corner span { display:grid; place-items:center; width:32px; height:32px; border:2px solid #ffcf54; border-radius:50%; background:#13180f; color:#fff; font-weight:800; font-size:15px; box-shadow:0 2px 8px #0008; }
+.map-bottom { flex:none; max-height:45dvh; overflow:auto; overscroll-behavior:contain; display:grid; gap:8px; padding:0 1px 1px; }
+.map-corner-actions { display:flex; align-items:center; gap:8px; }
+#mapCornerCount { margin-left:auto; color:#ffc72c; font-size:13px; white-space:nowrap; }
+#mapOptions { font-size:12px; color:#d4d9d2; }
+#mapOptions summary { cursor:pointer; padding:6px 0; }
+.map-options-grid { display:grid; gap:8px; grid-template-columns:repeat(2,minmax(0,1fr)); padding:6px 0; }
+.map-review { display:flex; align-items:center; gap:10px; border:1px solid #4a4028; border-radius:9px; padding:8px; }
+#mapAlignment { width:100px; min-width:100px; height:68px; background:#0d130d; }
+.map-review strong { font-size:12px; font-weight:700; line-height:1.4; }
+#mapAlignmentNote { font-size:10px; color:#bbc2b6; margin:4px 0 0; }
+#mapValidation,#mapNetworkStatus { margin:0; font-size:11px; line-height:1.4; overflow-wrap:anywhere; }
+#mapValidation { color:#ffdc8f; }
+#mapNetworkStatus { color:#c8d2c1; }
+#mapSaveArea { display:grid; gap:8px; }
+#mapSaveArea input:not([type="checkbox"]) { width:100%; }
+.map-confirm { display:flex; align-items:center; gap:8px; font-size:12px; }
+.map-confirm input { width:20px; height:20px; flex:none; }
+.map-provider-note { margin:0; font-size:10px; color:#b0b8ab; line-height:1.4; }
+.map-provider-note a { color:#e6cb80; }
+.map-search-results { flex:none; max-height:160px; overflow:auto; display:grid; gap:4px; color:#fff; background:#141b12; border:1px solid #424b36; border-radius:8px; font-size:12px; }
+.map-search-results button { text-align:left; min-height:44px; padding:10px; border:0; color:#fff; background:#1b2418; font:inherit; font-size:13px; overflow-wrap:anywhere; }
+@media (min-width:800px) { .field-map-view { max-width:1100px; margin:auto; border-inline:1px solid #393e35; }.map-bottom { max-height:38dvh; }.map-review { max-width:600px; } }
+@media (max-height:650px) { #calibrationMap { min-height:110px; }.map-bottom { max-height:40dvh; }.field-map-view { gap:5px; } }
+/* Visual viewport follows Safari chrome / keyboard; the footer can scroll independently. */
+#calibrationMap { min-height:clamp(100px,calc(var(--map-viewport-height,100dvh)*.22),180px); }
+.map-bottom { flex:0 1 auto; min-height:100px; max-height:calc(var(--map-viewport-height,100dvh)*.45); }
+@media (min-width:800px) { .map-bottom { max-height:calc(var(--map-viewport-height,100dvh)*.38); } }
+.map-side-metrics { border:1px solid #454b3b; border-radius:8px; padding:8px; font-size:12px; }
+.map-side-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px 12px; }
+.map-side-metrics p { margin:6px 0 0; font-size:11px; line-height:1.4; }
+#mapValidation[data-quality="VALID"] { color:#93e0a3; }
+#mapValidation[data-quality="APPROXIMATE"],.field-calibration-warning { border:1px solid #9b7827; border-radius:8px; padding:8px; background:#30250d; color:#ffe5a1; }
+#mapValidation[data-quality="INVALID"] { color:#ffb5a8; }
+.map-approximate-confirm { border:1px solid #9b7827; border-radius:8px; padding:8px; color:#ffe5a1; background:#30250d; line-height:1.45; }
+
+/* Field Replay prioritises the actual field; diagnostics are disclosed on demand. */
+.field-headline{font-size:14px;color:#e5c963;line-height:1.5;margin:8px 0 12px}
+.field-details{margin:16px 0;padding:12px;border:1px solid #38352a;border-radius:12px}
+.field-details summary{cursor:pointer;font-weight:700;color:#ddd}
+.field-details .field-calibration-warning{font-size:13px;line-height:1.5}
+.field-focused .summary-title{font-size:22px;margin:8px 0}
+.field-focused .summary-head{margin-bottom:12px}
+.field-focused .summary-grid{display:none}
+.field-focused #fieldReplayPanel h3{margin:12px 0 6px;font-size:24px}
+.field-focused .field-svg{width:100%;min-height:200px;max-height:54vh;background:#080a08}
+.field-focused #fieldCanvasPanel>.field-muted{font-size:12px;line-height:1.4;margin:8px 0}
+.field-focused .field-zoom .btn{min-height:36px;padding:6px 12px}

@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="ProAthleteCare GPS Training - live workout tracking and interval timer.">
 <title>GPS Training | ProAthleteCare</title>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -120,7 +121,7 @@
             </div>
 
             <div class="elapsed-card">
-                <span class="elapsed-label">Elapsed time</span>
+                <span class="elapsed-label">Active time</span>
                 <span class="elapsed-value" id="elapsedValue">00:00:00</span>
             </div>
 
@@ -147,7 +148,7 @@
                     <span class="metric-value" id="mSpeed">0.0 km/h</span>
                 </div>
                 <div class="metric-card">
-                    <span class="metric-label">Average speed</span>
+                    <span class="metric-label">Moving average speed</span>
                     <span class="metric-value" id="mAvgSpeed">0.0 km/h</span>
                 </div>
                 <div class="metric-card">
@@ -159,7 +160,7 @@
                     <span class="metric-value" id="mPace">--</span>
                 </div>
                 <div class="metric-card">
-                    <span class="metric-label">Average pace</span>
+                    <span class="metric-label">Moving average pace</span>
                     <span class="metric-value" id="mAvgPace">--</span>
                 </div>
             </div>
@@ -174,7 +175,8 @@
             </div>
             <div class="summary-grid" id="summaryGrid"></div>
 
-            <div class="route-panel">
+            <div id="fieldReplayHost" hidden></div>
+            <div class="route-panel" id="gpsRoutePanel">
                 <span class="section-title">Route</span>
                 <div class="route-map" id="routeMap" hidden>
                     <svg id="routeSvg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-label="Recorded route">
@@ -221,6 +223,11 @@
     </div>
 </div>
 
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="map-providers.js"></script>
+<script src="field-geometry.js"></script>
+<script src="field-map.js"></script>
+<script src="field-replay.js"></script>
 <script src="data.js"></script>
 </body>
 </html>

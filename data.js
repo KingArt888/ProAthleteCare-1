@@ -344,6 +344,8 @@
         currentPace: null,        // seconds per km
         averagePace: null,        // seconds per km
         route: [],                // ACCEPTED coordinates only
+        replaySchemaVersion: 0,
+        replayPoints: [],          // accepted fixes incl. stationary; independent replay continuity
         gpsPoints: [],            // every raw fix, internal/debug only
         intervalSettings: { workSec: 20, restSec: 10, rounds: 8 },
         completedRounds: 0
@@ -400,6 +402,7 @@
        ====================================================================== */
 
     function showScreen(name) {
+        if (name !== "summary" && window.PACFieldReplay) window.PACFieldReplay.hide();
         el.screenHome.hidden = name !== "home";
         el.screenLive.hidden = name !== "live";
         el.screenSummary.hidden = name !== "summary";
@@ -525,7 +528,7 @@
 
     function renderControls() {
         const isLive = state === STATE.RUNNING || state === STATE.PAUSED;
-        el.btnStart.hidden = isLive;
+        el.btnStart.hidden = state !== STATE.READY || !storageReady;
         el.runControls.hidden = !isLive;
 
         if (state === STATE.PAUSED) {
@@ -553,12 +556,7 @@
      * until there is enough real distance to be meaningful.
      */
     function movingDurationMs() {
-        let total = session.movingMs;
-        if (state === STATE.RUNNING && gps.movingSince) {
-            const delta = Date.now() - gps.movingSince;
-            if (delta > 0) total += Math.min(delta, CONFIG.MAX_SESSION_MS);
-        }
-        return total;
+        return session.movingMs;
     }
 
     function hasMeaningfulDistance() {
@@ -734,6 +732,7 @@
      * GPS noise cannot inflate the workout.
      */
     function onGpsSuccess(position) {
+        if (state !== STATE.RUNNING) return;
         const coords = position && position.coords;
         if (!coords) return;
 
@@ -746,7 +745,10 @@
         }
 
         const accuracy = finite(coords.accuracy, NaN);
-        const timestamp = finite(position.timestamp, Date.now());
+        const timestamp = finite(position.timestamp, NaN);
+        if (!Number.isFinite(timestamp) || timestamp > Date.now() + 1000 || Date.now() - timestamp > 10000) {
+            rejectFix('stale'); return;
+        }
 
         // Keep the newest reported accuracy for the UI, even when rejected.
         if (isFinite(accuracy) && accuracy >= 0) {
@@ -757,7 +759,7 @@
         storeRawPoint(lat, lon, timestamp, accuracy, coords.speed);
 
         /* 2. accuracy gate */
-        if (!isFinite(accuracy) || accuracy > CONFIG.MAX_ACCURACY_M) {
+        if (!isFinite(accuracy) || accuracy < 0 || accuracy > CONFIG.MAX_ACCURACY_M) {
             rejectFix("accuracy");
             updateGpsStatus();
             return;
@@ -783,6 +785,9 @@
         }
 
         /* 4-6. movement segment */
+        if (gps.lastPoint && timestamp - gps.lastPoint.timestamp > 10000) {
+            breakGpsChain(); session.partial = true;
+        }
         const previous = gps.lastPoint;
         let stepDistance = 0;
         let stepSeconds = 0;
@@ -833,20 +838,8 @@
         const reading = movementFromWindow();
         const isMoving = updateMovementState(reading);
 
-        /*
-         * Moving time may only accrue while the session is actually running,
-         * otherwise a paused session would still bank "moving" time and the
-         * average would jump on resume.
-         */
         const isRunning = state === STATE.RUNNING;
-        if (isMoving) {
-            if (isRunning && !gps.movingSince) gps.movingSince = Date.now();
-        } else {
-            if (gps.movingSince) {
-                if (isRunning) session.movingMs += Date.now() - gps.movingSince;
-                gps.movingSince = 0;
-            }
-        }
+        if (isMoving && isRunning && previous && stepDistance > 0) session.movingMs += stepSeconds * 1000;
 
         // Only real movement extends the accepted route and distance.
         if (isMoving && isRunning && stepDistance > 0) {
@@ -862,6 +855,12 @@
             });
             gps.routeBreak = false;
         }
+
+        // Separate accepted stream for timestamp replay, including stationary anchors.
+        // It never adds distance or changes the movement calculation.
+        session.replayPoints.push({lat:lat,lng:lon,timestamp:timestamp,accuracy:accuracy,
+            newSegment:gps.replayBreak === true || session.replayPoints.length === 0});
+        gps.replayBreak = false;
 
         /* 8. speed smoothing + confirmed max speed */
         updateSpeed(impliedSpeed, stepSeconds, isMoving, reading.speed);
@@ -916,6 +915,8 @@
     /** Drop a fix and record why (internal counters only). */
     function rejectFix(reason) {
         gps.rejected += 1;
+        session.partial = true;
+        breakGpsChain();
         if (CONFIG.DEBUG) {
             console.debug("[gps] rejected:", reason);
         }
@@ -1014,6 +1015,7 @@
         renderMetrics();
         updateInterval(Date.now());
         renderInterval();
+        if (Date.now() - lastSaveAt >= 1000) persistSession();
         if (state === STATE.RUNNING && !hasFreshSpeed()) renderGpsLine();
     }
 
@@ -1237,7 +1239,10 @@
     }
 
     function handleVisibility() {
-        if (document.visibilityState !== "visible") return;
+        if (document.visibilityState !== "visible") {
+            if (state === STATE.RUNNING) { session.partial = true; pauseWorkout(); }
+            persistSession(); return;
+        }
         const live = state === STATE.RUNNING || state === STATE.PAUSED;
         if (live && wake.wanted && wake.lock === null) {
             requestWakeLock();
@@ -1249,6 +1254,10 @@
        ====================================================================== */
 
     function createSession() {
+        session.sessionId = 's-' + crypto.randomUUID();
+        session.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        session.day = new Date().toLocaleDateString('sv-SE');
+        session.partial = false;
         session.activityType = activityType;
         session.sessionType = sessionType;
         session.state = state;
@@ -1265,6 +1274,8 @@
         session.currentPace = null;
         session.averagePace = null;
         session.route = [];
+        session.replaySchemaVersion = 1;
+        session.replayPoints = [];
         session.gpsPoints = [];
         session.completedRounds = 0;
         session.intervalSettings = readIntervalSettings();
@@ -1288,6 +1299,7 @@
         gps.movingStreak = 0;
         gps.stillStreak = 0;
         gps.routeBreak = false;
+        gps.replayBreak = true;
     }
 
     function readIntervalSettings() {
@@ -1305,7 +1317,7 @@
     }
 
     function startWorkout() {
-        if (state !== STATE.READY && state !== STATE.FINISHED) return;
+        if (state !== STATE.READY || !storageReady) return;
 
         ensureAudio();
         clearNotice();
@@ -1345,6 +1357,7 @@
         renderGpsLine();
         renderAcquiring();
         renderInterval();
+        persistSession();
     }
 
     function pauseWorkout() {
@@ -1360,6 +1373,8 @@
         state = STATE.PAUSED;
         session.state = state;
         pauseInterval();
+        stopGps();
+        breakGpsChain();
         session.currentSpeed = 0;
         showScreen("live");
         renderWorkoutState();
@@ -1368,6 +1383,7 @@
         renderMetrics();
         renderGpsLine();
         renderInterval();
+        persistSession();
     }
 
     function resumeWorkout() {
@@ -1377,8 +1393,8 @@
         startClock();
         resumeInterval();
         // Drop the stale chain so the paused gap is never counted as distance.
-        gps.lastPoint = null;
-        gps.lastSpeedAt = 0;
+        breakGpsChain();
+        startGps();
         showScreen("live");
         renderWorkoutState();
         renderControls();
@@ -1386,6 +1402,7 @@
         renderMetrics();
         renderGpsLine();
         renderInterval();
+        persistSession();
     }
 
     /** Toggle PAUSE / RESUME. */
@@ -1428,9 +1445,11 @@
         showScreen("summary");
         renderSummary();
         renderControls();
+        persistSession();
     }
 
     function resetToReady() {
+        if (state !== STATE.FINISHED && state !== STATE.READY) return;
         stopTicker();
         resetClock();
         stopGps();
@@ -1440,6 +1459,7 @@
         state = STATE.READY;
         session.state = state;
         session.route = [];
+        session.replayPoints = [];
         session.gpsPoints = [];
         session.totalDistance = 0;
         session.movingMs = 0;
@@ -1482,7 +1502,9 @@
     function summaryItems() {
         const items = [
             { label: "Distance", value: formatDistance(session.totalDistance), hero: true },
-            { label: "Duration", value: formatClock(session.activeDuration) },
+            { label: "Active time", value: formatClock(session.activeDuration) },
+            { label: "Elapsed time", value: formatClock(session.endTimestamp - session.startTimestamp) },
+            { label: "Observed moving time", value: formatClock(session.movingMs) },
             { label: "Average pace", value: formatPace(session.averagePace) },
             { label: "Average speed", value: formatSpeed(session.averageSpeed) },
             { label: "Maximum speed", value: formatSpeed(session.maxSpeed) }
@@ -1503,7 +1525,7 @@
         const activity = ACTIVITY[session.activityType] || ACTIVITY.run;
         el.summaryType.textContent = activity.label +
             (session.sessionType === "interval" ? " · Interval" : " · Free run");
-        el.summaryTitle.textContent = "Workout complete";
+        el.summaryTitle.textContent = session.partial ? "Workout complete · partial GPS" : "Workout complete";
         el.summaryGrid.textContent = "";
 
         summaryItems().forEach(function (item) {
@@ -1524,6 +1546,7 @@
         });
 
         renderRoute();
+        if (window.PACFieldReplay) window.PACFieldReplay.show(session);
     }
 
     /**
@@ -1533,6 +1556,8 @@
      * service is introduced here, and nothing can break if tiles fail.
      */
     function renderRoute() {
+        const panel = document.getElementById("gpsRoutePanel");
+        if (panel) panel.hidden = false;
         const route = session.route;
 
         if (route.length < 2) {
@@ -1574,25 +1599,14 @@
             return;
         }
 
-        // Equal-area-ish scaling: correct longitude by latitude so the
-        // shape is not stretched, and keep a margin around the path.
         const midLat = (minLat + maxLat) / 2;
         const lngScale = Math.cos(midLat * Math.PI / 180) || 1;
-        const width = Math.max(spanLng * lngScale, 1e-6);
-        const height = Math.max(spanLat, 1e-6);
-        const pad = 0.08;
-
-        const usable = 1 - pad * 2;
-        const coords = [];
-        for (let i = 0; i < route.length; i++) {
-            const p = route[i];
-            const x = ((p.lng - minLng) * lngScale) / width;
-            const y = (p.lat - minLat) / height;
-            coords.push({
-                x: (pad + x * usable).toFixed(2),
-                y: (1 - pad - y * usable).toFixed(2)
-            });
-        }
+        const width = spanLng * lngScale, height = spanLat;
+        const scale = 84 / Math.max(width, height, 1e-6);
+        const coords = route.map(p => ({
+            x: (50 + ((p.lng - minLng) * lngScale - width / 2) * scale).toFixed(3),
+            y: (50 - (p.lat - minLat - height / 2) * scale).toFixed(3)
+        }));
 
         /*
          * One SVG path, several subpaths. A "newSegment" point starts a new
@@ -1803,14 +1817,21 @@
                 sessionType: session.sessionType,
                 startTime: session.startTime,
                 endTime: session.endTime,
-                durationSeconds: Math.round(session.activeDuration / 1000),
+                durationSeconds: Math.round(activeDurationMs() / 1000),
                 distanceMeters: Math.round(session.totalDistance),
                 averageSpeedKmh: round1(session.averageSpeed * MS_TO_KMH),
                 maxSpeedKmh: round1(session.maxSpeed * MS_TO_KMH),
                 averagePaceSecondsPerKm: session.averagePace === null
                     ? null
                     : Math.round(session.averagePace),
-                route: session.route.slice(),
+                sessionId: session.sessionId,
+                day: session.day, timezone: session.timezone,
+                elapsedMs: session.startTimestamp === null ? 0 : (session.endTimestamp || Date.now()) - session.startTimestamp,
+                activeMs: activeDurationMs(), movingMs: movingDurationMs(),
+                quality: { status: session.partial ? 'partial' : 'unknown', validation: 'client' },
+                provenance: 'browser-geolocation-wgs84:v1',
+                routeRef: 'indexeddb:pac-gps/sessions/' + session.sessionId,
+                route: JSON.parse(JSON.stringify(session.route)),
                 intervalSettings: {
                     workSec: session.intervalSettings.workSec,
                     restSec: session.intervalSettings.restSec,
@@ -1839,13 +1860,74 @@
         return Math.round(v * 10) / 10;
     }
 
+
+    let storageReady = false, localDb = null, lastSaveAt = 0;
+    let saveQueue = Promise.resolve();
+    function breakGpsChain() {
+        gps.lastPoint = null; gps.lastSpeedAt = 0; gps.routeBreak = true; gps.replayBreak = true;
+        gps.stationary = true; gps.speedSamples = 0; resetWindow();
+    }
+    function persistSession() {
+        if (!localDb || !session.sessionId || state === STATE.READY) return saveQueue;
+        lastSaveAt = Date.now();
+        const record = JSON.parse(JSON.stringify({ ...session,
+            activeDuration: activeDurationMs(), movingMs: movingDurationMs(), savedAt: lastSaveAt,
+            intervalSnapshot: { ...interval, pausedRemaining: intervalRemainingMs() } }));
+        saveQueue = saveQueue.then(() => new Promise((resolve, reject) => {
+            const tx = localDb.transaction('sessions', 'readwrite');
+            tx.objectStore('sessions').put(record);
+            tx.oncomplete = resolve;
+            tx.onerror = tx.onabort = () => reject(tx.error || Error('Storage transaction failed'));
+        })).catch(() => showNotice('Local save failed. Keep this page open; storage may be full or unavailable.', 'error'));
+        return saveQueue;
+    }
+    async function restoreLocal() {
+        try {
+            localDb = await new Promise((resolve, reject) => {
+                const req = indexedDB.open('pac-gps', 1);
+                req.onupgradeneeded = () => req.result.createObjectStore('sessions', { keyPath: 'sessionId' });
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = req.onblocked = () => reject(req.error || Error('Storage blocked'));
+            });
+            const records = await new Promise((resolve,reject) => {
+                const req = localDb.transaction('sessions').objectStore('sessions').getAll();
+                req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error);
+            });
+            const sorted = records.sort((a,b) => b.savedAt - a.savedAt);
+            const saved = sorted.find(r => r.state !== STATE.FINISHED) || sorted[0];
+            if (saved) {
+                Object.assign(session, saved);
+                activityType = saved.activityType; sessionType = saved.sessionType;
+                limits = ACTIVITY[activityType] || ACTIVITY.run;
+                clock.accumulatedMs = saved.activeDuration;
+                if (saved.state === STATE.FINISHED) {
+                    state = STATE.FINISHED; showScreen('summary'); renderSummary();
+                } else {
+                    state = STATE.PAUSED; session.state = state; session.partial = true;
+                    Object.assign(interval, saved.intervalSnapshot || {});
+                    interval.running = sessionType === 'interval' && ['work', 'rest'].includes(interval.phase);
+                    interval.pausedAt = Date.now();
+                    breakGpsChain(); showScreen('live'); renderWorkoutState(); renderElapsed(); renderMetrics(); renderInterval();
+                    showNotice('Saved session recovered, paused. Resume or Finish as partial. Time offline has no GPS measurements.');
+                }
+            }
+            storageReady = true;
+        } catch (_) {
+            showNotice('Local storage unavailable. Tracking is disabled. Enable browser storage and reload.', 'error');
+        }
+        renderControls();
+    }
+    window.addEventListener('pagehide', () => {
+        if (state === STATE.RUNNING) { session.partial = true; pauseWorkout(); }
+        persistSession();
+    });
     window.PAC = PAC;
 
     /* ======================================================================
        14. Boot
        ====================================================================== */
 
-    function boot() {
+    async function boot() {
         setActivity("run");
         setMode("free");
         init();
@@ -1856,6 +1938,7 @@
         renderMetrics();
         renderAcquiring();
         refreshPermissionStatus();
+        await restoreLocal();
     }
 
     if (document.readyState === "loading") {

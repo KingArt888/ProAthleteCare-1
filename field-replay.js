@@ -21,7 +21,7 @@
         <div class="field-zoom" role="group" aria-label="Field zoom">
           <button type="button" class="btn btn-outline" id="fieldZoomOut" aria-label="Zoom out">−</button>
           <button type="button" class="btn btn-outline" id="fieldZoomIn" aria-label="Zoom in">+</button>
-          <button type="button" class="btn btn-outline" id="fieldFit">Fit all</button>
+          <button type="button" class="btn btn-outline" id="fieldFit">Fit all</button><button type="button" class="btn btn-outline" id="fieldFocus">Field</button><button type="button" class="btn btn-outline" id="fieldExpand">⛶ Full screen</button>
         </div>
         <svg id="fieldSvg" class="field-svg" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Actual GPS trajectory on the calibrated field">
           <image id="fieldBackground" x="0" y="0" width="1536" height="1024" preserveAspectRatio="xMidYMid meet"/>
@@ -47,6 +47,14 @@
   const headline=document.createElement('p');headline.id='fieldHeadline';headline.className='field-headline';panel.insertBefore(headline,$('fieldCanvasPanel'));
   const metrics=document.createElement('p');metrics.id='fieldMetrics';metrics.className='field-headline';$('fieldCanvasPanel').appendChild(metrics);
   const analyticsPanel=document.createElement('section');analyticsPanel.id='fieldAnalytics';analyticsPanel.className='field-details';$('fieldCanvasPanel').appendChild(analyticsPanel);
+  const fieldStage=document.createElement('div');fieldStage.id='fieldStage';
+  $('fieldCanvasPanel').insertBefore(fieldStage,$('fieldSvg'));
+  const fieldDrawing=document.createElementNS(NS,'g');fieldDrawing.id='fieldDrawing';while($('fieldSvg').firstChild)fieldDrawing.appendChild($('fieldSvg').firstChild);$('fieldSvg').appendChild(fieldDrawing);
+  fieldStage.appendChild($('fieldSvg'));fieldStage.appendChild(panel.querySelector('.field-zoom'));
+  const stageControls=document.createElement('div');stageControls.className='field-stage-controls';
+  [$('fieldGapBar'),$('fieldTimeline').parentElement,panel.querySelector('.field-play-controls'),$('fieldMarkerStatus')].forEach(n=>stageControls.appendChild(n));fieldStage.appendChild(stageControls);
+  let fieldOnly=true;
+  const portrait=()=>fieldStage.clientHeight>fieldStage.clientWidth;
   const KEY='pac-gps-field-calibrations-v1';
   let records=[],bindings={},storageError=false,storeNeedsRecovery=false,session=null,model=null,calibration=null,tab='route';
   let playing=false,frame=0,time=0,started=0,startTime=0,zoom=1,pan={x:0,y:0};
@@ -69,7 +77,7 @@
   }
   function stop(){playing=false;cancelAnimationFrame(frame);$('fieldPlay').textContent='Play';}
   function selectTab(next){
-    tab=next;stop();$('screenSummary').classList.toggle('field-focused',next==='field');$('fieldReplayPanel').hidden=next!=='field';
+    tab=next;stop();if(next!=='field')exitFieldScreen();$('screenSummary').classList.toggle('field-focused',next==='field');$('fieldReplayPanel').hidden=next!=='field';
     $('fieldRouteTab').setAttribute('aria-pressed',String(next==='route'));
     $('fieldReplayTab').setAttribute('aria-pressed',String(next==='field'));
     $('gpsRoutePanel').hidden=next==='field' && !!model;
@@ -77,7 +85,12 @@
   }
   function setView(){
     if(!model)return;
-    const v=G.viewport(model.points,zoom);$('fieldSvg').setAttribute('viewBox',[v.x+pan.x,v.y+pan.y,v.width,v.height].join(' '));
+    const c=model.calibration,a=G.fieldToArtwork({x:0,y:0},c),b=G.fieldToArtwork({x:c.length,y:c.width},c),points=fieldOnly?[]:model.points;
+    let left=Math.min(a.x,b.x)-25,top=Math.min(a.y,b.y)-25,right=Math.max(a.x,b.x)+25,bottom=Math.max(a.y,b.y)+25;
+    points.forEach(p=>{left=Math.min(left,p.art.x-25);top=Math.min(top,p.art.y-25);right=Math.max(right,p.art.x+25);bottom=Math.max(bottom,p.art.y+25)});
+    const width=(right-left)/zoom,height=(bottom-top)/zoom,x=(left+right-width)/2+pan.x,y=(top+bottom-height)/2+pan.y;
+    const rotated=portrait();$('fieldDrawing').setAttribute('transform',rotated?'translate(1024 0) rotate(90)':'');
+    $('fieldSvg').setAttribute('viewBox',(rotated?[1024-y-height,x,height,width]:[x,y,width,height]).join(' '));
   }
   function clock(ms){const sec=Math.floor(ms/1000);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
   function updateMarker(){
@@ -90,7 +103,7 @@
   }
   function positionMarker(id,p){const node=$(id);node.style.display=p?'':'none';if(p){node.setAttribute('cx',p.art.x);node.setAttribute('cy',p.art.y);}}
   function render(){
-    stop();model=null;$('fieldStatus').classList.remove('field-calibration-warning');$('fieldCanvasPanel').hidden=true;time=0;zoom=1;pan={x:0,y:0};
+    stop();model=null;$('fieldStatus').classList.remove('field-calibration-warning');$('fieldCanvasPanel').hidden=true;time=0;fieldOnly=true;zoom=1;pan={x:0,y:0};
     $('fieldGapBar').replaceChildren();$('fieldPaths').replaceChildren();$('fieldTimeline').value='0';
     $('fieldHeadline').textContent='Choose a saved field or open calibration settings below.';
     if(!calibration){
@@ -171,10 +184,15 @@
   function tick(now){if(!playing||!model)return;time=Math.min(model.durationMs,startTime+(now-started)*Number($('fieldRate').value));updateMarker();if(time>=model.durationMs)stop();else frame=requestAnimationFrame(tick);}
   $('fieldRate').onchange=stop;
   $('fieldPlay').onclick=()=>{if(playing){stop();return}if(!model||!model.points.length)return;if(time>=model.durationMs)time=0;startTime=time;started=performance.now();playing=true;$('fieldPlay').textContent='Pause';frame=requestAnimationFrame(tick);};
-  $('fieldZoomIn').onclick=()=>{zoom=Math.min(4,zoom*1.4);setView()};$('fieldZoomOut').onclick=()=>{zoom=Math.max(1,zoom/1.4);setView()};$('fieldFit').onclick=()=>{zoom=1;pan={x:0,y:0};setView()};
+  $('fieldZoomIn').onclick=()=>{zoom=Math.min(4,zoom*1.4);setView()};$('fieldZoomOut').onclick=()=>{zoom=Math.max(1,zoom/1.4);setView()};$('fieldFit').onclick=()=>{fieldOnly=false;zoom=1;pan={x:0,y:0};setView()};
+  $('fieldFocus').onclick=()=>{fieldOnly=true;zoom=1;pan={x:0,y:0};setView()};
+  function exitFieldScreen(){fieldStage.classList.remove('is-expanded');document.body.classList.remove('field-screen-open');$('fieldExpand').textContent='⛶ Full screen';requestAnimationFrame(setView)}
+  $('fieldExpand').onclick=()=>{const expanded=fieldStage.classList.toggle('is-expanded');document.body.classList.toggle('field-screen-open',expanded);$('fieldExpand').textContent=expanded?'× Close':'⛶ Full screen';requestAnimationFrame(setView)};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')exitFieldScreen()});
+  new ResizeObserver(()=>setView()).observe(fieldStage);
   let drag=null;const svg=$('fieldSvg');
   svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);drag={x:e.clientX,y:e.clientY,pan:{...pan}}});
-  svg.addEventListener('pointermove',e=>{if(!drag||!model)return;const matrix=svg.getScreenCTM();if(!matrix)return;pan={x:drag.pan.x-(e.clientX-drag.x)/matrix.a,y:drag.pan.y-(e.clientY-drag.y)/matrix.d};setView()});
+  svg.addEventListener('pointermove',e=>{if(!drag||!model)return;const matrix=svg.getScreenCTM();if(!matrix)return;const dx=(e.clientX-drag.x)/matrix.a,dy=(e.clientY-drag.y)/matrix.d;pan=portrait()?{x:drag.pan.x-dy,y:drag.pan.y+dx}:{x:drag.pan.x-dx,y:drag.pan.y-dy};setView()});
   const endDrag=()=>{drag=null};svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);
   $('fieldBackground').addEventListener('error',()=>{$('fieldStatus').textContent='Field artwork failed to load. Check the publication assets; use GPS route preview.';selectTab('route')});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
@@ -189,6 +207,6 @@
       if(r){try{calibration=G.validateCalibration(r.calibration)}catch(_){}}
       fillSaved(r?r.id:'');tab=calibration?'field':'route';render();
     },
-    hide(){stop();if(root.PACFieldMap)root.PACFieldMap.close();host.hidden=true;}
+    hide(){stop();exitFieldScreen();if(root.PACFieldMap)root.PACFieldMap.close();host.hidden=true;}
   };
 })(window);

@@ -1312,3 +1312,23 @@ body.field-map-open { overflow:hidden; }
 .field-focused .field-svg{width:100%;min-height:200px;max-height:54vh;background:#080a08}
 .field-focused #fieldCanvasPanel>.field-muted{font-size:12px;line-height:1.4;margin:8px 0}
 .field-focused .field-zoom .btn{min-height:36px;padding:6px 12px}
+
+/* Mobile field stage: rotate the artwork/route together, preserve metres and aspect. */
+#fieldStage{position:relative;height:72svh;min-height:420px;overflow:hidden;background:#080b08;border:1px solid #51471e;border-radius:16px}
+.field-focused #fieldStage .field-svg{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:none;aspect-ratio:auto;border:0;border-radius:0}
+#fieldStage .field-zoom{position:absolute;z-index:2;top:8px;left:8px;right:8px;gap:5px}
+#fieldStage .field-zoom .btn{background:#111d;min-height:38px;padding:6px 10px}
+.field-stage-controls{position:absolute;z-index:2;bottom:0;left:0;right:0;background:linear-gradient(transparent,#080b08 24%);padding:30px 12px max(8px,env(safe-area-inset-bottom));font-size:12px}
+.field-stage-controls .field-label{margin:4px 0}.field-stage-controls p{margin:4px 0}.field-stage-controls .btn{min-height:38px;padding:8px 15px}
+#fieldStage.is-expanded{position:fixed;inset:0;z-index:1500;width:100vw;height:100dvh;min-height:0;border:0;border-radius:0;padding-top:env(safe-area-inset-top)}
+body.field-screen-open{overflow:hidden}
+@media(min-width:800px){#fieldStage{height:78svh;min-height:480px}}
+
+#fieldStage{height:82svh;min-height:580px}
+.field-focused #fieldStage .field-svg{top:50px;bottom:130px;height:calc(100% - 180px)}
+@media(orientation:landscape){#fieldStage.is-expanded .field-svg{top:45px;bottom:90px;height:calc(100% - 135px)}.is-expanded .field-stage-controls #fieldMarkerStatus{display:none}}
+
+#fieldStage .field-zoom{flex-wrap:nowrap}#fieldStage .field-zoom .btn{font-size:10px;letter-spacing:0;padding:6px 7px;white-space:nowrap}
+.field-stage-controls{height:158px;box-sizing:border-box;padding:8px 12px;overflow:auto;background:#080b08ed}.field-stage-controls #fieldMarkerStatus{max-height:34px;overflow:auto}
+.field-focused #fieldStage .field-svg{top:50px;bottom:168px;height:calc(100% - 218px)}
+@media(orientation:landscape){#fieldStage.is-expanded .field-svg{top:45px;bottom:110px;height:calc(100% - 155px)}#fieldStage.is-expanded .field-stage-controls{height:105px}}

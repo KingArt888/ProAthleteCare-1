@@ -228,7 +228,7 @@
       const a=model.points[i-1],b=model.points[i],dt=(b.t-a.t)/1000;
       if(b.newSegment||dt<.5||dt>3||a.accuracy>10||b.accuracy>10){window=[];finish();if(!b.newSegment&&dt>0)excludedSeconds+=dt;continue;}
       const metres=Math.hypot(b.x-a.x,b.y-a.y);window.push({a,b,dt,metres});
-      while(window.length>1&&(b.t-window[1].a.t)>6000)window.shift();
+      while(window.length>1&&(b.t-window[0].a.t)>6000)window.shift();
       const elapsed=(b.t-window[0].a.t)/1000,distance=window.reduce((n,v)=>n+v.metres,0),uncertainty=Math.hypot(window[0].a.accuracy,b.accuracy)/elapsed;
       const kmh=elapsed>=3&&uncertainty<=1.5?distance/elapsed*3.6:null;
       const zone=kmh!==null&&kmh<=45?zones.findIndex(z=>kmh>=z.min&&kmh<z.max):-1;

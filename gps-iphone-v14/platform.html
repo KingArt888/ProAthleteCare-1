@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ProAthleteCare | Professional Performance Tracking</title>
+  <meta name="description" content="ProAthleteCare — професійний супровід атлетів: тренування, wellness, контроль болю, навантаження, ваги (з денним планом харчування) та power-тести. Повна картина спортсмена протягом сезону.">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/index.css">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ProAthleteCare">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/ProAthleteCare-1/gps-iphone-v14/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/ProAthleteCare-1/gps-iphone-v14/assets/icons/apple-touch-icon.png">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+</head>
+
+<body class="pac-public">
+
+  <!-- HEADER -->
+  <header class="pac-header">
+    <a href="index.html" class="logo-link pac-brand" aria-label="ProAthleteCare Home">
+      <img
+        src="assets/images/AK_logo-256.png"
+        alt="ProAthleteCare Logo"
+        class="logo pac-logo"
+        width="34"
+        height="34"
+        decoding="async"
+        fetchpriority="high"
+      >
+      <div class="pac-brand-text">
+        <div class="pac-title">ProAthleteCare</div>
+        <div class="pac-tagline" data-i18n="tagline">Professional Performance Tracking</div>
+      </div>
+    </a>
+
+    <div class="pac-header-actions" aria-label="Header actions">
+      <a href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" class="pac-btn pac-btn-primary" data-i18n="nav_pricing">Packages</a>
+      <a href="pages/regist.html" class="pac-btn pac-btn-outline" data-i18n="nav_login">Login / Register</a>
+
+      <select id="langSelect" class="pac-lang-select" aria-label="Language selector">
+        <option value="uk">UA</option>
+        <option value="en">EN</option>
+        <option value="de">DE</option>
+        <option value="es">ES</option>
+        <option value="ru">RU</option>
+        <option value="pt">PT</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- HERO -->
+    <section class="hero pac-hero" aria-label="Hero">
+      <video muted loop playsinline preload="none" class="hero-video" aria-label="ProAthleteCare intro video">
+        <source data-src="assets/videos/hero.mp4" type="video/mp4">
+      </video>
+
+      <div class="hero-overlay pac-hero-overlay">
+        <div class="pac-hero-card">
+          <div class="pac-hero-kicker" data-i18n="hero_kicker">Welcome</div>
+
+          <h2 class="pac-hero-title" data-i18n="hero_title">
+            Train every day. Control your state. Progress without injuries.
+          </h2>
+
+          <!-- SHORT & READABLE (no ellipsis on mobile) -->
+          <p class="pac-hero-lead" data-i18n="hero_p1">
+            Training, wellness, pain, load, weight/diet and power — in one system.
+          </p>
+
+          <!-- This can be longer on desktop, hidden on mobile by CSS -->
+          <p class="pac-hero-sub" data-i18n="hero_p2">
+            Microcycle structure every day. Daily diet generation inside Weight Control and real-time jump height help you decide when to push and when to recover.
+          </p>
+
+          <div class="pac-hero-actions">
+            <a href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" class="pac-btn pac-btn-primary pac-btn-hero" data-i18n="hero_cta_primary">View packages</a>
+            <a href="pages/regist.html" class="pac-btn pac-btn-outline pac-btn-hero" data-i18n="hero_cta_secondary">Login / Register</a>
+          </div>
+
+          <!-- SHORT NOTE -->
+          <p class="pac-lock-note" data-i18n="hero_lock_note">
+            Full access unlocks with subscription.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALUE -->
+    <section class="about-us">
+      <h1 data-i18n="value_title">Not just monitoring — a complete training system</h1>
+      <p data-i18n="value_p1">
+        ProAthleteCare combines daily training plans with wellness, pain tracking, load control, weight management (including daily diet plan generation) and power testing —
+        so you get the full picture and stay consistent through the season.
+      </p>
+
+      <h2 data-i18n="value_h2">What you control in one place</h2>
+      <ul class="pac-list">
+        <li data-i18n="li_1"><strong>Wellness:</strong> sleep, stress, wellbeing and readiness.</li>
+        <li data-i18n="li_2"><strong>Pain & risks:</strong> logging, history, trends, overload prevention.</li>
+        <li data-i18n="li_3"><strong>Load:</strong> daily and seasonal control of volume and intensity.</li>
+        <li data-i18n="li_4"><strong>Training:</strong> microcycle-based daily plan linked to your condition.</li>
+        <li data-i18n="li_5"><strong>Weight + diet:</strong> weight trend and daily diet plan generation inside Weight Control.</li>
+        <li data-i18n="li_6"><strong>Power (jump test):</strong> real-time jump height to track explosive power and fatigue.</li>
+      </ul>
+    </section>
+
+    <!-- FEATURES (locked to pricing while payment is not implemented) -->
+    <section class="about-us pac-features">
+      <h1 data-i18n="feat_title">Key modules (unlocked with subscription)</h1>
+      <p data-i18n="feat_p">
+        Two core performance tools: Weight Control (with daily diet plan) and Power (real-time jump height). Together with wellness, pain and load — one athlete picture.
+      </p>
+
+      <div class="pac-feature-grid pac-feature-grid-2">
+        <article class="pac-feature-card">
+          <div class="pac-feature-kicker" data-i18n="feat_w_kicker">Weight Control</div>
+          <h2 class="pac-feature-h" data-i18n="feat_w_title">Weight trend + daily diet plan</h2>
+          <p class="pac-feature-t" data-i18n="feat_w_p">
+            Track weight changes and stability. Generate a daily diet plan inside the same module based on preferences and training day.
+          </p>
+          <div class="pac-feature-actions">
+            <a href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" class="pac-btn pac-btn-primary pac-btn-hero" data-i18n="feat_unlock">Unlock</a>
+            <a href="pages/regist.html" class="pac-btn pac-btn-outline pac-btn-hero" data-i18n="feat_create">Create account</a>
+          </div>
+        </article>
+
+        <article class="pac-feature-card">
+          <div class="pac-feature-kicker" data-i18n="feat_p_kicker">Power</div>
+          <h2 class="pac-feature-h" data-i18n="feat_p_title">Real-time jump height</h2>
+          <p class="pac-feature-t" data-i18n="feat_p_p">
+            Quick jump test shows explosive power and fatigue trend. Keep quality and avoid hidden overload through the season.
+          </p>
+          <div class="pac-feature-actions">
+            <a href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" class="pac-btn pac-btn-primary pac-btn-hero" data-i18n="feat_unlock">Unlock</a>
+            <a href="pages/regist.html" class="pac-btn pac-btn-outline pac-btn-hero" data-i18n="feat_create">Create account</a>
+          </div>
+        </article>
+      </div>
+
+      <p class="pac-note" data-i18n="feat_note">
+        The platform supports decisions by showing trends and structure — it does not replace a medical professional.
+      </p>
+    </section>
+
+    <!-- HOW -->
+    <section class="about-us">
+      <h1 data-i18n="how_title">How it works</h1>
+      <ol class="pac-steps">
+        <li data-i18n="how_1">Complete a short daily wellness check and log pain.</li>
+        <li data-i18n="how_2">Follow daily microcycle training linked to your condition.</li>
+        <li data-i18n="how_3">Use Weight Control: track weight trend and generate a daily diet plan.</li>
+        <li data-i18n="how_4">Use the Power (jump) test to track explosive readiness and fatigue.</li>
+      </ol>
+      <p data-i18n="how_p">This creates daily discipline and a full performance picture — without overload and setbacks.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="about-us">
+      <h1 data-i18n="cta_title">Start professional athlete support today</h1>
+      <p data-i18n="cta_p">One system. Daily structure. Training + wellness + load + weight/diet + power — for consistent progress.</p>
+
+      <div class="pac-bottom-actions">
+        <a href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" class="pac-btn pac-btn-primary pac-btn-hero" data-i18n="cta_primary">View packages</a>
+        <a href="/ProAthleteCare-1/gps-iphone-v14/pages/regist.html" class="pac-btn pac-btn-outline pac-btn-hero" data-i18n="cta_secondary">Login / Register</a>
+      </div>
+
+      <p class="pac-legal" data-i18n="legal_note">
+        Note: not a medical service. Data processing follows GDPR / DSGVO. Diet plans are not medical advice. Details in Privacy and Terms.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="pac-footer">
+    <nav class="pac-footer-nav">
+      <a href="/ProAthleteCare-1/gps-iphone-v14/impressum.html">Impressum</a>
+      <a href="/ProAthleteCare-1/gps-iphone-v14/privacy.html">Privacy</a>
+      <a href="/ProAthleteCare-1/gps-iphone-v14/terms.html">Terms</a>
+    </nav>
+    <div class="pac-footer-copy" data-i18n="footer_copy">© 2026 ProAthleteCare. All rights reserved.</div>
+  </footer>
+
+  <!-- Essential-only notice -->
+  <div id="pacCookie" class="pac-cookie" role="dialog" aria-live="polite">
+    <div class="pac-cookie-text" data-i18n="cookie_text">
+      We use only technically necessary storage (e.g., language preference). No trackers. Details in Privacy.
+    </div>
+    <div class="pac-cookie-actions">
+      <a href="/ProAthleteCare-1/gps-iphone-v14/privacy.html" class="pac-btn pac-btn-outline" data-i18n="cookie_more">Learn more</a>
+      <button id="pacCookieOk" class="pac-btn pac-btn-primary" type="button" data-i18n="cookie_ok">OK</button>
+    </div>
+  </div>
+
+  <!-- Scoped CSS ONLY for index -->
+  <style>
+    .pac-public{ overflow-x: hidden; }
+    .pac-public *{ box-sizing: border-box; }
+
+    /* Header */
+    .pac-public .pac-header{
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,199,44,.22);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:10px 12px;
+    }
+    .pac-public .pac-brand{ display:flex; align-items:center; gap:10px; min-width:0; text-decoration:none; }
+    .pac-public .pac-logo{ width:34px; height:34px; object-fit:contain; flex:0 0 auto; }
+    .pac-public .pac-brand-text{ display:flex; flex-direction:column; min-width:0; }
+    .pac-public .pac-title{ color:#FFC72C; font-weight:900; letter-spacing:.02em; font-size:16px; line-height:1.1; }
+    .pac-public .pac-tagline{
+      color: rgba(255,255,255,.62);
+      font-size: 11px; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 52vw;
+    }
+    .pac-public .pac-header-actions{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; justify-content:flex-end; }
+
+    .pac-public .pac-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:12px;
+      font-weight:900; letter-spacing:.02em;
+      text-decoration:none; cursor:pointer; user-select:none; white-space:nowrap;
+    }
+    .pac-public .pac-btn-primary{ background:#FFC72C; color:#000; border:1px solid #FFC72C; }
+    .pac-public .pac-btn-outline{ background:transparent; color:#FFC72C; border:1px solid rgba(255,199,44,.65); }
+
+    .pac-public .pac-lang-select{
+      background:#0b0b0b; color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-weight:800;
+      width: 84px;
+      text-align: center;
+    }
+
+    /* HERO center */
+    .pac-public .pac-hero-overlay{
+      display:flex !important;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 12px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .pac-public .pac-hero-card{
+      width: min(900px, calc(100vw - 24px));
+      max-width: 100%;
+      margin: 0 auto;
+      background: rgba(0,0,0,.58);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .pac-public .pac-hero-kicker{
+      color: rgba(255,199,44,.92);
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .pac-public .pac-hero-title{
+      margin: 0 0 10px;
+      color: #FFC72C;
+      line-height: 1.06;
+      font-size: clamp(26px, 6.4vw, 56px);
+      overflow-wrap: anywhere;
+      hyphens: auto;
+      text-wrap: balance;
+    }
+
+    .pac-public .pac-hero-lead{
+      margin: 0 0 10px;
+      color: rgba(255,255,255,.88);
+      line-height: 1.45;
+      font-size: clamp(14px, 2.8vw, 18px);
+      max-width: 70ch;
+    }
+
+    .pac-public .pac-hero-sub{
+      margin: 0 0 14px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.45;
+      font-size: clamp(13px, 2.4vw, 16px);
+      max-width: 78ch;
+    }
+
+    .pac-public .pac-hero-actions{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .pac-public .pac-btn-hero{
+      padding: 12px 18px;
+      border-radius: 14px;
+      min-width: 180px;
+    }
+
+    .pac-public .pac-lock-note{
+      margin: 12px 0 0;
+      color: rgba(255,255,255,.62);
+      font-size: 0.95em;
+      max-width: 80ch;
+    }
+
+    /* Features (2 cards) */
+    .pac-public .pac-feature-grid-2{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .pac-public .pac-feature-card{
+      background: rgba(0,0,0,.40);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .pac-public .pac-feature-kicker{
+      color: rgba(255,199,44,.92);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .pac-public .pac-feature-h{
+      margin: 0 0 8px;
+      color: rgba(255,255,255,.92);
+      font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.2;
+    }
+    .pac-public .pac-feature-t{
+      margin: 0 0 12px;
+      color: rgba(255,255,255,.74);
+      line-height: 1.45;
+      font-size: clamp(13px, 2.0vw, 15px);
+      max-width: 70ch;
+    }
+    .pac-public .pac-feature-actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .pac-public .pac-note{
+      margin-top: 12px;
+      color: rgba(255,255,255,.60);
+      font-size: 0.95em;
+      max-width: 900px;
+    }
+
+    /* Lists */
+    .pac-public .pac-list li, .pac-public .pac-steps li{ color:#CCCCCC; margin:10px 0; }
+    .pac-public .pac-list strong{ color:#FFC72C; font-weight:900; }
+
+    /* Footer */
+    .pac-public .pac-bottom-actions{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+    .pac-public .pac-legal{ margin-top:14px; color: rgba(255,255,255,.65); font-size:.95em; max-width:900px; }
+    .pac-public .pac-footer{ border-top:1px solid rgba(255,255,255,.10); padding:18px 12px; text-align:center; }
+    .pac-public .pac-footer-nav{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+    .pac-public .pac-footer-nav a{ color:#FFC72C; text-decoration:none; }
+    .pac-public .pac-footer-copy{ margin-top:10px; color: rgba(255,255,255,.60); font-size:.9em; }
+
+    /* Cookie */
+    .pac-public .pac-cookie{
+      position:fixed; left:12px; right:12px; bottom:12px;
+      max-width: 980px; margin: 0 auto;
+      background:#0b0b0b; border:1px solid rgba(255,255,255,.14);
+      border-radius:14px; padding:12px;
+      display:none; z-index:9999;
+    }
+    .pac-public .pac-cookie-text{ color: rgba(255,255,255,.80); font-size:.95em; }
+    .pac-public .pac-cookie-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; justify-content:flex-end; }
+
+    /* Mobile */
+    @media (max-width: 820px){
+      .pac-public .pac-header{ flex-direction: column; align-items: stretch; gap: 10px; }
+      .pac-public .pac-brand{ justify-content: flex-start; }
+      .pac-public .pac-tagline{ max-width: 100%; }
+
+      .pac-public .pac-header-actions{
+        display:grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+      }
+      .pac-public .pac-btn{ width:100%; padding: 12px 14px; }
+
+      .pac-public .pac-hero-card{ padding: 16px 14px; border-radius: 16px; }
+      .pac-public .pac-btn-hero{ min-width: 0; flex: 1 1 100%; }
+
+      /* IMPORTANT FIX: remove overload in hero on mobile */
+      .pac-public .pac-hero-sub{ display:none; } /* hide second paragraph on small screens */
+      .pac-public .pac-hero-lead{ overflow: visible; } /* no ellipsis */
+      .pac-public .pac-lock-note{ overflow: visible; } /* no ellipsis */
+
+      .pac-public .pac-feature-grid-2{ grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 380px){
+      .pac-public .pac-header-actions{ grid-template-columns: 1fr 1fr; }
+      .pac-public .pac-lang-select{ grid-column: 1 / -1; width: 100%; }
+    }
+  </style>
+
+  <script>
+    const I18N = {
+      en: {
+        tagline: "Professional Performance Tracking",
+        nav_pricing: "Packages",
+        nav_login: "Login / Register",
+        hero_kicker: "Welcome",
+        hero_title: "Train every day. Control your state. Progress without injuries.",
+        hero_p1: "Training, wellness, pain, load, weight/diet and power — in one system.",
+        hero_p2: "Microcycle structure every day. Daily diet generation inside Weight Control and real-time jump height help you decide when to push and when to recover.",
+        hero_cta_primary: "View packages",
+        hero_cta_secondary: "Login / Register",
+        hero_lock_note: "Full access unlocks with subscription.",
+        value_title: "Not just monitoring — a complete training system",
+        value_p1: "ProAthleteCare combines daily training plans with wellness, pain tracking, load control, weight management (including daily diet plan generation) and power testing — so you get the full picture and stay consistent through the season.",
+        value_h2: "What you control in one place",
+        li_1: "<strong>Wellness:</strong> sleep, stress, wellbeing and readiness.",
+        li_2: "<strong>Pain & risks:</strong> logging, history, trends, overload prevention.",
+        li_3: "<strong>Load:</strong> daily and seasonal control of volume and intensity.",
+        li_4: "<strong>Training:</strong> microcycle-based daily plan linked to your condition.",
+        li_5: "<strong>Weight + diet:</strong> weight trend and daily diet plan generation inside Weight Control.",
+        li_6: "<strong>Power (jump test):</strong> real-time jump height to track explosive power and fatigue.",
+        feat_title: "Key modules (unlocked with subscription)",
+        feat_p: "Two core performance tools: Weight Control (with daily diet plan) and Power (real-time jump height). Together with wellness, pain and load — one athlete picture.",
+        feat_w_kicker: "Weight Control",
+        feat_w_title: "Weight trend + daily diet plan",
+        feat_w_p: "Track weight changes and stability. Generate a daily diet plan inside the same module based on preferences and training day.",
+        feat_p_kicker: "Power",
+        feat_p_title: "Real-time jump height",
+        feat_p_p: "Quick jump test shows explosive power and fatigue trend. Keep quality and avoid hidden overload through the season.",
+        feat_unlock: "Unlock",
+        feat_create: "Create account",
+        feat_note: "The platform supports decisions by showing trends and structure — it does not replace a medical professional.",
+        how_title: "How it works",
+        how_1: "Complete a short daily wellness check and log pain.",
+        how_2: "Follow daily microcycle training linked to your condition.",
+        how_3: "Use Weight Control: track weight trend and generate a daily diet plan.",
+        how_4: "Use the Power (jump) test to track explosive readiness and fatigue.",
+        how_p: "This creates daily discipline and a full performance picture — without overload and setbacks.",
+        cta_title: "Start professional athlete support today",
+        cta_p: "One system. Daily structure. Training + wellness + load + weight/diet + power — for consistent progress.",
+        cta_primary: "View packages",
+        cta_secondary: "Login / Register",
+        legal_note: "Note: not a medical service. Data processing follows GDPR / DSGVO. Diet plans are not medical advice. Details in Privacy and Terms.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        cookie_text: "We use only technically necessary storage (e.g., language preference). No trackers. Details in Privacy.",
+        cookie_more: "Learn more",
+        cookie_ok: "OK"
+      },
+
+      de: {
+        tagline: "Professionelles Performance-Tracking",
+        nav_pricing: "Pakete",
+        nav_login: "Login / Registrierung",
+        hero_kicker: "Willkommen",
+        hero_title: "Trainiere täglich. Kontrolliere deinen Zustand. Fortschritt ohne Verletzungen.",
+        hero_p1: "Training, Wellness, Schmerz, Belastung, Gewicht/Ernährung und Power — in einem System.",
+        hero_p2: "Mikrozyklus-Struktur jeden Tag. Ernährungsplan-Generierung im Weight Control und Sprunghöhe in Echtzeit helfen, richtig zu steuern.",
+        hero_cta_primary: "Pakete ansehen",
+        hero_cta_secondary: "Login / Registrierung",
+        hero_lock_note: "Voller Zugriff per Abo.",
+        value_title: "Nicht nur Monitoring — ein komplettes Trainingssystem",
+        value_p1: "ProAthleteCare verbindet Tagespläne mit Wellness, Schmerz-Tracking, Belastungssteuerung, Gewichtskontrolle (inkl. Tages-Ernährungsplan) und Power-Tests — für konstante Entwicklung über die Saison.",
+        value_h2: "Alles in einem System",
+        li_1: "<strong>Wellness:</strong> Schlaf, Stress, Befinden und Bereitschaft.",
+        li_2: "<strong>Schmerz & Risiken:</strong> Protokolle, Historie, Trends, Überlastungsprävention.",
+        li_3: "<strong>Belastung:</strong> tägliche und saisonale Steuerung von Umfang und Intensität.",
+        li_4: "<strong>Training:</strong> Mikrozyklus-basierter Tagesplan gekoppelt an deinen Zustand.",
+        li_5: "<strong>Gewicht + Ernährung:</strong> Gewichtstrend und Tagesplan im Weight Control.",
+        li_6: "<strong>Power (Sprungtest):</strong> Sprunghöhe in Echtzeit zur Bewertung von Explosivität und Ermüdung.",
+        feat_title: "Kernmodule (freigeschaltet mit Abo)",
+        feat_p: "Zwei Kern-Tools: Weight Control (inkl. Tages-Ernährungsplan) und Power (Sprunghöhe in Echtzeit). Zusammen mit Wellness, Schmerz und Belastung — ein Athletenbild.",
+        feat_w_kicker: "Weight Control",
+        feat_w_title: "Gewichtstrend + Tages-Ernährungsplan",
+        feat_w_p: "Gewicht und Stabilität verfolgen. Tagesplan im selben Modul generieren — nach Vorlieben und Trainingstag.",
+        feat_p_kicker: "Power",
+        feat_p_title: "Sprunghöhe in Echtzeit",
+        feat_p_p: "Schneller Sprungtest zeigt Trend und Ermüdung. Qualität halten und versteckte Überlastung vermeiden.",
+        feat_unlock: "Freischalten",
+        feat_create: "Account erstellen",
+        feat_note: "Die Plattform unterstützt Entscheidungen durch Trends und Struktur — sie ersetzt keine medizinische Beratung.",
+        how_title: "So funktioniert es",
+        how_1: "Kurzen täglichen Wellness-Check ausfüllen und Schmerzen erfassen.",
+        how_2: "Tägliches Mikrozyklus-Training passend zu deinem Zustand folgen.",
+        how_3: "Weight Control nutzen: Gewichtstrend sehen und Tagesplan generieren.",
+        how_4: "Power-Test (Sprung) nutzen, um Explosivität und Ermüdung zu verfolgen.",
+        how_p: "So entsteht tägliche Disziplin und ein vollständiges Performance-Bild — ohne Überlastung und Rückschläge.",
+        cta_title: "Starte professionelle Athletenbetreuung heute",
+        cta_p: "Ein System. Tägliche Struktur. Training + Wellness + Belastung + Gewicht/Ernährung + Power — für konstanten Fortschritt.",
+        cta_primary: "Pakete ansehen",
+        cta_secondary: "Login / Registrierung",
+        legal_note: "Hinweis: kein medizinischer Dienst. Datenverarbeitung gemäß GDPR / DSGVO. Ernährungspläne sind keine medizinische Beratung. Details in Privacy und Terms.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        cookie_text: "Wir verwenden nur technisch notwendige Speicherung (z. B. Sprache). Keine Tracker. Details in Privacy.",
+        cookie_more: "Mehr erfahren",
+        cookie_ok: "OK"
+      },
+
+      uk: {
+        tagline: "Professional Performance Tracking",
+        nav_pricing: "Пакети",
+        nav_login: "Вхід / Реєстрація",
+        hero_kicker: "Ласкаво просимо",
+        hero_title: "Тренуйся щодня. Контролюй стан. Прогресуй без травм.",
+        hero_p1: "Тренування, wellness, біль, навантаження, вага/харчування та power — в одній системі.",
+        hero_p2: "Структура мікроциклу щодня. Денний раціон у Weight Control та висота стрибка в реальному часі допомагають керувати навантаженням.",
+        hero_cta_primary: "Пакети",
+        hero_cta_secondary: "Вхід / Реєстрація",
+        hero_lock_note: "Повний доступ — після підписки.",
+        value_title: "Не лише моніторинг — повна система тренування",
+        value_p1: "ProAthleteCare поєднує план тренувань з wellness, контролем болю, навантаження, ваги (з генерацією денного харчування) та power-тестами — щоб стабільно зростати протягом сезону.",
+        value_h2: "Що ти контролюєш в одному місці",
+        li_1: "<strong>Wellness:</strong> сон, стрес, самопочуття та готовність.",
+        li_2: "<strong>Біль і ризики:</strong> фіксація, історія, динаміка, профілактика перевантажень.",
+        li_3: "<strong>Навантаження:</strong> щоденний та сезонний контроль обсягу й інтенсивності.",
+        li_4: "<strong>Тренування:</strong> план на день мікроциклу, прив’язаний до стану.",
+        li_5: "<strong>Вага + харчування:</strong> тренд ваги та денний раціон у Weight Control.",
+        li_6: "<strong>Power (стрибок):</strong> висота стрибка в реальному часі для оцінки вибухової сили та втоми.",
+        feat_title: "Ключові модулі (доступ після підписки)",
+        feat_p: "Два core-інструменти: Weight Control (денний раціон) та Power (висота стрибка в реальному часі). Разом з wellness, болем і навантаженням — одна картина атлета.",
+        feat_w_kicker: "Weight Control",
+        feat_w_title: "Тренд ваги + денний раціон",
+        feat_w_p: "Контролюй вагу та стабільність. Генеруй денний план харчування в тому ж модулі за уподобаннями і типом дня.",
+        feat_p_kicker: "Power",
+        feat_p_title: "Висота стрибка в реальному часі",
+        feat_p_p: "Швидкий тест стрибка показує тренд сили та втому. Тримай якість і уникай прихованого перевантаження.",
+        feat_unlock: "Відкрити доступ",
+        feat_create: "Створити акаунт",
+        feat_note: "Платформа допомагає рішенням через тренди та структуру — вона не замінює медичну консультацію.",
+        how_title: "Як це працює",
+        how_1: "Заповни wellness-чек і відміть біль.",
+        how_2: "Тренуйся по днях мікроциклу згідно стану.",
+        how_3: "Використовуй Weight Control: тренд ваги + денний раціон.",
+        how_4: "Використовуй Power-тест (стрибок), щоб бачити готовність і втому.",
+        how_p: "Це дає дисципліну щодня і повну картину стану — без перевантажень і зривів.",
+        cta_title: "Почни професійний супровід вже сьогодні",
+        cta_p: "Одна система. Щоденна структура. Тренування + wellness + навантаження + вага/харчування + power — для стабільного прогресу.",
+        cta_primary: "Пакети",
+        cta_secondary: "Вхід / Реєстрація",
+        legal_note: "Примітка: не медичний сервіс. Обробка даних відповідає GDPR / DSGVO. Плани харчування не є медичною порадою. Деталі — у Privacy та Terms.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        cookie_text: "Ми використовуємо лише технічно необхідні збереження (наприклад, мову інтерфейсу). Без трекерів. Деталі — у Privacy.",
+        cookie_more: "Детальніше",
+        cookie_ok: "OK"
+      },
+
+      es: {
+        tagline: "Seguimiento profesional del rendimiento",
+        nav_pricing: "Planes",
+        nav_login: "Entrar / Registrarse",
+        hero_kicker: "Bienvenido",
+        hero_title: "Entrena cada día. Controla tu estado. Progresa sin lesiones.",
+        hero_p1: "Entrenamiento, wellness, dolor, carga, peso/dieta y potencia — en un solo sistema.",
+        hero_p2: "Estructura del microciclo cada día. Dieta diaria en Weight Control y altura de salto en tiempo real para decidir cuándo apretar y cuándo recuperar.",
+        hero_cta_primary: "Ver planes",
+        hero_cta_secondary: "Entrar / Registrarse",
+        hero_lock_note: "Acceso completo con suscripción.",
+        value_title: "No es solo monitoreo — es un sistema completo de entrenamiento",
+        value_p1: "ProAthleteCare combina plan diario de entrenamiento con wellness, control del dolor, control de carga, control de peso (con dieta diaria) y test de potencia — para mantener consistencia durante la temporada.",
+        value_h2: "Todo en un solo lugar",
+        li_1: "<strong>Wellness:</strong> sueño, estrés, bienestar y preparación.",
+        li_2: "<strong>Dolor y riesgos:</strong> registro, historial, tendencias, prevención de sobrecarga.",
+        li_3: "<strong>Carga:</strong> control diario y de temporada del volumen e intensidad.",
+        li_4: "<strong>Entrenamiento:</strong> plan del microciclo ligado al estado.",
+        li_5: "<strong>Peso + dieta:</strong> tendencia del peso y dieta diaria dentro de Weight Control.",
+        li_6: "<strong>Potencia (salto):</strong> altura de salto en tiempo real para evaluar potencia y fatiga.",
+        feat_title: "Módulos clave (con suscripción)",
+        feat_p: "Dos herramientas core: Weight Control (con dieta diaria) y Power (altura de salto en tiempo real). Junto con wellness, dolor y carga — una visión del atleta.",
+        feat_w_kicker: "Weight Control",
+        feat_w_title: "Tendencia de peso + dieta diaria",
+        feat_w_p: "Controla cambios y estabilidad. Genera la dieta diaria en el mismo módulo según preferencias y tipo de día.",
+        feat_p_kicker: "Power",
+        feat_p_title: "Altura de salto en tiempo real",
+        feat_p_p: "Test rápido de salto para seguir potencia y fatiga. Mantén calidad y evita sobrecarga oculta.",
+        feat_unlock: "Desbloquear",
+        feat_create: "Crear cuenta",
+        feat_note: "La plataforma apoya decisiones con tendencias y estructura — no reemplaza asesoramiento médico.",
+        how_title: "Cómo funciona",
+        how_1: "Haz un check diario de wellness y registra dolor.",
+        how_2: "Sigue el microciclo diario según tu estado.",
+        how_3: "Usa Weight Control: tendencia de peso + dieta diaria.",
+        how_4: "Usa Power (salto) para ver preparación y fatiga.",
+        how_p: "Disciplina diaria y visión completa — sin sobrecarga ni retrocesos.",
+        cta_title: "Empieza el soporte profesional hoy",
+        cta_p: "Un sistema. Estructura diaria. Entrenamiento + wellness + carga + peso/dieta + potencia — para progresar de forma consistente.",
+        cta_primary: "Ver planes",
+        cta_secondary: "Entrar / Registrarse",
+        legal_note: "Nota: no es un servicio médico. Tratamiento de datos según GDPR/DSGVO. Las dietas no son consejo médico. Detalles en Privacy y Terms.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        cookie_text: "Usamos solo almacenamiento técnicamente necesario (por ejemplo, idioma). Sin rastreadores. Detalles en Privacy.",
+        cookie_more: "Más información",
+        cookie_ok: "OK"
+      },
+
+      ru: {
+        tagline: "Профессиональный контроль спортивной формы",
+        nav_pricing: "Пакеты",
+        nav_login: "Вход / Регистрация",
+        hero_kicker: "Добро пожаловать",
+        hero_title: "Тренируйся каждый день. Контролируй состояние. Прогрессируй без травм.",
+        hero_p1: "Тренировки, wellness, боль, нагрузка, вес/питание и power — в одной системе.",
+        hero_p2: "Структура микроцикла каждый день. Дневной рацион в Weight Control и высота прыжка в реальном времени помогают управлять нагрузкой.",
+        hero_cta_primary: "Пакеты",
+        hero_cta_secondary: "Вход / Регистрация",
+        hero_lock_note: "Полный доступ — по подписке.",
+        value_title: "Не просто мониторинг — полноценная система тренировки",
+        value_p1: "ProAthleteCare объединяет ежедневный план тренировок с wellness, контролем боли, нагрузки, веса (с дневным планом питания) и power-тестами — чтобы стабильно прогрессировать весь сезон.",
+        value_h2: "Что ты контролируешь в одном месте",
+        li_1: "<strong>Wellness:</strong> сон, стресс, самочувствие и готовность.",
+        li_2: "<strong>Боль и риски:</strong> фиксация, история, динамика, профилактика перегрузок.",
+        li_3: "<strong>Нагрузка:</strong> ежедневный и сезонный контроль объёма и интенсивности.",
+        li_4: "<strong>Тренировки:</strong> план дня микроцикла, привязанный к состоянию.",
+        li_5: "<strong>Вес + питание:</strong> тренд веса и дневной рацион внутри Weight Control.",
+        li_6: "<strong>Power (прыжок):</strong> высота прыжка в реальном времени для оценки мощности и усталости.",
+        feat_title: "Ключевые модули (доступ по подписке)",
+        feat_p: "Два core-инструмента: Weight Control (с дневным рационом) и Power (высота прыжка в реальном времени). Плюс wellness, боль и нагрузка — одна картина атлета.",
+        feat_w_kicker: "Weight Control",
+        feat_w_title: "Тренд веса + дневной рацион",
+        feat_w_p: "Контролируй вес и стабильность. Генерируй дневной план питания в том же модуле по предпочтениям и типу дня.",
+        feat_p_kicker: "Power",
+        feat_p_title: "Высота прыжка в реальном времени",
+        feat_p_p: "Быстрый тест прыжка показывает тренд силы и усталости. Держи качество и избегай скрытой перегрузки.",
+        feat_unlock: "Открыть доступ",
+        feat_create: "Создать аккаунт",
+        feat_note: "Платформа помогает решениям через тренды и структуру — она не заменяет медицинскую консультацию.",
+        how_title: "Как это работает",
+        how_1: "Заполни wellness-чек и отметь боль.",
+        how_2: "Тренируйся по дням микроцикла согласно состоянию.",
+        how_3: "Используй Weight Control: тренд веса + дневной рацион.",
+        how_4: "Используй Power (прыжок), чтобы видеть готовность и усталость.",
+        how_p: "Ежедневная дисциплина и полная картина формы — без перегрузок и срывов.",
+        cta_title: "Начни профессиональное сопровождение сегодня",
+        cta_p: "Одна система. Ежедневная структура. Тренировки + wellness + нагрузка + вес/питание + power — для стабильного прогресса.",
+        cta_primary: "Пакеты",
+        cta_secondary: "Вход / Регистрация",
+        legal_note: "Примечание: не медицинский сервис. Обработка данных соответствует GDPR / DSGVO. Планы питания не являются медицинской рекомендацией. Детали — в Privacy и Terms.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        cookie_text: "Используем только технически необходимое хранение (например, язык). Без трекеров. Детали — в Privacy.",
+        cookie_more: "Подробнее",
+        cookie_ok: "OK"
+      },
+
+      pt: {
+        tagline: "Monitorização profissional do desempenho",
+        nav_pricing: "Planos",
+        nav_login: "Entrar / Registar",
+        hero_kicker: "Bem-vindo",
+        hero_title: "Treina todos os dias. Controla o estado. Progride sem lesões.",
+        hero_p1: "Treino, wellness, dor, carga, peso/dieta e potência — num só sistema.",
+        hero_p2: "Estrutura do microciclo todos os dias. Plano alimentar no Weight Control e altura do salto em tempo real ajudam a decidir quando pressionar e quando recuperar.",
+        hero_cta_primary: "Ver planos",
+        hero_cta_secondary: "Entrar / Registar",
+        hero_lock_note: "Acesso completo com subscrição.",
+        value_title: "Não é só monitorização — é um sistema completo de treino",
+        value_p1: "ProAthleteCare combina plano diário de treino com wellness, controlo da dor, da carga, do peso (com plano alimentar diário) e testes de potência — para manter consistência durante a época.",
+        value_h2: "Tudo num só lugar",
+        li_1: "<strong>Wellness:</strong> sono, stress, bem-estar e prontidão.",
+        li_2: "<strong>Dor e riscos:</strong> registo, histórico, tendências, prevenção de sobrecarga.",
+        li_3: "<strong>Carga:</strong> controlo diário e sazonal do volume e intensidade.",
+        li_4: "<strong>Treino:</strong> plano do microciclo ligado ao estado.",
+        li_5: "<strong>Peso + nutrição:</strong> tendência do peso e plano diário dentro do Weight Control.",
+        li_6: "<strong>Potência (salto):</strong> altura do salto em tempo real para avaliar potência e fadiga.",
+        feat_title: "Módulos-chave (com subscrição)",
+        feat_p: "Duas ferramentas core: Weight Control (com plano diário) e Power (altura do salto em tempo real). Com wellness, dor e carga — uma visão do atleta.",
+        feat_w_kicker: "Weight Control",
+        feat_w_title: "Tendência de peso + plano diário",
+        feat_w_p: "Controla o peso e a estabilidade. Gera o plano diário no mesmo módulo conforme preferências e tipo de dia.",
+        feat_p_kicker: "Power",
+        feat_p_title: "Altura do salto em tempo real",
+        feat_p_p: "Teste rápido de salto para acompanhar potência e fadiga. Mantém qualidade e evita sobrecarga oculta.",
+        feat_unlock: "Desbloquear",
+        feat_create: "Criar conta",
+        feat_note: "A plataforma apoia decisões com tendências e estrutura — não substitui aconselhamento médico.",
+        how_title: "Como funciona",
+        how_1: "Faz o check diário de wellness e regista dor.",
+        how_2: "Segue o microciclo diário de acordo com o estado.",
+        how_3: "Usa Weight Control: tendência de peso + plano alimentar diário.",
+        how_4: "Usa Power (salto) para ver prontidão e fadiga.",
+        how_p: "Disciplina diária e visão completa — sem sobrecarga e sem recuos.",
+        cta_title: "Começa o suporte profissional hoje",
+        cta_p: "Um sistema. Estrutura diária. Treino + wellness + carga + peso/nutrição + potência — para progresso consistente.",
+        cta_primary: "Ver planos",
+        cta_secondary: "Entrar / Registar",
+        legal_note: "Nota: não é um serviço médico. Tratamento de dados conforme GDPR / DSGVO. Planos alimentares não são aconselhamento médico. Detalhes em Privacy e Terms.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        cookie_text: "Usamos apenas armazenamento tecnicamente necessário (por exemplo, idioma). Sem trackers. Detalhes em Privacy.",
+        cookie_more: "Saber mais",
+        cookie_ok: "OK"
+      }
+    };
+
+    function setLang(lang){
+      const dict = I18N[lang] || I18N.uk;
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const val = dict[key];
+        if (val == null) return;
+        if (typeof val === "string" && val.includes("<strong>")) el.innerHTML = val;
+        else el.textContent = val;
+      });
+    }
+
+    const select = document.getElementById("langSelect");
+    const saved = localStorage.getItem("pac_lang");
+    const browser = (navigator.language || "uk").toLowerCase();
+
+    function detectBrowserLang(){
+      if (browser.startsWith("de")) return "de";
+      if (browser.startsWith("es")) return "es";
+      if (browser.startsWith("pt")) return "pt";
+      if (browser.startsWith("ru")) return "ru";
+      if (browser.startsWith("en")) return "en";
+      return "uk";
+    }
+
+    const initial = (saved && I18N[saved]) ? saved : detectBrowserLang();
+    select.value = initial;
+    setLang(initial);
+
+    select.addEventListener("change", (e) => {
+      const lang = e.target.value;
+      localStorage.setItem("pac_lang", lang);
+      setLang(lang);
+    });
+
+    const banner = document.getElementById("pacCookie");
+    const okBtn = document.getElementById("pacCookieOk");
+    const seen = localStorage.getItem("pac_cookie_ok");
+    if (!seen) banner.style.display = "block";
+    okBtn.addEventListener("click", () => {
+      localStorage.setItem("pac_cookie_ok", "1");
+      banner.style.display = "none";
+    });
+  </script>
+  <script>
+    // Keep the hero video from competing with the first page render.
+    // It still starts automatically as soon as critical content has loaded.
+    function loadHeroVideo(){
+      const video = document.querySelector(".hero-video");
+      const source = video?.querySelector("source[data-src]");
+      if (!video || !source) return;
+
+      source.src = source.dataset.src;
+      source.removeAttribute("data-src");
+      video.load();
+      video.play().catch(() => {});
+    }
+
+    window.addEventListener("load", () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadHeroVideo, { timeout: 1200 });
+      } else {
+        window.setTimeout(loadHeroVideo, 250);
+      }
+    }, { once: true });
+  </script>
+  <script src="/ProAthleteCare-1/gps-iphone-v14/js/pwa-register.js"></script>
+
+</body>
+</html>

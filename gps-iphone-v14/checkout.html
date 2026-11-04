@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ProAthleteCare | Checkout</title>
+  <meta name="description" content="Checkout for ProAthleteCare plans. Start free trial or continue to authentication." />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/index.css">
+
+  <style>
+    body.pac-public{ overflow-x:hidden; }
+    body.pac-public *{ box-sizing:border-box; }
+
+    /* Header (same vibe as pricing) */
+    .pac-header{
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,199,44,.22);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:10px 12px;
+    }
+    .pac-brand{ display:flex; align-items:center; gap:10px; min-width:0; text-decoration:none; }
+    .pac-logo{ width:34px; height:34px; object-fit:contain; flex:0 0 auto; }
+    .pac-brand-text{ display:flex; flex-direction:column; min-width:0; }
+    .pac-title{ color:#FFC72C; font-weight:900; letter-spacing:.02em; font-size:16px; line-height:1.1; }
+    .pac-tagline{
+      color: rgba(255,255,255,.62);
+      font-size: 11px; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 52vw;
+    }
+    .pac-header-actions{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; justify-content:flex-end; }
+
+    .pac-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:12px;
+      font-weight:900; letter-spacing:.02em;
+      text-decoration:none; cursor:pointer; user-select:none; white-space:nowrap;
+      border: 1px solid transparent;
+    }
+    .pac-btn-primary{ background:#FFC72C; color:#000; border-color:#FFC72C; }
+    .pac-btn-outline{ background:transparent; color:#FFC72C; border-color: rgba(255,199,44,.65); }
+    .pac-btn-ghost{ background:transparent; color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.14); }
+
+    .pac-lang-select{
+      background:#0b0b0b; color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-weight:800;
+      width: 84px;
+      text-align: center;
+    }
+
+    /* Layout */
+    .pac-container{
+      width: min(1100px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 16px 0 40px;
+    }
+    .pac-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 12px;
+      align-items:start;
+    }
+
+    .pac-card{
+      background: rgba(0,0,0,.50);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding: 16px;
+      overflow:hidden;
+      position: relative;
+    }
+    .pac-kicker{
+      color: rgba(255,199,44,.92);
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .pac-h1{
+      margin: 0 0 10px;
+      color: #FFC72C;
+      line-height: 1.06;
+      font-size: clamp(22px, 4.8vw, 40px);
+      text-wrap: balance;
+    }
+    .pac-lead{
+      margin: 0;
+      color: rgba(255,255,255,.84);
+      line-height: 1.55;
+      font-size: clamp(14px, 2.6vw, 16px);
+      max-width: 78ch;
+    }
+
+    /* Status banner */
+    .pac-banner{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,199,44,.10);
+      border: 1px solid rgba(255,199,44,.28);
+    }
+    .pac-banner-title{
+      color: rgba(255,255,255,.92);
+      font-weight: 900;
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+    .pac-banner-sub{
+      color: rgba(255,255,255,.72);
+      margin: 0;
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    /* Order summary */
+    .pac-summary-title{
+      margin: 0 0 10px;
+      color: rgba(255,255,255,.92);
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .pac-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .pac-row:last-child{ border-bottom:none; padding-bottom: 0; }
+    .pac-row .l{
+      min-width:0;
+    }
+    .pac-row .l .name{
+      color: rgba(255,255,255,.92);
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+    .pac-row .l .sub{
+      color: rgba(255,255,255,.65);
+      font-size: 12.5px;
+      line-height: 1.35;
+      margin-top: 2px;
+      max-width: 70ch;
+    }
+    .pac-row .r{
+      color:#FFC72C;
+      font-weight: 1000;
+      font-size: 16px;
+      white-space:nowrap;
+    }
+
+    .pac-total{
+      display:flex; justify-content:space-between; align-items:baseline;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      gap: 10px;
+    }
+    .pac-total .t1{ color: rgba(255,255,255,.90); font-weight: 900; }
+    .pac-total .t2{ color:#FFC72C; font-weight: 1000; font-size: 22px; }
+
+    .pac-actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .pac-actions .pac-btn{ flex: 1 1 170px; }
+
+    .pac-note{
+      margin-top: 10px;
+      color: rgba(255,255,255,.60);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    /* Features mini list */
+    .pac-mini{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .pac-mini h3{
+      margin: 0 0 8px;
+      color: rgba(255,255,255,.92);
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .pac-mini ul{
+      margin: 0;
+      padding-left: 16px;
+    }
+    .pac-mini li{
+      color: rgba(255,255,255,.76);
+      margin: 6px 0;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .pac-mini strong{ color:#FFC72C; font-weight: 900; }
+
+    /* Footer */
+    .pac-footer{
+      border-top:1px solid rgba(255,255,255,.10);
+      padding:18px 12px;
+      text-align:center;
+      margin-top: 18px;
+    }
+    .pac-footer-nav{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+    .pac-footer-nav a{ color:#FFC72C; text-decoration:none; }
+    .pac-footer-copy{ margin-top:10px; color: rgba(255,255,255,.60); font-size:.9em; }
+
+    /* Mobile */
+    @media (max-width: 920px){
+      .pac-grid{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 820px){
+      .pac-header{ flex-direction: column; align-items: stretch; gap: 10px; }
+      .pac-tagline{ max-width: 100%; }
+      .pac-header-actions{
+        display:grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+      }
+      .pac-btn{ width:100%; padding: 12px 14px; }
+      .pac-lang-select{ width: 100%; }
+    }
+    @media (max-width: 380px){
+      .pac-header-actions{ grid-template-columns: 1fr 1fr; }
+      .pac-lang-select{ grid-column: 1 / -1; }
+    }
+    @media (max-width: 820px){
+  .pac-lang-select{ width: 100%; min-width: 0; }
+}
+
+  </style>
+</head>
+
+<body class="pac-public">
+
+  <!-- HEADER -->
+  <header class="pac-header">
+    <a href="index.html" class="pac-brand" aria-label="ProAthleteCare Home">
+      <img src="assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="pac-logo">
+      <div class="pac-brand-text">
+        <div class="pac-title">ProAthleteCare</div>
+        <div class="pac-tagline" data-i18n="tagline">Professional Performance Tracking</div>
+      </div>
+    </a>
+
+    <div class="pac-header-actions" aria-label="Header actions">
+  <a href="pricing.html" class="pac-btn pac-btn-ghost" data-i18n="nav_pricing">
+Packages</a>
+  <a href="pages/regist.html" class="pac-btn pac-btn-outline" data-i18n="nav_login">Login / Register</a>
+
+  <select id="langSelect" class="pac-lang-select" aria-label="Language selector">
+    <option value="uk">UA</option>
+    <option value="en">EN</option>
+    <option value="de">DE</option>
+    <option value="es">ES</option>
+    <option value="ru">RU</option>
+    <option value="pt">PT</option>
+  </select>
+
+    </div>
+  </header>
+
+  <main class="pac-container">
+    <div class="pac-grid">
+      <!-- Left: main -->
+      <section class="pac-card" aria-label="Checkout">
+        <div class="pac-kicker" data-i18n="kicker">Checkout</div>
+        <h1 class="pac-h1" data-i18n="h1">Confirm your plan</h1>
+        <p class="pac-lead" data-i18n="lead">
+          Payments are being integrated. For now you can continue with the 7-day free trial and finish setup in the unified login/register page.
+        </p>
+
+        <div class="pac-banner" role="status" aria-live="polite">
+          <div class="pac-banner-title" data-i18n="banner_title">Payment is coming soon</div>
+          <p class="pac-banner-sub" data-i18n="banner_sub">
+            You won’t be charged today. Continue to start your trial and access the system.
+          </p>
+        </div>
+
+        <div class="pac-mini" style="margin-top:12px;">
+          <h3 data-i18n="what_you_get">What you get</h3>
+          <ul>
+            <li data-i18n="g1"><strong>Performance system:</strong> wellness, pain, load, weight (diet generator), power.</li>
+            <li data-i18n="g2"><strong>Game-based weekly microcycle:</strong> structured training week.</li>
+            <li data-i18n="g3"><strong>Clear supervision:</strong> Basic is self-guided, Plus/Pro include coach reviews.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Right: summary -->
+      <aside class="pac-card" aria-label="Order summary">
+        <h2 class="pac-summary-title" data-i18n="summary_title">Order summary</h2>
+
+        <div class="pac-row">
+          <div class="l">
+            <div class="name" id="planName">Athlete Plus</div>
+            <div class="sub" id="planSub" data-i18n="plan_sub_default">Includes full modules. Supervision depends on plan level.</div>
+          </div>
+          <div class="r" id="planPrice">€99</div>
+        </div>
+
+        <div class="pac-row">
+          <div class="l">
+            <div class="name" data-i18n="trial_line">7-day free trial</div>
+            <div class="sub" data-i18n="trial_sub">No card required during MVP phase.</div>
+          </div>
+          <div class="r" data-i18n="free">FREE</div>
+        </div>
+
+        <div class="pac-total">
+          <div class="t1" data-i18n="total_today">Total today</div>
+          <div class="t2" data-i18n="zero">€0</div>
+        </div>
+
+        <div class="pac-actions">
+          <a id="continueBtn" class="pac-btn pac-btn-primary" href="/ProAthleteCare-1/gps-iphone-v14/pages/regist.html?trial=1" data-i18n="continue_cta">Continue</a>
+          <a class="pac-btn pac-btn-outline" href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" data-i18n="back_cta">Back to pricing</a>
+        </div>
+
+        <div class="pac-note" data-i18n="note">
+          By continuing you agree to our Terms and acknowledge our Privacy Policy. This is a performance system and does not provide medical advice.
+        </div>
+      </aside>
+    </div>
+
+    <footer class="pac-footer">
+      <nav class="pac-footer-nav">
+        <a href="/ProAthleteCare-1/gps-iphone-v14/impressum.html">Impressum</a>
+        <a href="/ProAthleteCare-1/gps-iphone-v14/privacy.html">Privacy</a>
+        <a href="/ProAthleteCare-1/gps-iphone-v14/terms.html">Terms</a>
+      </nav>
+      <div class="pac-footer-copy" data-i18n="footer_copy">© 2026 ProAthleteCare. All rights reserved.</div>
+    </footer>
+  </main>
+
+  <script>
+    // ===== i18n (6 languages) =====
+    const I18N = {
+      en: {
+        tagline: "Professional Performance Tracking",
+        nav_home: "Home",
+        nav_pricing: "Pricing",
+        nav_login: "Login / Register",
+        kicker: "Checkout",
+        h1: "Confirm your plan",
+        lead: "Payments are being integrated. For now you can continue with the 7-day free trial and finish setup in the unified login/register page.",
+        banner_title: "Payment is coming soon",
+        banner_sub: "You won’t be charged today. Continue to start your trial and access the system.",
+        what_you_get: "What you get",
+        g1: "<strong>Performance system:</strong> wellness, pain, load, weight (diet generator), power.",
+        g2: "<strong>Game-based weekly microcycle:</strong> structured training week.",
+        g3: "<strong>Clear supervision:</strong> Basic is self-guided, Plus/Pro include coach reviews.",
+        summary_title: "Order summary",
+        plan_sub_default: "Includes full modules. Supervision depends on plan level.",
+        trial_line: "7-day free trial",
+        trial_sub: "No card required during MVP phase.",
+        free: "FREE",
+        total_today: "Total today",
+        zero: "€0",
+        continue_cta: "Continue",
+        back_cta: "Back to pricing",
+        note: "By continuing you agree to our Terms and acknowledge our Privacy Policy. This is a performance system and does not provide medical advice.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        plans: {
+          basic: { name: "Athlete Basic", price: "€49", sub: "Self-guided. No active review or adjustments included." },
+          plus:  { name: "Athlete Plus",  price: "€99", sub: "1 review/week + 1 adjustment/week. Coach chat ≤ 48h (business days)." },
+          pro:   { name: "Athlete Pro",   price: "€149", sub: "2 reviews/week + 2 adjustments/week. Priority chat ≤ 24h (business days)." }
+        }
+      },
+      de: {
+        tagline: "Professionelles Performance-Tracking",
+        nav_home: "Start",
+        nav_pricing: "Pakete",
+        nav_login: "Login / Registrierung",
+        kicker: "Checkout",
+        h1: "Plan bestätigen",
+        lead: "Zahlungen werden gerade integriert. Aktuell kannst du mit der 7-Tage Free Trial fortfahren und das Setup über die единую Login/Registrierung abschließen.",
+        banner_title: "Bezahlung kommt bald",
+        banner_sub: "Heute wird nichts berechnet. Starte den Trial und nutze das System.",
+        what_you_get: "Was du bekommst",
+        g1: "<strong>Performance-System:</strong> Wellness, Schmerz, Belastung, Gewicht (Ernährungs-Generator), Power.",
+        g2: "<strong>Spielbasierter Wochen-Mikrozyklus:</strong> strukturierte Trainingswoche.",
+        g3: "<strong>Klare Betreuung:</strong> Basic self-guided, Plus/Pro mit Coach-Reviews.",
+        summary_title: "Bestellübersicht",
+        plan_sub_default: "Alle Module inklusive. Betreuung hängt vom Plan ab.",
+        trial_line: "7 Tage Free Trial",
+        trial_sub: "Während der MVP-Phase keine Karte nötig.",
+        free: "KOSTENLOS",
+        total_today: "Summe heute",
+        zero: "€0",
+        continue_cta: "Weiter",
+        back_cta: "Zurück zu Paketen",
+        note: "Mit Weiter stimmst du den AGB zu und bestätigst die Datenschutzerklärung. Kein medizinischer Rat.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        plans: {
+          basic: { name: "Athlete Basic", price: "€49", sub: "Self-guided. Keine aktiven Reviews/Anpassungen." },
+          plus:  { name: "Athlete Plus",  price: "€99", sub: "1 Review/Woche + 1 Anpassung/Woche. Chat ≤ 48h (Werktage)." },
+          pro:   { name: "Athlete Pro",   price: "€149", sub: "2 Reviews/Woche + 2 Anpassungen/Woche. Priorität ≤ 24h (Werktage)." }
+        }
+      },
+      uk: {
+        tagline: "Professional Performance Tracking",
+        nav_home: "Головна",
+        nav_pricing: "Пакети",
+        nav_login: "Вхід / Реєстрація",
+        kicker: "Checkout",
+        h1: "Підтверди свій план",
+        lead: "Оплата зараз у процесі інтеграції. Поки що ти можеш продовжити з 7-денним Free Trial і завершити налаштування у єдиній сторінці входу/реєстрації.",
+        banner_title: "Оплата буде скоро",
+        banner_sub: "Сьогодні списання не буде. Продовжуй, щоб стартувати trial і отримати доступ.",
+        what_you_get: "Що ти отримуєш",
+        g1: "<strong>Система:</strong> wellness, біль, load, вага (генератор харчування), power.",
+        g2: "<strong>Ігровий тижневий мікроцикл:</strong> структурований тиждень тренувань.",
+        g3: "<strong>Рівень супроводу:</strong> Basic — self-guided, Plus/Pro — з переглядами тренера.",
+        summary_title: "Підсумок замовлення",
+        plan_sub_default: "Усі модулі включено. Супровід залежить від плану.",
+        trial_line: "7 днів Free Trial",
+        trial_sub: "Під час MVP картка не потрібна.",
+        free: "БЕЗКОШТОВНО",
+        total_today: "До сплати сьогодні",
+        zero: "€0",
+        continue_cta: "Продовжити",
+        back_cta: "Назад до пакетів",
+        note: "Натискаючи «Продовжити», ти погоджуєшся з Terms та підтверджуєш Privacy Policy. Це не медична консультація.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        plans: {
+          basic: { name: "Athlete Basic", price: "€49", sub: "Self-guided. Без активних переглядів/корекцій." },
+          plus:  { name: "Athlete Plus",  price: "€99", sub: "1 перегляд/тиждень + 1 корекція/тиждень. Чат ≤ 48 год (будні)." },
+          pro:   { name: "Athlete Pro",   price: "€149", sub: "2 перегляди/тиждень + 2 корекції/тиждень. Пріоритет ≤ 24 год (будні)." }
+        }
+      },
+      es: {
+        tagline: "Seguimiento profesional del rendimiento",
+        nav_home: "Inicio",
+        nav_pricing: "Planes",
+        nav_login: "Entrar / Registrarse",
+        kicker: "Checkout",
+        h1: "Confirma tu plan",
+        lead: "Los pagos se están integrando. Por ahora puedes continuar con el Free Trial de 7 días y completar el setup en la página única de login/registro.",
+        banner_title: "El pago estará disponible pronto",
+        banner_sub: "Hoy no se te cobrará. Continúa para iniciar el trial y acceder al sistema.",
+        what_you_get: "Qué incluye",
+        g1: "<strong>Sistema:</strong> wellness, dolor, carga, peso (generador de dieta), potencia.",
+        g2: "<strong>Microciclo semanal basado en el juego:</strong> semana estructurada.",
+        g3: "<strong>Supervisión clara:</strong> Basic auto-guiado, Plus/Pro con revisiones del coach.",
+        summary_title: "Resumen del pedido",
+        plan_sub_default: "Incluye todos los módulos. La supervisión depende del plan.",
+        trial_line: "Free Trial de 7 días",
+        trial_sub: "Sin tarjeta durante la fase MVP.",
+        free: "GRATIS",
+        total_today: "Total hoy",
+        zero: "€0",
+        continue_cta: "Continuar",
+        back_cta: "Volver a planes",
+        note: "Al continuar aceptas los Términos y reconoces la Política de Privacidad. No es asesoramiento médico.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        plans: {
+          basic: { name: "Athlete Basic", price: "€49", sub: "Auto-guiado. Sin revisiones/ajustes activos." },
+          plus:  { name: "Athlete Plus",  price: "€99", sub: "1 revisión/semana + 1 ajuste/semana. Chat ≤ 48h (laborables)." },
+          pro:   { name: "Athlete Pro",   price: "€149", sub: "2 revisiones/semana + 2 ajustes/semana. Prioridad ≤ 24h (laborables)." }
+        }
+      },
+      ru: {
+        tagline: "Профессиональный контроль спортивной формы",
+        nav_home: "Главная",
+        nav_pricing: "Пакеты",
+        nav_login: "Вход / Регистрация",
+        kicker: "Checkout",
+        h1: "Подтвердите план",
+        lead: "Оплата сейчас в процессе интеграции. Пока вы можете продолжить с 7-дневным Free Trial и завершить настройку на единой странице входа/регистрации.",
+        banner_title: "Оплата скоро будет доступна",
+        banner_sub: "Сегодня списаний не будет. Продолжайте, чтобы начать trial и получить доступ.",
+        what_you_get: "Что вы получаете",
+        g1: "<strong>Система:</strong> wellness, боль, нагрузка, вес (генератор питания), power.",
+        g2: "<strong>Игровой недельный микроцикл:</strong> структурированная неделя.",
+        g3: "<strong>Понятный супровід:</strong> Basic — self-guided, Plus/Pro — с ревью тренера.",
+        summary_title: "Сводка заказа",
+        plan_sub_default: "Все модули включены. Супровід зависит от плана.",
+        trial_line: "7 дней Free Trial",
+        trial_sub: "В фазе MVP карта не нужна.",
+        free: "БЕСПЛАТНО",
+        total_today: "Итого сегодня",
+        zero: "€0",
+        continue_cta: "Продолжить",
+        back_cta: "Назад к пакетам",
+        note: "Продолжая, вы принимаете Terms и подтверждаете Privacy Policy. Это не медицинская консультация.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        plans: {
+          basic: { name: "Athlete Basic", price: "€49", sub: "Self-guided. Без активных ревью/коррекций." },
+          plus:  { name: "Athlete Plus",  price: "€99", sub: "1 ревью/нед + 1 корректировка/нед. Чат ≤ 48ч (будни)." },
+          pro:   { name: "Athlete Pro",   price: "€149", sub: "2 ревью/нед + 2 корректировки/нед. Приоритет ≤ 24ч (будни)." }
+        }
+      },
+      pt: {
+        tagline: "Monitorização profissional do desempenho",
+        nav_home: "Início",
+        nav_pricing: "Planos",
+        nav_login: "Entrar / Registar",
+        kicker: "Checkout",
+        h1: "Confirma o teu plano",
+        lead: "Os pagamentos estão a ser integrados. Por agora podes continuar com o Free Trial de 7 dias e concluir o setup na página única de login/registo.",
+        banner_title: "Pagamento disponível em breve",
+        banner_sub: "Hoje não serás cobrado. Continua para iniciar o trial e aceder ao sistema.",
+        what_you_get: "O que inclui",
+        g1: "<strong>Sistema:</strong> wellness, dor, carga, peso (gerador de dieta), potência.",
+        g2: "<strong>Microciclo semanal baseado no jogo:</strong> semana estruturada.",
+        g3: "<strong>Supervisão clara:</strong> Basic auto-guiado, Plus/Pro com reviews do coach.",
+        summary_title: "Resumo do pedido",
+        plan_sub_default: "Inclui todos os módulos. A supervisão depende do plano.",
+        trial_line: "Free Trial de 7 dias",
+        trial_sub: "Sem cartão durante a fase MVP.",
+        free: "GRÁTIS",
+        total_today: "Total hoje",
+        zero: "€0",
+        continue_cta: "Continuar",
+        back_cta: "Voltar aos planos",
+        note: "Ao continuar aceitas os Termos e reconheces a Política de Privacidade. Não é aconselhamento médico.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved.",
+        plans: {
+          basic: { name: "Athlete Basic", price: "€49", sub: "Auto-guiado. Sem reviews/ajustes ativos." },
+          plus:  { name: "Athlete Plus",  price: "€99", sub: "1 review/semana + 1 ajuste/semana. Chat ≤ 48h (dias úteis)." },
+          pro:   { name: "Athlete Pro",   price: "€149", sub: "2 reviews/semana + 2 ajustes/semana. Prioridade ≤ 24h (dias úteis)." }
+        }
+      }
+    };
+
+    function setLang(lang){
+      const dict = I18N[lang] || I18N.uk;
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const val = dict[key];
+        if (val == null) return;
+        if (typeof val === "string" && val.includes("<strong>")) el.innerHTML = val;
+        else el.textContent = val;
+      });
+
+      // Re-apply plan labels in selected language
+      applyPlanUI(dict);
+    }
+
+    const select = document.getElementById("langSelect");
+    const saved = localStorage.getItem("pac_lang");
+    const browser = (navigator.language || "uk").toLowerCase();
+
+    function detectBrowserLang(){
+      if (browser.startsWith("de")) return "de";
+      if (browser.startsWith("es")) return "es";
+      if (browser.startsWith("pt")) return "pt";
+      if (browser.startsWith("ru")) return "ru";
+      if (browser.startsWith("en")) return "en";
+      return "uk";
+    }
+
+    function getQueryParam(name){
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function normalizePlan(p){
+  if (!p) return "plus";
+  p = (""+p).toLowerCase();
+  if (p.includes("trial")) return "plus"; // trial = plus during MVP (or set your own)
+  if (p.includes("basic")) return "basic";
+  if (p.includes("pro")) return "pro";
+  return "plus";
+}
+
+
+    function applyPlanUI(dict){
+      const plan = normalizePlan(getQueryParam("plan"));
+      const planDef = (dict.plans && dict.plans[plan]) ? dict.plans[plan] : (I18N.uk.plans[plan] || I18N.uk.plans.plus);
+
+      document.getElementById("planName").textContent = planDef.name;
+      document.getElementById("planPrice").textContent = planDef.price;
+
+      const sub = document.getElementById("planSub");
+      if (planDef.sub) sub.textContent = planDef.sub;
+
+      // Keep it public & guard-friendly: go to regist with plan + trial
+      const continueBtn = document.getElementById("continueBtn");
+      continueBtn.href = `pages/regist.html?trial=1&plan=${encodeURIComponent(plan)}`;
+    }
+
+    const initial = (saved && I18N[saved]) ? saved : detectBrowserLang();
+    select.value = initial;
+    setLang(initial);
+
+    select.addEventListener("change", (e) => {
+      const lang = e.target.value;
+      localStorage.setItem("pac_lang", lang);
+      setLang(lang);
+    });
+  </script>
+
+</body>
+</html>

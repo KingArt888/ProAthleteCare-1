@@ -1,0 +1,1171 @@
+/* --- СТИЛІ ДЛЯ СТОРІНКИ INJURY STORY (УНІКАЛЬНІ + КОМПОНЕНТИ) --- */
+
+/* Активний пункт меню */
+.sidebar a.active {
+    background-color: #FFC72C; 
+    color: #000000; 
+    border-left: 2px solid #000000;
+}
+.sidebar a.active img {
+    filter: none; 
+}
+/* ============================================== */
+/* 1. СТИЛІ МАКЕТА ТА КАРТОК */
+/* ============================================== */
+
+/* Контейнер для форми та графіка (робить картки поряд) */
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    /* Центрування контейнера, коли картки переходять у вертикальний стовпець */
+    justify-content: center; 
+}
+
+/* Картки для форми та графіка (базовий вигляд) */
+.form-card, .chart-card {
+    background-color: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    /* Загальне обмеження ширини для десктопу */
+    max-width: 500px;
+}
+
+/* Розміри карток Injury (Десктопний вигляд: гнучкі) */
+.form-card {
+    width: 45%; 
+    min-width: 350px; 
+    flex-grow: 1; /* Дозволяємо зростати */
+    flex-shrink: 1;
+}
+.chart-card {
+    flex-grow: 1;
+}
+
+/* Better target for programmatic scrolling */
+#injury-form,
+#injury-list,
+.chart-card {
+    scroll-margin-top: 80px;
+}
+
+/* Заголовки всередині карток */
+.form-card h3, .chart-card h3 {
+    color: #FFC72C;
+    margin-top: 0;
+    border-bottom: 1px solid #333333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Стилі для форми, щоб центрувати кнопку та рейтинг */
+#injury-form {
+    text-align: center; /* ЦЕНТРУВАННЯ КНОПКИ ТА БЛОКУ РЕЙТИНГУ */
+}
+
+/* Стилі для полів вводу */
+input[type="date"],
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    color: #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box; 
+}
+
+textarea {
+    margin-top: 5px;
+    background-color: #0d0d0d;
+    resize: vertical;
+}
+
+/* Стилі для кнопки */
+.gold-button {
+    background-color: #FFC72C;
+    color: #000000;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    margin-top: 30px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+.gold-button:hover {
+    background-color: #E6B800;
+}
+
+/* =========================
+   Injury Vault
+   ========================= */
+.inj-vault-card {
+    margin: 14px 0 18px;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 199, 44, 0.28);
+    background: linear-gradient(160deg, rgba(18, 18, 18, 0.96), rgba(8, 8, 8, 0.92));
+}
+
+.inj-vault-head h4 {
+    margin: 0;
+    color: #FFC72C;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.inj-vault-head p {
+    margin: 6px 0 0;
+    color: #bdbdbd;
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+
+.inj-vault-context {
+    margin: 7px 0 0;
+    color: #f6d980;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.inj-vault-toolbar {
+    margin-top: 12px;
+}
+
+.inj-vault-open-btn {
+    width: 100%;
+}
+
+.inj-vault-form {
+    margin-top: 12px;
+}
+
+.inj-vault-form label {
+    display: block;
+    text-align: left;
+    color: #e7e7e7;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin: 8px 0 6px;
+    letter-spacing: 0.01em;
+}
+
+.inj-vault-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#inj-vault-form select,
+#inj-vault-form input[type="text"],
+#inj-vault-form textarea {
+    width: 100%;
+    background: #101010;
+    color: #f2f2f2;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 10px 11px;
+    box-sizing: border-box;
+}
+
+#inj-vault-form textarea {
+    resize: vertical;
+    min-height: 64px;
+}
+
+.inj-vault-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.inj-vault-file-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 130px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 199, 44, 0.45);
+    color: #FFC72C !important;
+    font-weight: 800;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(255, 199, 44, 0.08);
+}
+
+#inj-doc-file {
+    display: none;
+}
+
+#inj-vault-file-name {
+    color: #b9b9b9;
+    font-size: 0.8rem;
+    word-break: break-all;
+    text-align: left;
+}
+
+.inj-vault-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+    color: #d6d6d6 !important;
+    font-size: 0.78rem;
+    text-align: left;
+    line-height: 1.35;
+}
+
+.inj-vault-consent input {
+    margin-top: 2px;
+}
+
+.inj-vault-disclaimer {
+    margin: 8px 0 0;
+    color: #9f9f9f;
+    font-size: 0.74rem;
+    line-height: 1.35;
+    text-align: left;
+}
+
+#inj-vault-upload-btn {
+    margin-top: 12px;
+    width: 100%;
+}
+
+.inj-vault-empty {
+    margin-top: 12px;
+    color: #8f8f8f;
+    font-size: 0.84rem;
+    text-align: center;
+}
+
+.inj-vault-list {
+    margin-top: 10px;
+    display: grid;
+    gap: 8px;
+}
+
+.inj-vault-item {
+    border: 1px solid #252525;
+    border-left: 3px solid #FFC72C;
+    border-radius: 10px;
+    padding: 10px 11px;
+    background: #0e0e0e;
+}
+
+.inj-vault-item-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.inj-vault-name {
+    color: #efefef;
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.inj-vault-type {
+    color: #111;
+    background: #FFC72C;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.inj-vault-meta {
+    margin-top: 5px;
+    color: #a7a7a7;
+    font-size: 0.74rem;
+}
+
+.inj-vault-note {
+    margin-top: 6px;
+    color: #cdcdcd;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    white-space: pre-wrap;
+}
+
+.inj-vault-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.inj-vault-link,
+.inj-vault-delete {
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.inj-vault-link {
+    color: #111;
+    background: #FFC72C;
+}
+
+.inj-vault-delete {
+    color: #ffb7bf;
+    background: rgba(218, 62, 82, 0.14);
+    border-color: rgba(218, 62, 82, 0.55);
+}
+
+.inj-vault-readonly {
+    margin-top: 8px;
+    color: #ffd27a;
+    font-size: 0.76rem;
+    text-align: left;
+}
+
+.inj-vault-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.inj-vault-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.inj-vault-modal-dialog {
+    position: relative;
+    width: min(840px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 199, 44, 0.36);
+    background: linear-gradient(160deg, rgba(18, 18, 18, 0.99), rgba(8, 8, 8, 0.98));
+    padding: 16px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.56);
+}
+
+body.inj-vault-modal-open {
+    overflow: hidden;
+}
+
+.inj-vault-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.inj-vault-modal-head h4 {
+    margin: 0;
+    color: #FFC72C;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.inj-vault-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 199, 44, 0.4);
+    color: #FFC72C;
+    background: rgba(255, 199, 44, 0.08);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* Стилі для placeholder-тексту */
+.placeholder-text {
+    color: #888888;
+    font-style: italic;
+    font-size: 1.2em;
+}
+
+/* ============================================== */
+/* 2. СТИЛІ РЕЙТИНГІВ (ШКАЛА БОЛЮ) - ОНОВЛЕНО */
+/* ============================================== */
+.rating-group {
+    display: inline-flex; /* ЗМІНА: для центрування всього блоку */
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    direction: ltr;
+    font-size: 1.5em;
+    margin: 10px 0 20px 0;
+}
+.rating-group input { display: none; }
+
+/* Базові стилі для Label */
+.rating-group label { 
+    color: #333; 
+    cursor: pointer; 
+    transition: color 0.2s; 
+    position: relative; /* ДОДАНО: Для позиціонування номера */
+    padding: 0 4px; /* Додаємо невеликий відступ між м'ячиками */
+    display: inline-block;
+}
+
+/* 2. М'ячі (Біль/Втома) - СИМВОЛ М'ЯЧИКА */
+.pain-group label::before { 
+    content: '●'; /* ЗМІНА: З "✖" на "●" */
+    font-size: 1.7em; /* Розмір м'ячика */
+    margin-right: 5px; 
+    position: relative;
+    z-index: 10;
+}
+
+/* СТИЛІ ДЛЯ НОМЕРА ВСЕРЕДИНІ М'ЯЧИКА */
+.pain-group label::after {
+    content: attr(title); /* Відображаємо номер (1-10) з title атрибута */
+    position: absolute;
+    left: 50%;
+    top: 50%; /* ЦЕНТРУВАННЯ ВЕРТИКАЛЬНО */
+    transform: translate(-50%, -50%); 
+    font-size: 0.6em; /* Розмір тексту */
+    color: #000; /* Чорний текст для контрасту */
+    pointer-events: none;
+    z-index: 20;
+    font-weight: bold;
+}
+
+.pain-group input:checked ~ label::before,
+.pain-group label:hover::before,
+.pain-group label:hover ~ label::before { 
+    color: #DA3E52; /* Червоний колір активного м'ячика */
+}
+
+/* ============================================== */
+/* 3. УНІКАЛЬНІ СТИЛІ КАРТИ ТІЛА */
+/* ============================================== */
+.body-map-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px; 
+    margin: 15px auto;
+}
+.body-map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: crosshair;
+    filter: invert(10%); 
+}
+#click-marker {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: transparent;
+    border: 3px solid #DA3E52; 
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: background-color 0.2s;
+    z-index: 100;
+    left: -62px;
+    top: -46px;
+}
+.injury-marker {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #DA3E52; 
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 5px rgba(218, 62, 82, 0.8);
+    z-index: 90;
+    transition: all 0.2s;
+}
+.injury-marker:hover {
+    background-color: #FFC72C; 
+    box-shadow: 0 0 10px #FFC72C;
+}
+#notes-section {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    border-left: 3px solid #FFC72C;
+    display: none;
+}
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #0d0d0d;
+    font-size: 0.8em;
+    color: #888888;
+    border-top: 1px solid #1a1a1a;
+}
+
+/* ============================================== */
+/* 4. АДАПТИВНІСТЬ КАРТОК INJURY ДЛЯ МОБІЛЬНИХ */
+/* ============================================== */
+@media (max-width: 900px) {
+
+    /* Встановлюємо 100% ширину для вертикального макета */
+    .form-card, .chart-card {
+        width: 100%; 
+        /* Знімаємо всі жорсткі обмеження для мобільного вигляду */
+        min-width: 0; 
+        max-width: 100%;
+        flex-grow: 1; 
+        flex-shrink: 1;
+    }
+    
+    /* Додатково: трохи зменшимо максимальний розмір зображення силуету для мобільних */
+    .body-map-container {
+        max-width: 250px; 
+    }
+
+    .inj-vault-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inj-vault-upload-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .inj-vault-modal {
+        padding: 12px;
+    }
+
+    .inj-vault-modal-dialog {
+        max-height: calc(100vh - 24px);
+    }
+}
+
+/* =========================
+   HARD A4 FIX FOR PDF
+   ========================= */
+#pdf-root{
+  position: fixed;
+  inset: 0;
+  width: 210mm;
+  height: 297mm;
+  background: #fff;
+  z-index: 9999;
+
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.pac-report-mode #pdf-root{
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+#pdf-root .pac-pdf-page {
+  width: 210mm;
+  height: 297mm;
+  background: #ffffff;
+  box-sizing: border-box;
+  padding: 18mm 16mm;
+  overflow: hidden;
+}
+body.pac-report-mode #pdf-root,
+body.pac-report-mode #pdf-root {
+  transform: none !important;
+}
+#pdf-root img{
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+/* PDF header safety */
+#pdf-root .pac-pdf-logo{
+  width: 34px !important;
+  height: 34px !important;
+  object-fit: contain !important;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+
+#pdf-root .pac-pdf-brand{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#pdf-root .pac-pdf-brandname{
+  font-weight: 800;
+  font-size: 14px;
+}
+
+#pdf-root .pac-pdf-top{
+  display:flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+#pdf-root .pac-pdf-meta{
+  text-align: right;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+#pdf-root .pac-pdf-h1{
+  margin: 10px 0 0;
+  font-size: 34px;
+  font-weight: 900;
+}
+#pdf-root #inj-pdf-body-img{
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+/* PDF: two top cards layout */
+#pdf-root .pac-charts{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+#pdf-root .pac-chart-card{
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 12px;
+  background: #f7f8f9;
+}
+#pdf-root .pac-chart-title{
+  font-weight: 800;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+/* PDF: map wrap — limit height */
+#pdf-root .inj-pdf-map-wrap{
+  position: relative;
+  width: 100%;
+  height: 230px;            /* <-- ключ */
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Body image inside map wrap */
+#pdf-root #inj-pdf-body-img{
+  width: 100% !important;
+  height: 100% !important;  /* <-- ключ */
+  object-fit: contain !important;
+}
+#pdf-root .inj-pdf-marker{
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #DA3E52;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(218,62,82,0.35);
+}
+#pdf-root .pac-chart-canvas-wrap{
+  height: 180px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 8px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+
+#pdf-root #inj-pdf-line{
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+
+
+/* PDF text contrast fix */
+#pdf-root{
+  color: #111;
+}
+
+#pdf-root h1,
+#pdf-root h2,
+#pdf-root h3,
+#pdf-root .pac-chart-title,
+#pdf-root .pac-risk-title{
+  color: #111;
+  opacity: 1 !important;
+}
+
+#pdf-root p,
+#pdf-root li,
+#pdf-root .pac-risk-sub,
+#pdf-root .pac-risk-date,
+#pdf-root .item,
+#pdf-root .note{
+  color: #222;
+  opacity: 1 !important;
+}
+/* =========================
+   PDF: Chart stats (Last / Avg / Trend)
+   ========================= */
+#pdf-root .pac-chart-stats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#pdf-root .pac-chart-stats .stat{
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 10px 8px;
+  text-align: center;
+}
+
+#pdf-root .pac-chart-stats .label{
+  font-size: 11px;
+  opacity: 0.75;
+  margin-bottom: 4px;
+}
+
+#pdf-root .pac-chart-stats .value{
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* Trend colors */
+#pdf-root #inj-pdf-stat-trend-box.up .value{ color: #2e7d32; }
+#pdf-root #inj-pdf-stat-trend-box.down .value{ color: #c62828; }
+#pdf-root #inj-pdf-stat-trend-box.flat .value{ color: #6b6b6b; }
+/* =========================
+   PDF: Metrics row under chart (1:1)
+   ========================= */
+#pdf-root .inj-pdf-metrics{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+#pdf-root .inj-metric{
+  padding: 10px 10px;
+  text-align: center;
+}
+
+#pdf-root .inj-metric + .inj-metric{
+  border-left: 1px solid rgba(0,0,0,0.10);
+}
+
+#pdf-root .inj-metric-label{
+  font-size: 11px;
+  opacity: 0.75;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+#pdf-root .inj-metric-value{
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  color: #111;
+}
+
+#pdf-root .inj-metric-value.red{
+  color: #b3261e; /* як у макеті */
+}
+
+/* Trend look (green with arrow) */
+#pdf-root .inj-metric-trend{
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+#pdf-root .inj-metric-trend .arrow{
+  font-size: 22px;
+  line-height: 1;
+}
+#pdf-root .inj-metric-trend .pct{
+  font-size: 22px;
+}
+
+/* =========================
+   PDF: History table (1:1)
+   ========================= */
+#pdf-root .inj-pdf-history-table{
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #fff;
+}
+
+#pdf-root .inj-hist-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(46,125,50,0.18);
+  font-weight: 900;
+}
+
+#pdf-root .inj-hist-head .left{
+  display:flex; align-items:center; gap:10px;
+}
+
+#pdf-root .inj-hist-check{
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #2e7d32;
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 12px;
+}
+
+#pdf-root .inj-hist-row{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-size: 13px;
+}
+
+#pdf-root .inj-hist-row .pain{
+  font-weight: 900;
+}
+
+#pdf-root .inj-hist-row .pain.bad{
+  color:#b3261e;
+}
+
+#pdf-root .inj-hist-row .pain-bubble{
+  margin-left: 10px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  color:#fff;
+  background:#b3261e;
+}
+/* =========================
+   PDF: Risk block (mock-like)
+   ========================= */
+#pdf-root .inj-risk-block{ margin-top: 14px; }
+
+#pdf-root .inj-risk-head{
+  display:flex; gap:12px; align-items:flex-start; margin-bottom: 10px;
+}
+
+#pdf-root .inj-risk-icon{
+  width: 34px; height: 34px; border-radius: 999px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight: 900;
+  border: 2px solid rgba(46,125,50,0.35);
+  background: #eef7ee;
+  color:#2e7d32;
+}
+
+#pdf-root .inj-risk-title{
+  font-size: 26px; font-weight: 900; margin: 0 0 4px;
+}
+#pdf-root .inj-risk-sub{
+  font-size: 14px; color:#2b2b2b; opacity: .9;
+}
+
+#pdf-root .inj-risk-box{
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #f7f8f9;
+  overflow: hidden;
+}
+
+#pdf-root .inj-risk-datebar{
+  display:flex; align-items:center; gap:10px;
+  padding: 12px 14px;
+   background: linear-gradient(90deg,
+    var(--riskGrad1, rgba(46,125,50,.78)),
+    var(--riskGrad2, rgba(46,125,50,.35))
+  );
+}
+#pdf-root .inj-risk-datebar .lbl{ font-size: 22px; }
+#pdf-root .inj-risk-datebar .val{ font-size: 20px; opacity: .95; font-weight: 800; }
+
+#pdf-root .inj-risk-list{
+  margin: 0;
+  padding: 14px 16px 16px 16px;
+  list-style: none;
+}
+#pdf-root .inj-risk-list li{
+  display:flex; gap:10px; align-items:flex-start;
+  margin: 8px 0;
+  font-size: 15px;
+  color:#222;
+}
+#pdf-root .inj-risk-list li::before{
+  content: "▶";
+  color: var(--risk, rgba(46,125,50,0.95));
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+/* =========================
+   PDF: History table (mock-like)
+   ========================= */
+#pdf-root .inj-history-card{
+  margin-top: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #f7f8f9;
+  overflow: hidden;
+}
+
+#pdf-root .inj-history-head{
+  display:flex; align-items:center; justify-content: space-between;
+  padding: 10px 14px;
+  color:#fff;
+  background: linear-gradient(90deg, rgba(46,125,50,0.78), rgba(46,125,50,0.35));
+  font-weight: 900;
+}
+
+#pdf-root .inj-history-head .left{
+  display:flex; align-items:center; gap:10px;
+  font-size: 20px;
+}
+#pdf-root .inj-history-head .okdot{
+  width: 26px; height: 26px; border-radius: 999px;
+  background: rgba(255,255,255,0.90);
+  color:#2e7d32;
+  display:flex; align-items:center; justify-content:center;
+  font-weight: 900;
+}
+#pdf-root .inj-history-head .right{
+  display:flex; gap:8px; align-items:center;
+  font-size: 18px;
+}
+
+#pdf-root .inj-row{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items:center;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.65);
+}
+#pdf-root .inj-row:nth-child(even){
+  background: rgba(255,255,255,0.45);
+}
+#pdf-root .inj-row .date{
+  font-size: 16px; font-weight: 900; color:#222;
+}
+#pdf-root .inj-row .pain{
+  justify-self: end;
+  font-size: 16px;
+  font-weight: 800;
+  color:#222;
+}
+#pdf-root .inj-row .pain .badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  background: #b3261e;
+  color:#fff;
+}
+
+/* =========================
+   PDF: compact history to fit A4
+   ========================= */
+#pdf-root .inj-history-card{
+  margin-top: 6px;
+}
+
+#pdf-root .inj-row{
+  padding: 8px 12px;          /* було 10px 14px */
+}
+
+#pdf-root .inj-row .date{
+  font-size: 15px;            /* було 16 */
+}
+
+#pdf-root .inj-row .pain{
+  font-size: 15px;            /* було 16 */
+}
+
+#pdf-root .inj-history-head{
+  padding: 8px 12px;          /* було 10px 14px */
+}
+
+#pdf-root .inj-history-head .left{
+  font-size: 18px;            /* було 20 */
+}
+
+#pdf-root .inj-history-head .right{
+  font-size: 16px;            /* було 18 */
+}
+#pdf-root .inj-risk-title{ font-size: 24px; }   /* було 26 */
+#pdf-root .inj-risk-list li{ font-size: 14px; } /* було 15 */
+#pdf-root .inj-risk-datebar .lbl{ font-size: 20px; } /* було 22 */
+#pdf-root .inj-risk-datebar .val{ font-size: 18px; } /* було 20 */
+/* =========================
+   PDF HEADER — FIX spacing (like Wellness)
+   ========================= */
+
+#pdf-root .pac-pdf-top{
+  margin-bottom: 6px !important;
+}
+
+#pdf-root .pac-pdf-h1{
+  margin: 6px 0 6px !important;
+  line-height: 1.05;
+}
+
+/* прибираємо зайвий простір під хедером */
+#pdf-root .pac-pdf-page > *:first-child{
+  margin-top: 0 !important;
+}
+.pac-pdf-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+}
+.pac-pdf-brand{ display:flex; align-items:center; gap:10px; }
+.pac-pdf-logo{ width: 26px; height: 26px; object-fit: contain; }
+.pac-pdf-brandname{ font-weight:800; font-size:14px; color:#bfa14a; }
+.pac-pdf-h1{
+  font-size: 34px;
+  font-weight: 800;
+  margin: 10px 0 0 0;
+  letter-spacing: -0.5px;
+}
+.pac-pdf-meta{
+  text-align:right;
+  font-size: 14px;
+  color:#444;
+  line-height: 1.45;
+}
+.pac-pdf-athlete{ font-weight: 700; color:#222; }
+
+.pac-divider{
+  height:1px;
+  background:#e9e9ec;
+  margin: 16px 0 18px;
+}
+/* =========================
+   PDF: GDPR footer (same as Wellness)
+   ========================= */
+#pdf-root .pac-foot{
+  margin-top: 10px;
+  text-align: center;
+  font-size: 10px;
+  color: #777;
+  line-height: 1.45;
+}
+
+#pdf-root .pac-foot strong{
+  color: #666;
+}
+
+#pdf-root .pac-foot div{
+  margin: 4px 0;
+}
+
+/* === PDF FIX: 3rd metric cell (trend) is not .inj-metric in HTML === */
+#pdf-root .inj-pdf-metrics > .inj-metric-trend{
+  padding: 10px 10px;
+  text-align: center;
+  border-left: 1px solid rgba(0,0,0,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+/* === PDF Trend colors (FINAL override at end) === */
+#pdf-root .inj-metric-trend{ color:#111; }            /* базово нейтрально */
+#pdf-root .inj-metric-trend.up   { color:#b3261e; }   /* ↑ = погано */
+#pdf-root .inj-metric-trend.down { color:#2e7d32; }   /* ↓ = добре */
+#pdf-root .inj-metric-trend.flat { color:#b26a00; }   /* → = стабільно/жовтий */
+/* === PDF Risk themes by class on #pdf-root (no vars, no color-mix) === */
+#pdf-root.risk-low  .inj-risk-icon{ color:#2e7d32; background:#eef7ee; border:2px solid rgba(46,125,50,.35); }
+#pdf-root.risk-mod  .inj-risk-icon{ color:#b26a00; background:#fff5e6; border:2px solid rgba(178,106,0,.40); }
+#pdf-root.risk-high .inj-risk-icon{ color:#b3261e; background:#fdecec; border:2px solid rgba(179,38,30,.40); }
+
+#pdf-root.risk-low  .inj-risk-datebar{ background: linear-gradient(90deg, rgba(46,125,50,.78), rgba(46,125,50,.35)); }
+#pdf-root.risk-mod  .inj-risk-datebar{ background: linear-gradient(90deg, rgba(178,106,0,.72), rgba(178,106,0,.32)); }
+#pdf-root.risk-high .inj-risk-datebar{ background: linear-gradient(90deg, rgba(179,38,30,.70), rgba(179,38,30,.30)); }
+
+#pdf-root.risk-low  .inj-risk-list li::before{ color: rgba(46,125,50,.95); }
+#pdf-root.risk-mod  .inj-risk-list li::before{ color: rgba(178,106,0,.95); }
+#pdf-root.risk-high .inj-risk-list li::before{ color: rgba(179,38,30,.95); }
+/* === PDF: History header must follow risk class on #pdf-root === */
+#pdf-root.risk-low  .inj-history-head{
+  background: linear-gradient(90deg, rgba(46,125,50,.78), rgba(46,125,50,.35));
+}
+#pdf-root.risk-mod  .inj-history-head{
+  background: linear-gradient(90deg, rgba(178,106,0,.72), rgba(178,106,0,.32));
+}
+#pdf-root.risk-high .inj-history-head{
+  background: linear-gradient(90deg, rgba(179,38,30,.70), rgba(179,38,30,.30));
+}
+
+/* dot/check color inside header */
+#pdf-root.risk-low  .inj-history-head .okdot{ color:#2e7d32; }
+#pdf-root.risk-mod  .inj-history-head .okdot{ color:#b26a00; }
+#pdf-root.risk-high .inj-history-head .okdot{ color:#b3261e; }
+/* === PDF: compact trend in metrics === */
+#pdf-root .inj-metric-trend{
+  font-size: 16px;     /* було 22 */
+  font-weight: 800;
+  gap: 4px;
+}
+
+#pdf-root .inj-metric-trend .arrow{
+  font-size: 18px;     /* стрілка трохи більша за текст */
+  line-height: 1;
+}
+
+#pdf-root .inj-metric-trend .pct{
+  font-size: 14px;     /* текст компактний */
+  font-weight: 700;
+}
+/* === PDF: fine-tune injury marker position === */
+#pdf-root .inj-pdf-marker{
+  transform: translate(calc(-50% - 2px), calc(-50% + 2px));
+}

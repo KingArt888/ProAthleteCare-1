@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <title>ProAthleteCare | Secure Email Action</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="/ProAthleteCare-1/gps-iphone-v14/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/ProAthleteCare-1/gps-iphone-v14/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/auth-action.css">
+</head>
+<body class="notranslate" translate="no">
+  <main class="aa-wrap">
+    <section class="aa-card">
+      <div class="aa-brand">
+        <img src="../assets/images/AK_logo.png" alt="ProAthleteCare logo">
+        <div class="aa-brand-copy">
+          <h2 class="aa-brand-name">ProAthleteCare</h2>
+          <p id="aa-brand-subtitle" class="aa-brand-subtitle">Account Security Center</p>
+        </div>
+      </div>
+
+      <div id="aa-badge" class="aa-badge">Secure email action</div>
+      <h1 id="aa-title" class="aa-title">Processing request...</h1>
+      <p id="aa-subtitle" class="aa-subtitle">Please wait while we validate your secure link.</p>
+
+      <div class="aa-stack">
+        <div id="aa-status-panel" class="aa-panel aa-status-panel is-loading" aria-live="polite">
+          <div class="aa-status-icon" aria-hidden="true"></div>
+          <div class="aa-status-copy">
+            <div id="aa-status" class="aa-status loading">Loading...</div>
+            <p id="aa-status-note" class="aa-hint"></p>
+          </div>
+        </div>
+
+        <form id="aa-reset-form" class="aa-panel aa-reset-form hidden" autocomplete="off">
+          <p id="aa-reset-email" class="aa-account-line"></p>
+
+          <div class="aa-row">
+            <label for="aa-new-pass" id="aa-new-pass-label">New password</label>
+            <div class="aa-input-wrap">
+              <input id="aa-new-pass" type="password" minlength="6" autocomplete="new-password" required>
+              <button id="aa-toggle-new-pass" class="aa-toggle" type="button" data-target="aa-new-pass">Show</button>
+            </div>
+          </div>
+
+          <div class="aa-row">
+            <label for="aa-confirm-pass" id="aa-confirm-pass-label">Confirm password</label>
+            <div class="aa-input-wrap">
+              <input id="aa-confirm-pass" type="password" minlength="6" autocomplete="new-password" required>
+              <button id="aa-toggle-confirm-pass" class="aa-toggle" type="button" data-target="aa-confirm-pass">Show</button>
+            </div>
+          </div>
+
+          <div class="aa-strength-wrap">
+            <div class="aa-strength-bar" aria-hidden="true">
+              <span id="aa-strength-fill"></span>
+            </div>
+            <p id="aa-strength-text" class="aa-hint"></p>
+          </div>
+
+          <ul class="aa-rules">
+            <li id="aa-rule-len">Minimum 6 characters</li>
+            <li id="aa-rule-match">Passwords match</li>
+          </ul>
+
+          <div class="aa-btns">
+            <button id="aa-submit-reset" class="aa-btn aa-btn-primary" type="submit">Save new password</button>
+          </div>
+          <p id="aa-reset-msg" class="aa-hint aa-reset-msg"></p>
+        </form>
+
+        <div id="aa-actions" class="aa-panel hidden">
+          <div class="aa-btns">
+            <a id="aa-continue" href="/ProAthleteCare-1/gps-iphone-v14/pages/regist.html" class="aa-btn aa-btn-primary">Continue</a>
+            <a id="aa-login" href="/ProAthleteCare-1/gps-iphone-v14/pages/regist.html" class="aa-btn aa-btn-ghost">Back to sign in</a>
+          </div>
+        </div>
+      </div>
+
+      <p id="aa-security-note" class="aa-footer-note">Only secure account actions are processed on this page.</p>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="../config/firebase-config.js"></script>
+  <script src="../js/auth-action.js?v=20260503r5"></script>
+</body>
+</html>

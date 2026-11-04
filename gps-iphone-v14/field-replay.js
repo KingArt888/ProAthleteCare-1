@@ -143,11 +143,11 @@
     $('fieldTimeline').max=String(model.durationMs);setView();updateMarker();selectTab(tab);
   }
   $('fieldRouteTab').onclick=()=>selectTab('route');$('fieldReplayTab').onclick=()=>selectTab('field');
-  function openCalibration(edit=false,fromHome=false){
+  function openCalibration(edit=false,fromHome=false,onClose=null){
     stop();
-    if(!root.PACFieldMap){$('fieldCalibrationMessage').textContent='Interactive map unavailable. Check local map resources; GPS replay is unaffected.';return;}
-    const selected=edit?records.find(r=>r?.id===$('fieldSaved').value):null;
-    root.PACFieldMap.open({record:selected,onSave({name,calibration:input}){
+    if(!root.PACFieldMap)throw Error('FIELD_EDITOR_UNAVAILABLE');
+    const selected=edit?records.find(r=>r?.id===$(fromHome?'homeFieldSaved':'fieldSaved').value):null;
+    root.PACFieldMap.open({record:selected,onClose,onSave({name,calibration:input}){
       const result=G.validateCalibration(input);
       if(result.validationStatus==='APPROXIMATE'&&!result.approximateAcknowledged)throw Error('Explicit approximate calibration confirmation required');
       const id='field-'+crypto.randomUUID(),now=new Date().toISOString();
@@ -197,13 +197,27 @@
   $('fieldBackground').addEventListener('error',()=>{$('fieldStatus').textContent='Field artwork failed to load. Check the publication assets; use GPS route preview.';selectTab('route')});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
   root.PACFieldReplay={
+    setup(includeCalibration=false){
+      const valid=records.filter(record=>{try{G.validateCalibration(record.calibration);return true}catch(_){return false}}),id=$('homeFieldSaved').value;
+      const selected=valid.find(record=>record.id===id);
+      return{mode:$('homeRunLocation').value==='field'?'field':'route',fieldId:selected?.id||null,fields:valid.map(record=>({id:record.id,name:record.name,sport:record.calibration.sport})),...(includeCalibration?{field:selected?JSON.parse(JSON.stringify(selected)):null}:{})};
+    },
+    configure(mode,id=''){
+      if(root.PAC?.getState()!=='ready')throw Error('TASK_ALREADY_STARTED');
+      if(!['route','field'].includes(mode))throw Error('INVALID_FIELD_MODE');
+      if(id&&!records.some(record=>record.id===id))throw Error('FIELD_NOT_FOUND');
+      $('homeRunLocation').value=mode;$('homeRunLocation').onchange();
+      if(id){$('homeFieldSaved').value=id;$('homeFieldSaved').onchange();}syncHome();return this.setup();
+    },
+    editSetup(edit,onClose){if(root.PAC?.getState()!=='ready')throw Error('TASK_ALREADY_STARTED');openCalibration(Boolean(edit),true,onClose);},
+    bindSession(id){const selected=this.setup(true);if(selected.mode!=='field')return null;if(!selected.field)throw Error('FIELD_REQUIRED');saveStore(records,{...bindings,[id]:selected.fieldId});return selected.field;},
     show(value){stop();
       // Read only the finished replay snapshot; never duplicate raw/debug GPS fixes.
       session={totalDistance:value.totalDistance,maxSpeed:value.maxSpeed,sessionId:value.sessionId,startTimestamp:value.startTimestamp,endTimestamp:value.endTimestamp,
         startTime:value.startTime,endTime:value.endTime,replaySchemaVersion:value.replaySchemaVersion,
         replayPoints:value.replayPoints,route:value.route};
       host.hidden=value.activityType!=='run';if(host.hidden)return;
-      const chosen=bindings[session.sessionId];const r=records.find(r=>r?.id===chosen);calibration=null;
+      const chosen=bindings[session.sessionId];const r=value.fieldSelection||records.find(r=>r?.id===chosen);calibration=null;
       if(r){try{calibration=G.validateCalibration(r.calibration)}catch(_){}}
       fillSaved(r?r.id:'');tab=calibration?'field':'route';render();
     },

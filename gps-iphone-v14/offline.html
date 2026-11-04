@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>ProAthleteCare — немає з’єднання</title>
+  <style>
+    :root { color-scheme: dark; font-family: Arial, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #000; color: #fff; }
+    main { width: min(480px, 100%); padding: 28px; border: 1px solid rgba(255,199,44,.45); border-radius: 18px; background: #0b0b0b; text-align: center; }
+    h1 { margin: 0 0 12px; color: #FFC72C; font-size: clamp(24px, 7vw, 36px); }
+    p { margin: 0 0 20px; color: #d5d5d5; line-height: 1.5; }
+    .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    button, a { min-height: 44px; padding: 11px 16px; border-radius: 12px; font-weight: 800; cursor: pointer; text-decoration: none; }
+    button { border: 1px solid #FFC72C; background: #FFC72C; color: #000; }
+    a { border: 1px solid #555; color: #fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Немає з’єднання</h1>
+    <p>Приватні тренувальні та медичні дані не зберігаються в offline-кеші. Підключіться до інтернету й повторіть спробу.</p>
+    <div class="actions">
+      <button type="button" onclick="location.reload()">Спробувати знову</button>
+      <a href="/ProAthleteCare-1/gps-iphone-v14/platform.html">На головну</a>
+    </div>
+  </main>
+</body>
+</html>

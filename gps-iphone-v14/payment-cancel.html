@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ProAthleteCare | Payment Canceled</title>
+  <meta name="description" content="Payment canceled. Choose a plan or start a free trial on ProAthleteCare." />
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="stylesheet" href="/ProAthleteCare-1/gps-iphone-v14/css/style.css">
+  <link rel="stylesheet" href="/ProAthleteCare-1/gps-iphone-v14/css/index.css">
+
+  <style>
+    body.pac-public{ overflow-x:hidden; }
+    body.pac-public *{ box-sizing:border-box; }
+
+    .pac-header{
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,199,44,.22);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:10px 12px;
+    }
+    .pac-brand{ display:flex; align-items:center; gap:10px; min-width:0; text-decoration:none; }
+    .pac-logo{ width:34px; height:34px; object-fit:contain; flex:0 0 auto; }
+    .pac-brand-text{ display:flex; flex-direction:column; min-width:0; }
+    .pac-title{ color:#FFC72C; font-weight:900; letter-spacing:.02em; font-size:16px; line-height:1.1; }
+    .pac-tagline{
+      color: rgba(255,255,255,.62);
+      font-size: 11px; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 52vw;
+    }
+    .pac-header-actions{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; justify-content:flex-end; }
+
+    .pac-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:12px;
+      font-weight:900; letter-spacing:.02em;
+      text-decoration:none; cursor:pointer; user-select:none; white-space:nowrap;
+      border: 1px solid transparent;
+    }
+    .pac-btn-primary{ background:#FFC72C; color:#000; border-color:#FFC72C; }
+    .pac-btn-outline{ background:transparent; color:#FFC72C; border-color: rgba(255,199,44,.65); }
+    .pac-btn-ghost{ background:transparent; color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.14); }
+
+    .pac-lang-select{
+      background:#0b0b0b; color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-weight:800;
+      width: 84px;
+      text-align: center;
+    }
+
+    main{ padding-bottom: 40px; }
+    .pac-container{ width: min(980px, calc(100vw - 24px)); margin: 0 auto; }
+
+    .pac-hero{
+      margin: 16px auto 0;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.58);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .pac-kicker{
+      color: rgba(255,199,44,.92);
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .pac-h1{
+      margin: 0 0 10px;
+      color: #FFC72C;
+      line-height: 1.06;
+      font-size: clamp(24px, 5.6vw, 44px);
+      text-wrap: balance;
+    }
+    .pac-lead{
+      margin: 0;
+      color: rgba(255,255,255,.84);
+      line-height: 1.55;
+      font-size: clamp(14px, 2.6vw, 17px);
+      max-width: 80ch;
+    }
+
+    .pac-card{
+      margin-top: 14px;
+      background: rgba(0,0,0,.40);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pac-alert{
+      display:flex; align-items:flex-start; gap:12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(218,62,82,.10);
+      border: 1px solid rgba(218,62,82,.28);
+      margin-top: 12px;
+    }
+    .pac-alert b{ color: rgba(255,255,255,.92); }
+    .pac-alert p{ margin: 2px 0 0; color: rgba(255,255,255,.72); line-height: 1.45; font-size: 13px; }
+
+    .pac-actions{
+      margin-top: 14px;
+      display:flex; gap: 10px; flex-wrap: wrap;
+    }
+    .pac-actions .pac-btn{ flex: 1 1 210px; }
+
+    .pac-muted{
+      margin-top: 10px;
+      color: rgba(255,255,255,.60);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .pac-footer{
+      border-top:1px solid rgba(255,255,255,.10);
+      padding:18px 12px;
+      text-align:center;
+      margin-top: 18px;
+    }
+    .pac-footer-nav{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+    .pac-footer-nav a{ color:#FFC72C; text-decoration:none; }
+    .pac-footer-copy{ margin-top:10px; color: rgba(255,255,255,.60); font-size:.9em; }
+
+    @media (max-width: 820px){
+      .pac-header{ flex-direction: column; align-items: stretch; gap: 10px; }
+      .pac-tagline{ max-width: 100%; }
+      .pac-header-actions{
+        display:grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+      }
+      .pac-btn{ width:100%; padding: 12px 14px; }
+      .pac-lang-select{ width: 100%; }
+    }
+    @media (max-width: 380px){
+      .pac-header-actions{ grid-template-columns: 1fr 1fr; }
+      .pac-lang-select{ grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+
+<body class="pac-public">
+
+  <!-- HEADER -->
+  <header class="pac-header">
+    <a href="/ProAthleteCare-1/gps-iphone-v14/platform.html" class="pac-brand" aria-label="ProAthleteCare Home">
+      <img src="/ProAthleteCare-1/gps-iphone-v14/assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="pac-logo">
+      <div class="pac-brand-text">
+        <div class="pac-title">ProAthleteCare</div>
+        <div class="pac-tagline" data-i18n="tagline">Professional Performance Tracking</div>
+      </div>
+    </a>
+
+    <div class="pac-header-actions">
+      <a href="/ProAthleteCare-1/gps-iphone-v14/platform.html" class="pac-btn pac-btn-ghost" data-i18n="nav_home">Home</a>
+      <a href="/ProAthleteCare-1/gps-iphone-v14/pages/regist.html" class="pac-btn pac-btn-outline" data-i18n="nav_login">Login / Register</a>
+
+      <select id="langSelect" class="pac-lang-select" aria-label="Language selector">
+        <option value="uk">UA</option>
+        <option value="en">EN</option>
+        <option value="de">DE</option>
+        <option value="es">ES</option>
+        <option value="ru">RU</option>
+        <option value="pt">PT</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="pac-container">
+    <section class="pac-hero">
+      <div class="pac-kicker" data-i18n="kicker">Payment</div>
+      <h1 class="pac-h1" data-i18n="h1">Payment canceled</h1>
+      <p class="pac-lead" data-i18n="lead">
+        No worries — you can try again or start with a free trial. Your account can still be created.
+      </p>
+
+      <div class="pac-alert" role="status" aria-live="polite">
+        <div style="font-size:18px; line-height:1;">⚠️</div>
+        <div>
+          <b data-i18n="alert_t">Nothing was charged.</b>
+          <p data-i18n="alert_p">If you saw an error, it’s usually bank confirmation or a browser popup blocker. Just try again.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pac-card" aria-label="Actions">
+      <div class="pac-actions">
+        <a class="pac-btn pac-btn-primary" id="ctaRetry" href="/ProAthleteCare-1/gps-iphone-v14/pricing.html" data-i18n="cta_retry">Try checkout again</a>
+        <a class="pac-btn pac-btn-outline" href="/ProAthleteCare-1/gps-iphone-v14/pages/regist.html?trial=1" data-i18n="cta_trial">Start free trial</a>
+      </div>
+
+      <div class="pac-muted" data-i18n="tips">
+        Tips: allow popups for this site, try another browser, or use a different card/payment method.
+      </div>
+    </section>
+  </main>
+
+  <footer class="pac-footer">
+    <nav class="pac-footer-nav">
+      <a href="/ProAthleteCare-1/gps-iphone-v14/impressum.html">Impressum</a>
+      <a href="/ProAthleteCare-1/gps-iphone-v14/privacy.html">Privacy</a>
+      <a href="/ProAthleteCare-1/gps-iphone-v14/terms.html">Terms</a>
+    </nav>
+    <div class="pac-footer-copy" data-i18n="footer_copy">© 2026 ProAthleteCare. All rights reserved.</div>
+  </footer>
+
+  <script>
+    const I18N = {
+      en: {
+        tagline: "Professional Performance Tracking",
+        nav_home: "Home",
+        nav_login: "Login / Register",
+        kicker: "Payment",
+        h1: "Payment canceled",
+        lead: "No worries — you can try again or start with a free trial. Your account can still be created.",
+        alert_t: "Nothing was charged.",
+        alert_p: "If you saw an error, it’s usually bank confirmation or a browser popup blocker. Just try again.",
+        cta_retry: "Try checkout again",
+        cta_trial: "Start free trial",
+        tips: "Tips: allow popups for this site, try another browser, or use a different card/payment method.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved."
+      },
+      de: {
+        tagline: "Professionelles Performance-Tracking",
+        nav_home: "Start",
+        nav_login: "Login / Registrierung",
+        kicker: "Zahlung",
+        h1: "Zahlung abgebrochen",
+        lead: "Kein Problem — du kannst es erneut versuchen oder mit einem Free Trial starten. Dein Konto kann trotzdem erstellt werden.",
+        alert_t: "Es wurde nichts abgebucht.",
+        alert_p: "Wenn du einen Fehler gesehen hast: häufig sind es Bank-Bestätigung oder Pop-up-Blocker. Versuch es einfach erneut.",
+        cta_retry: "Checkout erneut versuchen",
+        cta_trial: "Free Trial starten",
+        tips: "Tipps: Popups erlauben, anderen Browser testen oder andere Karte/Zahlungsmethode nutzen.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved."
+      },
+      uk: {
+        tagline: "Professional Performance Tracking",
+        nav_home: "Головна",
+        nav_login: "Вхід / Реєстрація",
+        kicker: "Оплата",
+        h1: "Оплату скасовано",
+        lead: "Все ок — можеш спробувати знову або почати з Free Trial. Акаунт все одно можна створити.",
+        alert_t: "Кошти не були списані.",
+        alert_p: "Якщо бачиш помилку — зазвичай це підтвердження банку або блокування попапів. Просто спробуй ще раз.",
+        cta_retry: "Спробувати оплату ще раз",
+        cta_trial: "Почати Free Trial",
+        tips: "Поради: дозволь попапи для сайту, спробуй інший браузер або інший спосіб оплати.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved."
+      },
+      es: {
+        tagline: "Seguimiento profesional del rendimiento",
+        nav_home: "Inicio",
+        nav_login: "Entrar / Registrarse",
+        kicker: "Pago",
+        h1: "Pago cancelado",
+        lead: "Sin problema — puedes intentarlo de nuevo o empezar con un Free Trial. Tu cuenta aún puede crearse.",
+        alert_t: "No se cobró nada.",
+        alert_p: "Si viste un error, suele ser confirmación bancaria o bloqueo de popups. Inténtalo de nuevo.",
+        cta_retry: "Reintentar checkout",
+        cta_trial: "Empezar Free Trial",
+        tips: "Consejos: permite popups, prueba otro navegador o usa otro método de pago.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved."
+      },
+      ru: {
+        tagline: "Профессиональный контроль спортивной формы",
+        nav_home: "Главная",
+        nav_login: "Вход / Регистрация",
+        kicker: "Оплата",
+        h1: "Оплата отменена",
+        lead: "Ничего страшного — можно попробовать снова или начать с Free Trial. Аккаунт всё равно можно создать.",
+        alert_t: "Списаний не было.",
+        alert_p: "Если была ошибка — обычно это подтверждение банка или блокировка попапов. Просто попробуйте ещё раз.",
+        cta_retry: "Повторить оплату",
+        cta_trial: "Начать Free Trial",
+        tips: "Советы: разрешите попапы, попробуйте другой браузер или другой способ оплаты.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved."
+      },
+      pt: {
+        tagline: "Monitorização profissional do desempenho",
+        nav_home: "Início",
+        nav_login: "Entrar / Registar",
+        kicker: "Pagamento",
+        h1: "Pagamento cancelado",
+        lead: "Sem stress — podes tentar novamente ou começar com um Free Trial. A tua conta pode ser criada na mesma.",
+        alert_t: "Nada foi cobrado.",
+        alert_p: "Se viste um erro, normalmente é confirmação do banco ou bloqueio de popups. Tenta novamente.",
+        cta_retry: "Tentar checkout novamente",
+        cta_trial: "Começar Free Trial",
+        tips: "Dicas: permite popups, tenta outro browser ou usa outro método de pagamento.",
+        footer_copy: "© 2026 ProAthleteCare. All rights reserved."
+      }
+    };
+
+    function setLang(lang){
+      const dict = I18N[lang] || I18N.uk;
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const val = dict[key];
+        if (val == null) return;
+        el.textContent = val;
+      });
+    }
+
+    const select = document.getElementById("langSelect");
+    const saved = localStorage.getItem("pac_lang");
+    const browser = (navigator.language || "uk").toLowerCase();
+    function detectBrowserLang(){
+      if (browser.startsWith("de")) return "de";
+      if (browser.startsWith("es")) return "es";
+      if (browser.startsWith("pt")) return "pt";
+      if (browser.startsWith("ru")) return "ru";
+      if (browser.startsWith("en")) return "en";
+      return "uk";
+    }
+    const initial = (saved && I18N[saved]) ? saved : detectBrowserLang();
+    select.value = initial;
+    setLang(initial);
+
+    select.addEventListener("change", (e) => {
+      const lang = e.target.value;
+      localStorage.setItem("pac_lang", lang);
+      setLang(lang);
+    });
+
+    // Optional: if you pass ?plan=plus, send user back to checkout with plan
+    (function(){
+      const p = new URLSearchParams(location.search);
+      const plan = (p.get("plan") || "").toLowerCase();
+      const btn = document.getElementById("ctaRetry");
+      if (!plan) return;
+      btn.href = "checkout.html?trial=1&plan=" + encodeURIComponent(plan);
+    })();
+  </script>
+</body>
+</html>

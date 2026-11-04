@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight Control | ProAthleteCare</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/weight-control.css?v=20260409c">
+    <link rel="stylesheet" href="../css/navigation-mobile.css">
+</head>
+<body class="weight-auth-pending">
+    <header>
+        <a href="../platform.html" class="logo-link">
+            <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo">
+        </a>
+        <h1 class="project-title">ProAthleteCare</h1>
+        <p class="tagline" id="weight-tagline">Professional Performance Tracking</p>
+        <button class="menu-toggle" id="menu-toggle-button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <div class="content-wrapper">
+        <nav class="sidebar" id="main-sidebar">
+            <a href="dashboard_user.html"> Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="injury.html">Injury Story <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="load-season.html">Load Season <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="daily-individual.html">Daily Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="weekly-individual.html">Weekly Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="weight-control.html">Weight Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="power.html">Power Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+
+            <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top: auto; padding: 15px; border-top: 1px solid #333; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="../assets/images/AK_logo.png" style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #FFC72C; object-fit: cover;" alt="AK">
+                    <span id="user-name" style="color: #FFC72C; font-weight: bold; font-size: 14px;">...</span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <h2 id="weight-main-title">Weight Control: Body Composition Analytics</h2>
+            <div class="pac-sensitive-disclaimer" data-pac-disclaimer="weight" role="note" style="background:#000;border:1px solid rgba(255,199,44,0.45);border-radius:10px;color:#FFC72C;font-size:12px;line-height:1.45;padding:10px 12px;margin:0 0 14px 0;">
+                Weight Control provides general fitness and nutrition guidance only. It is not medical, dietary, or clinical advice.
+            </div>
+            <div class="dashboard-container">
+                <div class="form-card" id="body-params-section">
+                    <h3 id="weight-card-body-title">Body Parameters</h3>
+                    <form id="weight-form">
+                        <div class="input-row-top" id="user-stats-container">
+                            <div id="stats-display" style="display: none; width: 100%; text-align: center; margin-bottom: 25px;">
+                                <div style="display: flex; justify-content: center; gap: 50px; align-items: center; background: #000; padding: 15px; border-radius: 12px; border: 1px solid #1a1a1a;">
+                                    <div class="stat-item">
+                                        <label id="weight-label-age" style="display:block; font-size:9px; color:#FFC72C; letter-spacing:1px; margin-bottom:5px;">AGE</label>
+                                        <span id="display-age" style="font-size: 28px; color: #fff; font-weight: 800;">--</span>
+                                    </div>
+
+                                    <div class="stat-item edit-trigger" onclick="enableEditStats()" style="cursor: pointer; transition: 0.3s;">
+                                        <div style="background: #FFC72C; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 199, 44, 0.2);">
+                                            <span style="color: #000; font-size: 18px; font-weight: bold;">✎</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-item">
+                                        <label id="weight-label-height" style="display:block; font-size:9px; color:#FFC72C; letter-spacing:1px; margin-bottom:5px;">HEIGHT</label>
+                                        <span id="display-height" style="font-size: 28px; color: #fff; font-weight: 800;">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="stats-inputs" style="display: flex; gap: 15px; width: 100%;">
+                                <div class="field-box" style="flex:1;">
+                                    <label id="weight-label-birthdate">Birthdate</label>
+                                    <input type="date" id="user-birthdate" onchange="autoSaveProfile()">
+                                </div>
+                                <div class="field-box" style="flex:1;">
+                                    <label id="weight-label-height-cm">Height (cm)</label>
+                                    <input type="number" id="user-height" placeholder="178" oninput="autoSaveProfile()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="weight-focus-area">
+                            <label id="weight-label-current-weight">Current weight (kg)</label>
+                            <input type="number" id="weight-value" step="0.1" placeholder="00.0" required>
+                        </div>
+
+                        <button type="submit" class="gold-button" id="weight-btn-save-analyze">Save and analyze</button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <h3 id="weight-card-scan-title">Composition Scan</h3>
+                    <div class="hologram-viewport">
+                        <div class="scan-beam"></div>
+                        <div class="main-circle">
+                            <small></small>
+                            <strong id="fat-percentage-value">--</strong>
+                        </div>
+                    </div>
+                    <div id="weight-scan-explain" class="scan-explain-shell">
+                        —
+                    </div>
+                </div>
+
+                <div class="form-card diet-card" id="diet-section">
+                    <h3 id="weight-card-nutrition-title">Nutrition Plan 40/30/30</h3>
+
+                    <div class="speed-selector" style="display: flex; gap: 5px; margin-bottom: 15px;">
+                        <button id="weight-speed-easy" type="button" onclick="setSpeed('Easy', this)" class="speed-btn active" style="flex:1; font-size: 10px; padding: 8px; background: #FFC72C; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 4px;">Fast</button>
+                        <button id="weight-speed-medium" type="button" onclick="setSpeed('Medium', this)" class="speed-btn" style="flex:1; font-size: 10px; padding: 8px; background: #222; color: #fff; border: 1px solid #FFC72C; cursor: pointer; border-radius: 4px;">Balanced</button>
+                        <button id="weight-speed-hard" type="button" onclick="setSpeed('Hard', this)" class="speed-btn" style="flex:1; font-size: 10px; padding: 8px; background: #222; color: #fff; border: 1px solid #FFC72C; cursor: pointer; border-radius: 4px;">Detailed</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                        <label id="weight-goal-title" for="weight-goal-mode" style="font-size:11px; color:#FFC72C; min-width:86px;">Goal mode</label>
+                        <select id="weight-goal-mode" style="flex:1; background:#111; color:#fff; border:1px solid #333; border-radius:6px; padding:8px 10px; font-size:11px;">
+                            <option id="weight-goal-auto" value="auto">Auto (from scan)</option>
+                            <option id="weight-goal-wl" value="wl">Weight loss</option>
+                            <option id="weight-goal-af" value="af">Athletic form</option>
+                            <option id="weight-goal-mg" value="mg">Muscle gain</option>
+                        </select>
+                    </div>
+
+                    <div id="athlete-recommendation-box" style="color: #FFC72C; font-size: 14px; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 10px;">
+                        Enter your data to get recommendation...
+                    </div>
+
+                    <button id="get-diet-plan-btn" class="gold-button" style="display:none; margin: 10px 0; width: 100%;">Generate weekly menu</button>
+
+                    <div id="diet-tabs-wrapper" style="display:none; margin-top:20px;">
+                        <div style="margin-bottom:10px; padding:10px; border:1px solid #2a2a2a; border-radius:10px; background:#0d0d0d;">
+                            <div id="diet-active-day-title" style="font-size:11px; color:#FFC72C; margin-bottom:4px;">Day plan</div>
+                            <div id="diet-active-day-hint" style="font-size:10px; color:#888; margin-bottom:8px;">Weekly menu is generated instantly for 7 days.</div>
+                            <div id="diet-week-days" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:2px;"></div>
+                            <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:10px;">
+                                <span id="diet-active-day-status" style="color:#FFC72C;">—</span>
+                                <span id="diet-active-day-date" style="color:#aaa;">—</span>
+                            </div>
+                            <div id="diet-active-day-kcal" style="margin-top:6px; font-size:10px; color:#777;">—</div>
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:15px;">
+                            <button onclick="switchDietTab('brf')" id="btn-brf" class="speed-btn" style="flex:1; font-size:9px; padding:10px; border: 1px solid #FFC72C; background: #111;">Breakfast</button>
+                            <button onclick="switchDietTab('lnc')" id="btn-lnc" class="speed-btn" style="flex:1; font-size:9px; padding:10px; border: 1px solid #FFC72C; background: #111;">Lunch</button>
+                            <button onclick="switchDietTab('din')" id="btn-din" class="speed-btn" style="flex:1; font-size:9px; padding:10px; border: 1px solid #FFC72C; background: #111;">Dinner</button>
+                        </div>
+                        <div id="diet-tab-content"></div>
+                    </div>
+
+                    <div class="remaining-balance" style="margin-top: 20px; border-top: 1px dashed #FFC72C; padding-top: 15px;">
+                        <div style="display:flex; justify-content: space-between; font-size: 12px;">
+                            <span><strong id="total-daily-kcal"></strong></span>
+                            <span style="color:#FFC72C"><strong id="calories-left"></strong></span>
+                        </div>
+                        <div id="bju-left-display" style="display:flex; justify-content:space-between; font-size:10px; color:#555; margin-top:5px; font-family:monospace;"></div>
+                    </div>
+
+                    <div class="nutrition-week-box" id="nutrition-week-section">
+                        <div class="nutrition-week-title" id="nutrition-week-title">Nutrition week review</div>
+                        <div class="nutrition-week-sub" id="nutrition-week-sub">Weekly completion: —</div>
+                        <div class="nutrition-week-grid" id="nutrition-week-grid">
+                            <div class="nutrition-week-empty" id="nutrition-week-empty">No weekly nutrition data yet.</div>
+                        </div>
+                    </div>
+                    <div class="nutrition-week-box" id="shopping-list-section" style="margin-top:12px;">
+                        <div class="nutrition-week-title" id="shopping-list-title">Weekly shopping list</div>
+                        <div class="nutrition-week-sub" id="shopping-list-sub">Auto-built from menu and goal mode.</div>
+                        <div id="shopping-week-summary"></div>
+                        <div id="shopping-list-box" style="margin-top:8px;">
+                            <div class="nutrition-week-empty">Generate weekly menu to see shopping list.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3 id="weight-chart-title">Progress Chart</h3>
+                    <div class="chart-container">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+
+                    <details style="margin-top: 15px; background: #000; border: 1px solid #FFC72C; border-radius: 8px;">
+                        <summary id="weight-history-summary" style="padding: 12px; cursor: pointer; color: #FFC72C; font-weight: 700; font-size: 12px; outline: none; list-style: none;">
+                            History logs (tap to view)
+                        </summary>
+                        <div id="weight-history-list" style="max-height: 200px; overflow-y: auto; padding: 5px 10px 10px 10px;">
+                            <div style="color: #444; font-size: 11px; text-align: center; padding: 10px;">Loading history...</div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <script src="../js/libs/chart.min.js"></script>
+    <script src="../config/firebase-config.js"></script>
+    <script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/diet-data.js"></script>
+    <script src="../js/diet-i18n.js?v=20260405c"></script>
+    <script src="../js/weight.js?v=20260409w14"></script>
+    <script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

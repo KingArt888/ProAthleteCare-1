@@ -316,6 +316,8 @@
 
     /** Selected training mode: "free" | "interval". */
     let sessionType = "free";
+    let boundTask = null, taskTickAt = 0, taskGpsError = null, dailyListener = null;
+    const dailyScope = (() => { try { const q = new URLSearchParams(location.search); return q.get('daily') === '1' ? {owner:q.get('owner'),key:q.get('task')} : null; } catch (_) { return null; } })();
 
     /** Selected activity: "walk" | "run" | "cycle". */
     let activityType = "run";
@@ -832,6 +834,7 @@
         gps.lastPoint = { lat: lat, lng: lon, timestamp: timestamp };
         gps.hasFix = true;
         gps.lastFixAt = Date.now();
+        taskGpsError = null;
 
         /* 7. movement decision over a short window of accepted fixes */
         pushWindow(lat, lon, timestamp);
@@ -958,6 +961,8 @@
 
     function onGpsError(error) {
         const code = error && typeof error.code === "number" ? error.code : 0;
+        taskGpsError = code === 1 ? 'denied' : code === 3 ? 'timeout' : 'unavailable';
+        if (boundTask) session.partial = true;
         if (code === 1) {
             setGpsStatus("denied");
             showNotice("Location permission is required to track your workout.", "error");
@@ -985,6 +990,7 @@
     }
 
     function startClock() {
+        taskTickAt = Date.now();
         clock.segmentStart = Date.now();
         stopTicker();
         clock.tickId = setInterval(onTick, CONFIG.TICK_MS);
@@ -1011,12 +1017,20 @@
     }
 
     function onTick() {
+        if (boundTask && state === STATE.RUNNING && Date.now() - taskTickAt > 3000) {
+            const gap = Date.now() - taskTickAt;
+            clock.accumulatedMs += Math.max(0, taskTickAt - clock.segmentStart);
+            clock.segmentStart = Date.now(); interval.phaseEndsAt += gap;
+            session.partial = true; pauseWorkout(); return;
+        }
+        taskTickAt = Date.now();
         renderElapsed();
         renderMetrics();
         updateInterval(Date.now());
         renderInterval();
         if (Date.now() - lastSaveAt >= 1000) persistSession();
         if (state === STATE.RUNNING && !hasFreshSpeed()) renderGpsLine();
+        if (boundTask && dailyListener) dailyListener();
     }
 
     /* ======================================================================
@@ -1026,14 +1040,16 @@
     function startInterval() {
         const settings = session.intervalSettings;
         interval.running = true;
-        interval.phase = "work";
+        interval.phase = boundTask?.planned?.prepSec > 0 ? "prep" : "work";
         interval.round = 1;
         interval.completedRounds = 0;
         interval.pausedAt = 0;
         interval.pausedRemaining = 0;
-        interval.phaseEndsAt = Date.now() + settings.workSec * 1000;
+        interval.phaseEndsAt = Date.now() + (interval.phase === 'prep' ? boundTask.planned.prepSec : settings.workSec) * 1000;
+        session.runningIntervals = [];
+        session.roundDistanceStart = session.totalDistance;
         el.intervalPanel.hidden = false;
-        signalPhase("work");
+        if (interval.phase === 'work') signalPhase("work");
     }
 
     /**
@@ -1046,12 +1062,28 @@
         if (state === STATE.PAUSED) return;
 
         const settings = session.intervalSettings;
+        if (boundTask && interval.phase === 'rest') {
+            const left=Math.ceil((interval.phaseEndsAt-now)/1000);
+            if(left>0&&left<=4&&interval.restCue!==left){interval.restCue=left;tone(550,.12,0,.16);}
+        }
+        if (boundTask && interval.phase === 'work' && boundTask.planned.cueEverySec > 0) {
+            const elapsed = settings.workSec - Math.max(0, (interval.phaseEndsAt - now) / 1000);
+            const cue = Math.floor(elapsed / boundTask.planned.cueEverySec);
+            if (cue > (interval.lastCue || 0) && now < interval.phaseEndsAt) { interval.lastCue = cue; tone(660,.1,0,.15); }
+        }
         let guard = 0;
 
         while (interval.phaseEndsAt - now <= 0 && guard < 500) {
             guard += 1;
 
-            if (interval.phase === "work") {
+            if (interval.phase === 'prep') {
+                interval.phase = 'work'; interval.phaseEndsAt += settings.workSec * 1000;
+                session.roundDistanceStart = session.totalDistance;
+                interval.lastCue = 0; signalPhase('work');
+            } else if (interval.phase === "work") {
+                if (boundTask) session.runningIntervals.push({round:interval.round, workSec:settings.workSec,
+                    completedAt:new Date(interval.phaseEndsAt).toISOString(),source:'timer',
+                    distanceM:gps.acquired ? Math.max(0,session.totalDistance-session.roundDistanceStart) : null});
                 interval.completedRounds = interval.round;
                 session.completedRounds = interval.round;
 
@@ -1060,12 +1092,16 @@
                     return;
                 }
                 interval.phase = "rest";
-                interval.phaseEndsAt += settings.restSec * 1000;
-                signalPhase("rest");
+                interval.restCue = null;
+                const p = boundTask?.planned;
+                const rest = p && p.blocks > 1 && interval.round % p.rounds === 0 && p.restBetweenSetsSec != null ? p.restBetweenSetsSec : settings.restSec;
+                interval.phaseEndsAt += rest * 1000;
+                if (rest > 0) signalPhase("rest");
             } else {
                 interval.phase = "work";
                 interval.round += 1;
                 interval.phaseEndsAt += settings.workSec * 1000;
+                session.roundDistanceStart = session.totalDistance; interval.lastCue = 0;
                 signalPhase("work");
             }
         }
@@ -1099,12 +1135,16 @@
         interval.phase = "complete";
         session.completedRounds = interval.completedRounds;
         signalPhase("complete");
+        if (boundTask) { finishWorkout(); return; }
         showNotice("Interval program complete. Finish when you are ready.", "success");
     }
 
     function phaseDurationMs() {
         const settings = session.intervalSettings;
-        const seconds = interval.phase === "rest" ? settings.restSec : settings.workSec;
+        const p=boundTask?.planned;
+        const seconds = interval.phase === 'prep' ? p?.prepSec : interval.phase === "rest"
+          ? p && p.blocks>1 && interval.round%p.rounds===0 && p.restBetweenSetsSec!=null ? p.restBetweenSetsSec : settings.restSec
+          : settings.workSec;
         return Math.max(1, finite(seconds, 1)) * 1000;
     }
 
@@ -1166,6 +1206,7 @@
     }
 
     function tone(frequency, duration, delay, volume) {
+        if (boundTask && !boundTask.soundEnabled) return;
         if (!audioCtx) return;
         try {
             const start = audioCtx.currentTime + (delay || 0);
@@ -1196,8 +1237,10 @@
     }
 
     function signalPhase(phase) {
+        if (boundTask && phase === 'rest') return;
+        if (boundTask && phase === 'complete') { tone(1180,.4,0,.2); return; }
         if (phase === "work") {
-            tone(880, 0.16, 0, 0.22);
+            tone(880, boundTask ? .5 : 0.16, 0, 0.22);
             vibrate(180);
         } else if (phase === "rest") {
             tone(520, 0.16, 0, 0.18);
@@ -1255,9 +1298,16 @@
 
     function createSession() {
         session.sessionId = 's-' + crypto.randomUUID();
+        session.fieldSelection=activityType==='run'?(window.PACFieldReplay?.bindSession?.(session.sessionId)||null):null;
+        if (boundTask) {
+            boundTask.sessionId = session.sessionId;
+            session.dailyTask = JSON.parse(JSON.stringify(boundTask));
+            session.dailyOwner = dailyScope.owner; session.dailyKey = dailyScope.key;
+        } else { delete session.dailyTask; delete session.dailyOwner; delete session.dailyKey; }
         session.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         session.day = new Date().toLocaleDateString('sv-SE');
-        session.partial = false;
+        session.partial = boundTask?.gpsMode === 'none';
+        session.gpsEvidence = false; taskGpsError = null;
         session.activityType = activityType;
         session.sessionType = sessionType;
         session.state = state;
@@ -1303,6 +1353,7 @@
     }
 
     function readIntervalSettings() {
+        if (boundTask) return {workSec:boundTask.planned.workSec,restSec:boundTask.planned.restSec ?? 0,rounds:boundTask.planned.sets};
         const clampInput = function (input, min, max, fallback) {
             if (!input) return fallback;
             const value = parseInt(input.value, 10);
@@ -1318,6 +1369,7 @@
 
     function startWorkout() {
         if (state !== STATE.READY || !storageReady) return;
+        if(boundTask&&boundTask.gpsMode!=='none'&&(!boundTask.gpsReadyAt||Date.now()-boundTask.gpsReadyAt>60000))return;
 
         ensureAudio();
         clearNotice();
@@ -1330,9 +1382,9 @@
         limits = ACTIVITY[activityType] || ACTIVITY.run;
 
         state = STATE.STARTING;
-        createSession();
+        try{createSession();}catch(error){state=STATE.READY;renderControls();throw error;}
 
-        if (!startGps()) {
+        if (boundTask?.gpsMode !== 'none' && !startGps()) {
             // GPS could not even be requested: stay usable, let the user retry.
             state = STATE.READY;
             showScreen("home");
@@ -1394,7 +1446,7 @@
         resumeInterval();
         // Drop the stale chain so the paused gap is never counted as distance.
         breakGpsChain();
-        startGps();
+        if (boundTask?.gpsMode !== 'none') startGps();
         showScreen("live");
         renderWorkoutState();
         renderControls();
@@ -1799,6 +1851,48 @@
        ====================================================================== */
 
     const PAC = {
+        subscribe: function(listener) { dailyListener=typeof listener==='function'?listener:null; },
+        bindTask: function(task) {
+            if (!storageReady || !dailyScope?.owner || !dailyScope.key || task?.context?.userId !== dailyScope.owner || task.mode !== 'running' || !task.ready) throw Error('INVALID_DAILY_TASK');
+            const p = task.planned;
+            if (!(p.workSec > 0) || !Number.isInteger(p.sets) || p.sets < 1 || p.sets > 500 || (p.restSec != null && p.restSec < 0)) throw Error('INVALID_DAILY_TIMING');
+            boundTask = session.dailyTask ? JSON.parse(JSON.stringify(session.dailyTask)) : JSON.parse(JSON.stringify(task));
+            boundTask.executionId ||= 'exec-' + crypto.randomUUID();
+            activityType = 'run'; sessionType = 'interval'; return PAC.getLive();
+        },
+        requestLocation: function() {
+            ensureAudio();
+            return new Promise(resolve => {
+                if (!navigator.geolocation?.getCurrentPosition) { taskGpsError='unavailable'; resolve({ready:false,reason:taskGpsError}); return; }
+                navigator.geolocation.getCurrentPosition(position => {
+                    const c=position.coords;
+                    const ready=Number.isFinite(c.latitude)&&Number.isFinite(c.longitude)&&Number.isFinite(c.accuracy)&&c.accuracy<=CONFIG.ACQUIRE_ACCURACY_M;
+                    taskGpsError=ready?null:'weak'; if(boundTask) boundTask.gpsReadyAt=ready?Date.now():null;
+                    resolve({ready,reason:taskGpsError,accuracy:c.accuracy});
+                },error=>{taskGpsError=error.code===1?'denied':'unavailable';resolve({ready:false,reason:taskGpsError});}, {enableHighAccuracy:true,timeout:10000,maximumAge:0});
+            });
+        },
+        useTimerOnly: function() { if(!boundTask || state!==STATE.READY) throw Error('TASK_ALREADY_STARTED'); boundTask.gpsMode='none'; },
+        usePhoneGPS: function() { if(!boundTask || state!==STATE.READY)throw Error('TASK_ALREADY_STARTED');boundTask.gpsMode='phone';boundTask.gpsReadyAt=null;taskGpsError=null; },
+        configureField: function(mode,id){return window.PACFieldReplay.configure(mode,id);},
+        editField: function(edit,onClose){return window.PACFieldReplay.editSetup(edit,onClose);},
+        restartTask: function(task) {
+            if(!boundTask||state!==STATE.FINISHED)throw Error('TASK_NOT_FINISHED');
+            resetToReady();delete session.dailyTask;session.gpsEvidence=false;
+            if(task)PAC.bindTask(task);
+            boundTask.executionId='exec-'+crypto.randomUUID();boundTask.sessionId=null;boundTask.gpsReadyAt=null;
+        },
+        setSound: function(enabled,test) { ensureAudio(); if(boundTask)boundTask.soundEnabled=Boolean(enabled); if(test&&enabled)tone(880,.15,0,.2); },
+        flush: function() { return persistSession().then(()=>{if(lastLocalSaveError)throw Error('LOCAL_SAVE_FAILED');}); },
+        getLive: function() {
+            return {storageReady,state,phase:state===STATE.FINISHED?'complete':interval.phase,round:interval.round,
+                remainingSec:Math.ceil(intervalRemainingMs()/1000),completedRounds:session.completedRounds,
+                phaseDurationSec:phaseDurationMs()/1000,phaseElapsedSec:Math.max(0,(phaseDurationMs()-intervalRemainingMs())/1000),
+                soundEnabled:Boolean(boundTask?.soundEnabled),timerOnly:boundTask?.gpsMode==='none',
+                gpsReady:Boolean(boundTask?.gpsReadyAt&&Date.now()-boundTask.gpsReadyAt<60000),
+                gpsStatus:taskGpsError || (gps.acquired?'active':'acquiring'),accuracy:gps.accuracy,
+                fieldSetup:window.PACFieldReplay?.setup?.()||null};
+        },
         start: startWorkout,
         pause: pauseWorkout,
         resume: resumeWorkout,
@@ -1811,7 +1905,7 @@
          * Clean, serialisable session record. This is the shape intended
          * for later upload into ProAthleteCare / Firebase.
          */
-        getSession: function () {
+        getSession: function (options = {}) {
             return {
                 activityType: session.activityType,
                 sessionType: session.sessionType,
@@ -1831,13 +1925,17 @@
                 quality: { status: session.partial ? 'partial' : 'unknown', validation: 'client' },
                 provenance: 'browser-geolocation-wgs84:v1',
                 routeRef: 'indexeddb:pac-gps/sessions/' + session.sessionId,
-                route: JSON.parse(JSON.stringify(session.route)),
+                route: options.includeRoute === false ? [] : JSON.parse(JSON.stringify(session.route)),
                 intervalSettings: {
                     workSec: session.intervalSettings.workSec,
                     restSec: session.intervalSettings.restSec,
                     rounds: session.intervalSettings.rounds
                 },
-                completedRounds: session.completedRounds
+                completedRounds: session.completedRounds,
+                dailyTask: session.dailyTask ? JSON.parse(JSON.stringify(session.dailyTask)) : null,
+                fieldSelection:session.fieldSelection?JSON.parse(JSON.stringify(session.fieldSelection)):null,
+                runningIntervals: JSON.parse(JSON.stringify(session.runningIntervals || [])),
+                gps: {mode:boundTask?.gpsMode==='none'?'none':'phone',hasMeasurements:Boolean(gps.acquired||session.gpsEvidence),status:taskGpsError || (gps.acquired||session.gpsEvidence?'active':'unavailable')}
             };
         },
         /** Internal diagnostics, deliberately not shown in the athlete UI. */
@@ -1861,7 +1959,7 @@
     }
 
 
-    let storageReady = false, localDb = null, lastSaveAt = 0;
+    let storageReady = false, localDb = null, lastSaveAt = 0, lastLocalSaveError = false;
     let saveQueue = Promise.resolve();
     function breakGpsChain() {
         gps.lastPoint = null; gps.lastSpeedAt = 0; gps.routeBreak = true; gps.replayBreak = true;
@@ -1871,14 +1969,15 @@
         if (!localDb || !session.sessionId || state === STATE.READY) return saveQueue;
         lastSaveAt = Date.now();
         const record = JSON.parse(JSON.stringify({ ...session,
+            gpsEvidence: Boolean(gps.acquired || session.gpsEvidence),
             activeDuration: activeDurationMs(), movingMs: movingDurationMs(), savedAt: lastSaveAt,
             intervalSnapshot: { ...interval, pausedRemaining: intervalRemainingMs() } }));
         saveQueue = saveQueue.then(() => new Promise((resolve, reject) => {
             const tx = localDb.transaction('sessions', 'readwrite');
             tx.objectStore('sessions').put(record);
-            tx.oncomplete = resolve;
+            tx.oncomplete = () => {lastLocalSaveError=false;resolve();};
             tx.onerror = tx.onabort = () => reject(tx.error || Error('Storage transaction failed'));
-        })).catch(() => showNotice('Local save failed. Keep this page open; storage may be full or unavailable.', 'error'));
+        })).catch(() => {lastLocalSaveError=true;showNotice('Local save failed. Keep this page open; storage may be full or unavailable.', 'error');});
         return saveQueue;
     }
     async function restoreLocal() {
@@ -1893,7 +1992,7 @@
                 const req = localDb.transaction('sessions').objectStore('sessions').getAll();
                 req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error);
             });
-            const sorted = records.sort((a,b) => b.savedAt - a.savedAt);
+            const sorted = records.filter(r => dailyScope ? r.dailyOwner===dailyScope.owner&&r.dailyKey===dailyScope.key : !r.dailyOwner).sort((a,b) => b.savedAt - a.savedAt);
             const saved = sorted.find(r => r.state !== STATE.FINISHED) || sorted[0];
             if (saved) {
                 Object.assign(session, saved);
@@ -1905,7 +2004,7 @@
                 } else {
                     state = STATE.PAUSED; session.state = state; session.partial = true;
                     Object.assign(interval, saved.intervalSnapshot || {});
-                    interval.running = sessionType === 'interval' && ['work', 'rest'].includes(interval.phase);
+                    interval.running = sessionType === 'interval' && ['prep', 'work', 'rest'].includes(interval.phase);
                     interval.pausedAt = Date.now();
                     breakGpsChain(); showScreen('live'); renderWorkoutState(); renderElapsed(); renderMetrics(); renderInterval();
                     showNotice('Saved session recovered, paused. Resume or Finish as partial. Time offline has no GPS measurements.');

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Individual | ProAthleteCare</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/weekly-individual.css"> 
+    
+    <link rel="stylesheet" href="../css/navigation-mobile.css">
+    </head>
+<body>
+    <header>
+    <a href="../platform.html" class="logo-link">
+        <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo">
+        </a>
+        <h1 class="project-title">ProAthleteCare</h1>
+    
+        <p class="tagline" id="daily-tagline">Онлайн-тренінг та професійний супровід атлетів</p>
+        <button class="menu-toggle" id="menu-toggle-button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+    
+    <div class="content-wrapper">
+        <nav class="sidebar" id="main-sidebar">
+            <a href="dashboard_user.html"> Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="injury.html">Injury Story <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="load-season.html">Load Season <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="daily-individual.html">Daily Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="weekly-individual.html">Weekly Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="weight-control.html">Weight Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="power.html">Power Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+
+        <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top: auto; padding: 15px; border-top: 1px solid #333; cursor: pointer;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../assets/images/AK_logo.png" style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #FFC72C; object-fit: cover;">
+                <span id="user-name" style="color: #FFC72C; font-weight: bold; font-size: 14px;">...</span>
+            </div>
+        </div>
+    </nav>
+
+        <main class="main-content">
+            <h2 id="daily-page-title" style="color: #fff; font-weight: 800; margin-bottom: 5px;">🔥 Ваш Індивідуальний План</h2>
+            <p id="current-date-display" class="sub-header" style="color: #666; font-size: 0.9rem; margin-bottom: 25px;"></p>
+
+            <div id="athlete-welcome">
+            <p id="daily-loading-profile" style="color: #444; padding: 20px;">Завантаження профілю атлета...</p>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #1a1a1a; margin: 30px 0;">
+
+            <div id="daily-exercise-list">
+            <p id="daily-loading-plan" style="text-align: center; color: #444; padding: 40px;">Завантаження плану тренування...</p>
+        </div>
+
+            <section id="user-feedback-container" class="feedback-block" style="margin-top: 40px;">
+            </section>
+            </main>
+        </div>
+
+    <footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+
+<script src="../config/firebase-config.js"></script>
+
+<script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+
+<script src="../js/settings.js"></script>
+<script src="../js/exercise_library.js?v=20260411z3"></script>
+<script src="../js/drill-local-storage.js?v=20260926-storage-v1"></script>
+<script src="../js/drill-library-integration.js?v=20261016-sport-library"></script>
+<script src="../js/exercise-task.js?v=20261104-series-clock-v1"></script>
+<script src="../js/strength-execution.js?v=20261104-journal-v2"></script>
+<script src="../js/session-normalizer.js?v=20261104-journal-v1"></script>
+<script src="../js/session-repository.js?v=20261104-series-clock-v1"></script>
+<script src="../js/session-journal.js?v=20261104-field-setup-v1"></script>
+<script src="../GPS_TRAINING/session-adapter.js?v=20261104-field-setup-v1"></script>
+<script src="../js/daily-running.js?v=20261104-route-timing-v1"></script>
+<script src="../js/daily-individual.js?v=20261104-series-clock-v1"></script>
+<script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<style>
+    :root { 
+        --plyr-color-main: #d4af37; 
+        --plyr-video-background: #000;
+    }
+    .plyr--full-ui input[type=range] { color: #d4af37; }
+    .plyr__control--overlaid { background: rgba(212, 175, 55, 0.8); }
+    
+    .plyr__video-embed iframe { transform: scale(1.2); } 
+</style>
+
+
+</body>
+</html>
+
+
+
+
+
+
+

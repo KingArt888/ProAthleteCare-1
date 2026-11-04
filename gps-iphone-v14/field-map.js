@@ -122,6 +122,7 @@
     panel.hidden=true;saving=false;document.body.classList.remove('field-map-open');
     const app=document.querySelector('.app');if(app)app.inert=false;
     if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
+    const callback=close.callback;close.callback=null;if(callback)callback();
   }
   async function search(event){
     event.preventDefault();const query=$('mapSearch').value.trim();
@@ -189,8 +190,8 @@
     }
   });
   root.PACFieldMap={
-    open({record=null,onSave}){
-      if(!panel.hidden)close();returnFocus=document.activeElement;saveCallback=onSave;draft=null;corners=[];saving=false;
+    open({record=null,onSave,onClose=null}){
+      if(!panel.hidden)close();close.callback=onClose;returnFocus=document.activeElement;saveCallback=onSave;draft=null;corners=[];saving=false;
       $('mapFieldName').value=record?.name||'';$('mapSearch').value='';$('mapSearchResults').hidden=true;$('mapSearchResults').replaceChildren();
       $('mapOptions').open=false;$('mapSport').value=record?.calibration?.sport||'football';$('mapVariant').value=record?.calibration?.variant||'standard';
       $('mapSelectionMode').value=record?.calibration?.selectionMode|| (record?'pitch':'area');$('mapExtent').value=record?.calibration?.extent||'goal-lines';$('mapInGoalStart').value=record?.calibration?.inGoal?.start||'';$('mapInGoalEnd').value=record?.calibration?.inGoal?.end||'';

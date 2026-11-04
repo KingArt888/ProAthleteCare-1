@@ -1,0 +1,889 @@
+{
+  "build": "daily-phone-20261104-v1",
+  "builtAt": "2026-11-04T21:16:07.695Z",
+  "base": "/ProAthleteCare-1/gps-iphone-v14/",
+  "calibrationStorage": "pac-gps-field-calibrations-v1",
+  "sessionStorage": "pac-gps",
+  "files": [
+    {
+      "file": "pages/app-access-required.html",
+      "bytes": 3292,
+      "sha256": "66fc8392e629aae5dc7ceba996bac74b2246d4e19964ef273a956a8261f44de5"
+    },
+    {
+      "file": "pages/auth-action.html",
+      "bytes": 4176,
+      "sha256": "1c2b5ebb4b7028a5f09ccbf5b857029baa0826a6c74c29cea44aacd93025c9cf"
+    },
+    {
+      "file": "pages/coach-dashboard.html",
+      "bytes": 7527,
+      "sha256": "1e0544318d5040d2794b757f4e15fd59632746809482abe8f56de388d40bfe8d"
+    },
+    {
+      "file": "pages/coach-date-plan.html",
+      "bytes": 4065,
+      "sha256": "dd70851a94827ac22a5878c54423a9fd46fba86918f33f3fea31c5504a7b243a"
+    },
+    {
+      "file": "pages/coach-week-editor.html",
+      "bytes": 14773,
+      "sha256": "b81ab321f5b8bab83c6126a7da4e4d8f9c7cf3d7612a0694c845f950bc33aa80"
+    },
+    {
+      "file": "pages/daily-individual.html",
+      "bytes": 5691,
+      "sha256": "6b5bff802b5b3e2e4c066d6373e34cd04eb4ad7922c55afb7bb7d2dcfd2fa29a"
+    },
+    {
+      "file": "pages/dashboard.html",
+      "bytes": 5064,
+      "sha256": "912161084b4cd8fd4b471cbd37a5904b86717ee9490ba1b0b045678c8670f8e3"
+    },
+    {
+      "file": "pages/dashboard_user.html",
+      "bytes": 11529,
+      "sha256": "31ee0f7ea96e82c887882a5270d580aa29f815f48a01ad72303c6548388dc3af"
+    },
+    {
+      "file": "pages/drill-canvas-editor.html",
+      "bytes": 44350,
+      "sha256": "1520b93ac6e5a4306b964dc60575dc6c9389037677538163af2a23c889ce2a35"
+    },
+    {
+      "file": "pages/drill-player.html",
+      "bytes": 2703,
+      "sha256": "a251fddc6c3a2187aa8d201910423f8c1bb74447db40d1c290d70214806062c9"
+    },
+    {
+      "file": "pages/drill-storage-recovery.html",
+      "bytes": 789,
+      "sha256": "5ec9f2d5fa2561687f988bc525420de2b2ab6ffce28ff0f3f761913d00920fcf"
+    },
+    {
+      "file": "pages/injury.html",
+      "bytes": 19158,
+      "sha256": "16fe051287893105acda86adc56a0f32b22add3cd8a5edbff45a0956a2f1f3d4"
+    },
+    {
+      "file": "pages/load-season.html",
+      "bytes": 15443,
+      "sha256": "b670a45e7888b3d8a14f93b4f830d96a6f603fcea2785e17e04c706aae914fc1"
+    },
+    {
+      "file": "pages/power-hub.html",
+      "bytes": 123,
+      "sha256": "eb0feac39fd0ff1dba5a7530e1264644875d947aea4839297b6742352d69a1af"
+    },
+    {
+      "file": "pages/power.html",
+      "bytes": 8893,
+      "sha256": "3f28df3a76314d1a66042820ef56bfa31039365a0f11ac4f69bf6b31cc575981"
+    },
+    {
+      "file": "pages/profile.html",
+      "bytes": 901,
+      "sha256": "008f1ea67bb6d2c981116eb645c11c78b2b043f8f58f087dfeaffb2af0712171"
+    },
+    {
+      "file": "pages/regist.html",
+      "bytes": 7904,
+      "sha256": "abcfa3b0741d03a6f5ea8f89ff07fab797b6f17e0506c090a28563074b28b0b0"
+    },
+    {
+      "file": "pages/weekly-individual.html",
+      "bytes": 12107,
+      "sha256": "d7a99fd0fba572d82205387b35960740ecaf3b1b561b812f6781d921392bead2"
+    },
+    {
+      "file": "pages/weight-control.html",
+      "bytes": 15536,
+      "sha256": "a5fb05712b4f0d98c7502c946dc106220f72c4197cffb84da0d0551030637709"
+    },
+    {
+      "file": "pages/wellness.html",
+      "bytes": 26819,
+      "sha256": "fd5208fcbaf8717b966b876cc67eff668e6ec8d7d161167f690e2a63c0b8f2ed"
+    },
+    {
+      "file": "js/admin.js",
+      "bytes": 94909,
+      "sha256": "6461575f95ec3670191737ff9f2f9e71ce875dbdd5c0849a0937c756d8de70ea"
+    },
+    {
+      "file": "js/athlete-core-loader.js",
+      "bytes": 22325,
+      "sha256": "f1043f0ccb9da3ac139e8bfbc17b3653f85c94b4317307520dc045c9a1e39ee0"
+    },
+    {
+      "file": "js/athlete-core.js",
+      "bytes": 31848,
+      "sha256": "216795cca80542cfb9921d8d70fa05034d462799ef085641481a97101303686e"
+    },
+    {
+      "file": "js/auth-action.js",
+      "bytes": 36596,
+      "sha256": "4bceab6f7a8d95cd52c7ca92f8f56c9dd46cea2efc50746475647099be779072"
+    },
+    {
+      "file": "js/auth-guard.js",
+      "bytes": 24368,
+      "sha256": "2978bb70563cf06ec19c5144036cb4855de40a7322f0bc9fe9c9b307aaf4d2b2"
+    },
+    {
+      "file": "js/auth-v9.js",
+      "bytes": 951,
+      "sha256": "95cedcb11249ca9ff10433291f9f052d4fedf7bd19a22209bc04016b6276a318"
+    },
+    {
+      "file": "js/auth.js",
+      "bytes": 2893,
+      "sha256": "81810bcb8d4a924dc9485cf73efea8debc78ff3ce0e20fc34663deffbadc5df6"
+    },
+    {
+      "file": "js/coach-dashboard.js",
+      "bytes": 35737,
+      "sha256": "c244b1bb3cdcab441bf4a65010d229eefbed7433131f628f0f8330d068ead046"
+    },
+    {
+      "file": "js/coach-date-plan.js",
+      "bytes": 27903,
+      "sha256": "019dff815b39f377e52facb3576aacbcdfa29d2752bde4b58e202ca71c7ef5e2"
+    },
+    {
+      "file": "js/coach-week-editor.js",
+      "bytes": 62715,
+      "sha256": "54904b0169c89c30b78eadc54a843e5a7ded4302d45d1fa37ed59e1cc9076d53"
+    },
+    {
+      "file": "js/daily-individual.js",
+      "bytes": 292747,
+      "sha256": "ae43e3eab027671352216a37732a636eeacfb6386c7c7d53e6f77bbec4968bb2"
+    },
+    {
+      "file": "js/daily-running.js",
+      "bytes": 6786,
+      "sha256": "c94d49ada975061f2a215e3192e768a540e16a8e6e63c118b5776e8781b30fdc"
+    },
+    {
+      "file": "js/dashboard.js",
+      "bytes": 11438,
+      "sha256": "5f5c7b4fc1f35489a30c20ea48c833889207d2ce4023a03586306d0a9fb759f7"
+    },
+    {
+      "file": "js/dashboard_user.js",
+      "bytes": 125781,
+      "sha256": "9616ffbca4e48a0587564424fbfefb4a94e327039accea365b944f27af3280b0"
+    },
+    {
+      "file": "js/diet-data.js",
+      "bytes": 13937,
+      "sha256": "5bb15ea9c551a9aabcd4ea50fb1b3a28cf1d872d7dbb6d28e63cf4da5b1112ac"
+    },
+    {
+      "file": "js/diet-i18n.js",
+      "bytes": 29917,
+      "sha256": "e6cfa7de81f0454d4428cbd3c9a80e21b83a84459fc7a5a84b0e33f81f7b7f5c"
+    },
+    {
+      "file": "js/drill-canvas-editor.js",
+      "bytes": 1223999,
+      "sha256": "e82ff6163db79097043f569060d087248e6c63d1854b16ef6bcc56fc22699b84"
+    },
+    {
+      "file": "js/drill-canvas-scheduler.js",
+      "bytes": 12637,
+      "sha256": "ecf16a76afdff1fb4036622cb4c50efa4ccb8019e1c633b4438954aa4b54f5f9"
+    },
+    {
+      "file": "js/drill-equipment-playback.js",
+      "bytes": 3546,
+      "sha256": "8c94cc4e1788a70907476f197acfdb8550fcd59d68915077462411ded59d46e0"
+    },
+    {
+      "file": "js/drill-library-integration.js",
+      "bytes": 20083,
+      "sha256": "1449fe32d45358afca8939678eefc116da113cc20d830c4dc647908ab5bd7007"
+    },
+    {
+      "file": "js/drill-local-storage.js",
+      "bytes": 1981,
+      "sha256": "7ddbe150835fd19b3db6ae67b603c1f08ff030a5614c3ac425f84cc63db405fa"
+    },
+    {
+      "file": "js/drill-player-kit.js",
+      "bytes": 11637,
+      "sha256": "a6613db3d897fb34f50d1de0dea790bcae410b1550d82938f87eb2ca2baa5d34"
+    },
+    {
+      "file": "js/drill-player.js",
+      "bytes": 88576,
+      "sha256": "9333f70790f782423ef70c3e108d40ce3986fd8a8409208dbe6c2718def93328"
+    },
+    {
+      "file": "js/drill-reels.js",
+      "bytes": 14454,
+      "sha256": "548223144112bcad3f1febab22a35eadb679c420abd6352b5a5decc9afb3a0c7"
+    },
+    {
+      "file": "js/drill-storage-recovery.js",
+      "bytes": 2389,
+      "sha256": "3b1895ee0286a145ba733fc17ee0c78c8113ed5b889de08bf2646108ecab3b3a"
+    },
+    {
+      "file": "js/exercise-task.js",
+      "bytes": 16089,
+      "sha256": "2a0e5ef980578dbb82d8f366647f205df3718ae75726fbbba9c3591ea8e344c7"
+    },
+    {
+      "file": "js/exercise_library.js",
+      "bytes": 64864,
+      "sha256": "b5538ce654655481c8dc6b76168daa90ecbc123a7750e144ac96793d09a72fc8"
+    },
+    {
+      "file": "js/injury.js",
+      "bytes": 113670,
+      "sha256": "811dd3dabeef5e7b67b6c46c29934ee3a1f2eea18adad64e2ba5a08cd8220d35"
+    },
+    {
+      "file": "js/libs/camera_utils.js",
+      "bytes": 7902,
+      "sha256": "183a2c4494ff2ee86d9e6ef5c9cb04e273583704af59558f04497c983c654ae7"
+    },
+    {
+      "file": "js/libs/chart.min.js",
+      "bytes": 208534,
+      "sha256": "ad54d75eb8c321ca85779e01685dc2dcf81d209a4c5c0cc599319c1791b2842c"
+    },
+    {
+      "file": "js/libs/drawing_utils.js",
+      "bytes": 3778,
+      "sha256": "4ea424726153e80464133d003ecfaa3e437f7eff65f8f2a19509167b7db9b828"
+    },
+    {
+      "file": "js/libs/pose/pose.js",
+      "bytes": 47188,
+      "sha256": "2d1753832993d52d3ffbee0b2bec6051b52cf4114f7611975696c5a5fc4262b3"
+    },
+    {
+      "file": "js/libs/pose/pose_landmark_full.tflite",
+      "bytes": 6440512,
+      "sha256": "e9a5c5cb17f736fafd4c2ec1da3b3d331d6edbe8a0d32395855aeb2cdfd64b9f"
+    },
+    {
+      "file": "js/libs/pose/pose_landmark_heavy.tflite",
+      "bytes": 27709200,
+      "sha256": "59e42d71bcd44cbdbabc419f0ff76686595fd265419566bd4009ef703ea8e1fe"
+    },
+    {
+      "file": "js/libs/pose/pose_landmark_lite.tflite",
+      "bytes": 2819824,
+      "sha256": "f17bfbecadb61c3be1baa8b8d851cc6619c870a87167b32848ad20db306b9d61"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_packed_assets.data",
+      "bytes": 2962288,
+      "sha256": "a63c614bef30d35947f13be361820b1e4e3bec9cfeebf4d11216a18373108e85"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_packed_assets_loader.js",
+      "bytes": 8193,
+      "sha256": "cf0c957f00a00ae8cd0bb71ecc9b97b71edc7420bad1c0fe7b320701c5af10bf"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_simd_wasm_bin.data",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_simd_wasm_bin.js",
+      "bytes": 276499,
+      "sha256": "e1f81908099c4672fe237681585dd2fe26ca4d6fda6f8a67d19e456b100d1b54"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_simd_wasm_bin.wasm",
+      "bytes": 6104372,
+      "sha256": "195a929430e2ce130b3efb82e64ba27c8e68cb0f6bad870b715688060ea6f7e2"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_wasm_bin.js",
+      "bytes": 276494,
+      "sha256": "cf0246578d45d88c4fbe6799de3ffdaeb9b4007c53c11375bc3333711269a635"
+    },
+    {
+      "file": "js/libs/pose/pose_solution_wasm_bin.wasm",
+      "bytes": 5994571,
+      "sha256": "a5589369289e1f1e007c106e8ffb26e85a5be762c6db9551ed36213f8f58378d"
+    },
+    {
+      "file": "js/libs/pose/pose_web.binarypb",
+      "bytes": 1007,
+      "sha256": "dc8efd1c2d62007b34278467407fda5f70847f41310e0e39f0f59fc17b1d01f7"
+    },
+    {
+      "file": "js/libs/pose.js",
+      "bytes": 47186,
+      "sha256": "cee088758e673f723e9fed2a154a650b72a380873fc1dbf277a986eb49c41a1e"
+    },
+    {
+      "file": "js/load-season.js",
+      "bytes": 64865,
+      "sha256": "308bd9fd95c4fa8e3c6914bd1503504c0f7ce21f17271b6e34505c7cc07f0f70"
+    },
+    {
+      "file": "js/navigation-common.js",
+      "bytes": 185359,
+      "sha256": "e1eeb56789ce5933bca7d6e91c1b75bb55e28d6fdfe225ca25639f74cf92c42d"
+    },
+    {
+      "file": "js/power.js",
+      "bytes": 59950,
+      "sha256": "db771057724e9df1ad13ebd965dc880392be26eb37c5fa1adfb6c7bc1711035a"
+    },
+    {
+      "file": "js/pwa-register.js",
+      "bytes": 6420,
+      "sha256": "0e5f8b1faa2d1a5ca185e0e11b62d418086b9705442ae86836b6720248096782"
+    },
+    {
+      "file": "js/regist-i18n.js",
+      "bytes": 40930,
+      "sha256": "173cc189aa289a80953d214455987d87e5b493df8c06a8cc3176ab7ab8f76bb9"
+    },
+    {
+      "file": "js/regist.js",
+      "bytes": 40699,
+      "sha256": "7386eebba1f7702ec8891d00fbf5f5b6b516e92a989c54b5f2d596c8609cc32a"
+    },
+    {
+      "file": "js/script.js",
+      "bytes": 445,
+      "sha256": "a7cfa4cada82c15d380801b93ceaf2cc68f5a64948662ad83e31eec5c0a4e9a4"
+    },
+    {
+      "file": "js/session-journal.js",
+      "bytes": 13705,
+      "sha256": "053fb01082479bc4d12a58e7ebbfcd2a3a7831005f636042c616dec10e4cb977"
+    },
+    {
+      "file": "js/session-normalizer.js",
+      "bytes": 20776,
+      "sha256": "aad9648056ec2df489b32bdc99720db43567aebb77f319b58644934eff8a6b9c"
+    },
+    {
+      "file": "js/session-repository.js",
+      "bytes": 21832,
+      "sha256": "2f570af8d3707d9c26f5f4322cd818bd0597cf255cabfb22918b595be1a696db"
+    },
+    {
+      "file": "js/settings.js",
+      "bytes": 15245,
+      "sha256": "fcf755f47da1048dc35f0aed2369c2e12bce1d49273190f63a5fc163dec01b1a"
+    },
+    {
+      "file": "js/site-lock.js",
+      "bytes": 4836,
+      "sha256": "8ca59a326d86ba24a9ceca47d3135bb8274de2e0f1bfbb3780447f2392dbcc96"
+    },
+    {
+      "file": "js/strength-execution.js",
+      "bytes": 13246,
+      "sha256": "43a80f3f9bca2625e9210102372e6be04d8abbaa5c841c2d1ce238ec51a5d247"
+    },
+    {
+      "file": "js/vendor/konva-9.3.22.min.js",
+      "bytes": 175354,
+      "sha256": "4655b6cd12d0d2ee5f6d461fa98c3611b1f9979b9106f18221bf0e6a90ab6745"
+    },
+    {
+      "file": "js/vendor/KONVA-LICENSE.txt",
+      "bytes": 1172,
+      "sha256": "7190132c82df30243dc2ba512c9509ea3b629329b4266e9f2c3b5dbd04029613"
+    },
+    {
+      "file": "js/vendor/KONVA-NOTICE.txt",
+      "bytes": 312,
+      "sha256": "218d7d63e8c72ec2929ab43110f964a881b35bd4918ac86e1159fdbc75da91b2"
+    },
+    {
+      "file": "js/weekly-individual.js",
+      "bytes": 278873,
+      "sha256": "b95cd6091b63a73db838625be6af88105832a299b26b2a9af59ace51ccca9417"
+    },
+    {
+      "file": "js/weight.js",
+      "bytes": 116095,
+      "sha256": "ab65393b99bdf1fb5b2123601a52115bdd82695253b81f9cb7e525c82cb24fc9"
+    },
+    {
+      "file": "js/wellness.js",
+      "bytes": 123551,
+      "sha256": "72fafd56cdbf13710a7cfb960f8503f5cdaa8836f27f469d6f42a3a42785f7a5"
+    },
+    {
+      "file": "css/admin.css",
+      "bytes": 2821,
+      "sha256": "ff0ca99b841f101420a20d0f857de1d3409d4b7cff30af4e690c517c0e27d07f"
+    },
+    {
+      "file": "css/auth-action.css",
+      "bytes": 7134,
+      "sha256": "5b5f5ef03b4086d3847b23b4296273087e071acdfcd92d34660533f03b16f4be"
+    },
+    {
+      "file": "css/daily-execution.css",
+      "bytes": 8634,
+      "sha256": "75dae3c98302041d1232463ed8a943dee458f33038f165904006679dbe8bc8be"
+    },
+    {
+      "file": "css/dashboard.css",
+      "bytes": 4390,
+      "sha256": "f4484ba15d05a00c75e1291bb0cb5a3dd3c34e913f5e04f7da05a967220bf713"
+    },
+    {
+      "file": "css/dashboard_elite.css",
+      "bytes": 2642,
+      "sha256": "ab1e9746bedf2b30f1f76ba2da4a012d0a48d7f56d9b29ea70b2a6d0dee8e76c"
+    },
+    {
+      "file": "css/dashboard_user.css",
+      "bytes": 12310,
+      "sha256": "2a6e431504f349debd5f1ea0073fad56f309781eea0e1de6d990ac9656c107a1"
+    },
+    {
+      "file": "css/drill-canvas-editor.css",
+      "bytes": 169192,
+      "sha256": "43d0696624e88048724392b51cd01a5b99a0c1fb360f9ec8501c78158e4e158e"
+    },
+    {
+      "file": "css/drill-player.css",
+      "bytes": 3844,
+      "sha256": "6eccc444c5a2ab667cdde36a5bb72dd97ec8140d4be117eec644844f6bb8ec9b"
+    },
+    {
+      "file": "css/index.css",
+      "bytes": 1053,
+      "sha256": "9cadeea50a3a0c8879c54fa6475609d54e509af0bfb1822e79a0c3892fcad67e"
+    },
+    {
+      "file": "css/injury.css",
+      "bytes": 27880,
+      "sha256": "deea9ae01ada0b232106997ebe8c882ce0d4556dcaa52745ca50df4a9b290224"
+    },
+    {
+      "file": "css/load-season.css",
+      "bytes": 15182,
+      "sha256": "af8a0310e455cd21a2c91fcb39bfdf563f93bd80d5a807c00c15ba9138c52995"
+    },
+    {
+      "file": "css/navigation-mobile.css",
+      "bytes": 8974,
+      "sha256": "23144743345ad0f6cd246798c0215de9a543e9fec805cc9992d59b6031d27efd"
+    },
+    {
+      "file": "css/power.css",
+      "bytes": 20397,
+      "sha256": "76feb7a0e552e09444df6c132190edfbccb2118aa5571eaa24806a8a7dd6f78c"
+    },
+    {
+      "file": "css/style.css",
+      "bytes": 16273,
+      "sha256": "3d9354079d2b2946bd24d712d7521a8738bf3184e2d9add2fe2e72be7ea92868"
+    },
+    {
+      "file": "css/weekly-individual.css",
+      "bytes": 9956,
+      "sha256": "cf5be346525ca21c381e65f014d46654c902194c73e3714b63272313d2cc6311"
+    },
+    {
+      "file": "css/weight-control.css",
+      "bytes": 8303,
+      "sha256": "8ec7e8efdc2f32b56b778c28af114b1d9374d1e3b85c3a3f496f6250a6e99e7d"
+    },
+    {
+      "file": "css/wellness.css",
+      "bytes": 20441,
+      "sha256": "26983c160bdd959e2f4ea0eba3414928020bdff4fa2145d31be9197fda1d137f"
+    },
+    {
+      "file": "assets/icons/apple-touch-icon.png",
+      "bytes": 16640,
+      "sha256": "80e95a26ba8ffb158e47ace280d2279d0f248e62fe689bcbf43673ac6c82acd6"
+    },
+    {
+      "file": "assets/icons/pwa-192.png",
+      "bytes": 18468,
+      "sha256": "ad8ac215bd3691321ac8ed939b47ed9b2bfffe84afa6d229352abce8b746e1d7"
+    },
+    {
+      "file": "assets/icons/pwa-512.png",
+      "bytes": 128710,
+      "sha256": "b6d029b4b5669da4d937a9d4c7729de2a7197cd9d1f5ab81f62c31f4acf11d12"
+    },
+    {
+      "file": "assets/images/AK_logo-256.png",
+      "bytes": 32304,
+      "sha256": "e746f5b746ce4891081b858388aaf0e61c78d4fbfe4e74fa29199a41348f5c03"
+    },
+    {
+      "file": "assets/images/AK_logo.png",
+      "bytes": 1602271,
+      "sha256": "1ad5751d3385152e94f82bc0b5b0174c250de77cb70444f4d4bb9ff4d1e6602f"
+    },
+    {
+      "file": "assets/images/drill-ball-black-gold.png",
+      "bytes": 1898689,
+      "sha256": "70dca21302065be81743a6690c8397a38381e3b95079db123e8f26ec8810b100"
+    },
+    {
+      "file": "assets/images/drill-field-proathletecare-rugby.png",
+      "bytes": 2486059,
+      "sha256": "ee8f8341bf501495d683f39116c0e1a016dec353fcc6d8600ddf4d41469dec92"
+    },
+    {
+      "file": "assets/images/drill-field-proathletecare-stadium.png",
+      "bytes": 2868478,
+      "sha256": "ab3c653463aff78cd6e5c43a0840440bf9cfc84963487f9da02dc2aab97c56eb"
+    },
+    {
+      "file": "assets/images/human_body_outline.png",
+      "bytes": 622685,
+      "sha256": "b1358fc56462fcda5793a71dc49de98f681a12a37b8c6ac4efb5359619ffbace"
+    },
+    {
+      "file": "assets/images/main_image.jpg",
+      "bytes": 98708,
+      "sha256": "d5953d139f721071623ea218a4b9d9de1658ec7045e2f6fb25385139a38909bf"
+    },
+    {
+      "file": "assets/images/players/goalkeepers/goalkeeper-green-sheet.png",
+      "bytes": 747546,
+      "sha256": "8e063958ff903f5c01ad513d46df19de0b3331ebbcb9fb399a4f1cfb33323fb3"
+    },
+    {
+      "file": "assets/images/players/goalkeepers/goalkeeper-green-topdown-sheet.png",
+      "bytes": 492024,
+      "sha256": "d6136e515f848e7121da04f7387048fb2e4d087e91417fdb73e653830f3c34c5"
+    },
+    {
+      "file": "assets/images/players/goalkeepers/goalkeeper-orange-sheet.png",
+      "bytes": 765667,
+      "sha256": "167af43d4752fef2b26db551843232868fa07db4108b68d21e84546ed02020c9"
+    },
+    {
+      "file": "assets/images/players/goalkeepers/goalkeeper-orange-topdown-sheet.png",
+      "bytes": 528032,
+      "sha256": "7ea5b4a523592226e1adb811428bce7f6ea07b106c34ecef4e44d6b806ea1454"
+    },
+    {
+      "file": "assets/images/players/pac-run-sheet.png",
+      "bytes": 2315744,
+      "sha256": "09b293f592badbbd016f9633eb22d7a374bf3c93487a57aff481fe1639be848d"
+    },
+    {
+      "file": "assets/images/players/player_run_A.png",
+      "bytes": 159908,
+      "sha256": "0594afac8106f8dd700db4d74c9c61349a32f105a422363694029e8c5bf54658"
+    },
+    {
+      "file": "assets/images/players/player_run_B.png",
+      "bytes": 147331,
+      "sha256": "fa9e4bb3c00e73fa6bd65b72d471c5ac88ee5195324fd0b0fa2e928ab20e769b"
+    },
+    {
+      "file": "assets/images/players/player_run_C.png",
+      "bytes": 152432,
+      "sha256": "689db6dce772fae90f84ba24b67d01b8316d77479744f09449f783d11676219e"
+    },
+    {
+      "file": "assets/images/players/player_run_D.png",
+      "bytes": 160326,
+      "sha256": "119d389b87e574d39d0ae2c10b20ca0f25e37f8bbcbdd03d6efb22444c4b990b"
+    },
+    {
+      "file": "assets/images/players/player_yellow_run_A.png",
+      "bytes": 243755,
+      "sha256": "cc976e14e34e7c711750f2c0113f43c718e3c7020613c5bb22d96cdc8d1fe8df"
+    },
+    {
+      "file": "assets/images/players/player_yellow_run_B.png",
+      "bytes": 231787,
+      "sha256": "73bb59f1facf7c367151a9ca6db216f538d204962f0642e3295f1e08298589b6"
+    },
+    {
+      "file": "assets/images/players/player_yellow_run_C.png",
+      "bytes": 259335,
+      "sha256": "e192b953470018d6a26aed1321f53d14a38f87bc58f3c38c6ab4c9fb0af297ab"
+    },
+    {
+      "file": "assets/images/players/player_yellow_run_D.png",
+      "bytes": 245120,
+      "sha256": "f9f38cedfa983fc9576ad8c846ff7d79377431132a02fb270a3bf42202e7f0ba"
+    },
+    {
+      "file": "assets/images/rugby/rugby-lineout-lift-sheet.png",
+      "bytes": 995598,
+      "sha256": "7d71255e72c25f9c77084c2e136dcbdb78373b55fcbdd94be62c1ed689ecf551"
+    },
+    {
+      "file": "assets/images/rugby/rugby-scrum-rear-sheet.png",
+      "bytes": 784707,
+      "sha256": "50bc2c669bd41739037910112f55881235b7e07d2cef50684c1ef26e6e57ab06"
+    },
+    {
+      "file": "assets/images/rugby/rugby-scrum-side-sheet.png",
+      "bytes": 1238653,
+      "sha256": "4e87a18302c41e49509bfc403f77faf6039f4a6a4b8a2eff586ad23b53f7ed0d"
+    },
+    {
+      "file": "assets/videos/hero.mp4",
+      "bytes": 1502976,
+      "sha256": "b2040a454588dd754d5c4695bc4afbcf373945170efa47921c6cba5ca1b405fa"
+    },
+    {
+      "file": "config/firebase-config.js",
+      "bytes": 1196,
+      "sha256": "2f1257a8cc28f7d8694ca6113d3910cff3826bb9a6c751320c5df6c1b03b3e9e"
+    },
+    {
+      "file": "platform.html",
+      "bytes": 46389,
+      "sha256": "03991200a757f89e44357514ee8faebebecd3b561e0a2ae6966a92017f3fa847"
+    },
+    {
+      "file": "auth.html",
+      "bytes": 418,
+      "sha256": "5ef738a346518115520265bc17f9f6f494580763154a15157b32d087eac97d15"
+    },
+    {
+      "file": "favicon.ico",
+      "bytes": 61644,
+      "sha256": "01c166b20957805f637c8244a3de65c3287571e7baeaceb801e5a147c266bf07"
+    },
+    {
+      "file": "manifest.webmanifest",
+      "bytes": 809,
+      "sha256": "6c17d6ca4352b06c3eedc58a66bd9f30380d0a1573db6b23f4f53bc583e607c3"
+    },
+    {
+      "file": "service-worker.js",
+      "bytes": 3382,
+      "sha256": "6c647be604ee36c69a782a7cf5313d3187e98dc8f759aa565a8053a8b7a8bfb6"
+    },
+    {
+      "file": "offline.html",
+      "bytes": 1666,
+      "sha256": "10061e000542beeb33d6c243f5482aea4fe1257e64bcd625cd7c037c59071929"
+    },
+    {
+      "file": "pricing.html",
+      "bytes": 60592,
+      "sha256": "711e632efb4cf39ae3397596f5e825ad96acf2a81279234e29f40feb518c1f5a"
+    },
+    {
+      "file": "checkout.html",
+      "bytes": 27278,
+      "sha256": "43be236494407cde8514fab0aad04a18f159a1127bb49439610e998dab786992"
+    },
+    {
+      "file": "payment-success.html",
+      "bytes": 18031,
+      "sha256": "1a545543b20a37eaa2b60a701eafe61e3c56fbeb47a0efe6bc051f52a3f05bcf"
+    },
+    {
+      "file": "payment-cancel.html",
+      "bytes": 14939,
+      "sha256": "ded5b66b73b58aeb566fd53cb9b60bc2d6def28a224dd9355735eb026c7708ca"
+    },
+    {
+      "file": "privacy.html",
+      "bytes": 20305,
+      "sha256": "ba833293305fe75a35aeaaeb4f893ccfb8475ff19c7101d46d66234720a6b774"
+    },
+    {
+      "file": "terms.html",
+      "bytes": 14330,
+      "sha256": "09515a492498c2d63ec114ba630878fd44aad9b297e4238ae848072c67ad6af3"
+    },
+    {
+      "file": "impressum.html",
+      "bytes": 11672,
+      "sha256": "d88918a8687094b65f568868574a91179f6f67724ef2db31f3484b3d95a87271"
+    },
+    {
+      "file": "GPS_TRAINING/index.html",
+      "bytes": 12663,
+      "sha256": "417a065d8e8b110954f7dd9f21350819fe455d6506afd1704c10dcc7cd0fdeff"
+    },
+    {
+      "file": "GPS_TRAINING/styles.css",
+      "bytes": 41229,
+      "sha256": "f3ef90f48542e3745a09d4a60c76befb064450d71a86d463f2a4818183a553f0"
+    },
+    {
+      "file": "GPS_TRAINING/data.js",
+      "bytes": 81383,
+      "sha256": "5cb0e365a461a20e6a2345754897c1bb038ae1bedd2672bbfc8b2d7f8522d27e"
+    },
+    {
+      "file": "GPS_TRAINING/field-geometry.js",
+      "bytes": 20952,
+      "sha256": "e175823d39b273a7999c75cdec957ce3022e9320c3541f718278902368c5a956"
+    },
+    {
+      "file": "GPS_TRAINING/field-replay.js",
+      "bytes": 24411,
+      "sha256": "c4a4d22369a09a70cb55956b244b2f0904ddf056b07534ab276eca45bba1474e"
+    },
+    {
+      "file": "GPS_TRAINING/field-map.js",
+      "bytes": 23236,
+      "sha256": "1ace599a6ac5e5e3a83d42b92a5d4b56628a20a354b618abdbcb9f2888dc57c0"
+    },
+    {
+      "file": "GPS_TRAINING/map-providers.js",
+      "bytes": 377,
+      "sha256": "236d47b004c1a52af98949c99e624368e4dcc6d425676d903913480b92ccfa7c"
+    },
+    {
+      "file": "GPS_TRAINING/assets/field-football.png",
+      "bytes": 2868478,
+      "sha256": "ab3c653463aff78cd6e5c43a0840440bf9cfc84963487f9da02dc2aab97c56eb"
+    },
+    {
+      "file": "GPS_TRAINING/assets/field-rugby.png",
+      "bytes": 2486059,
+      "sha256": "ee8f8341bf501495d683f39116c0e1a016dec353fcc6d8600ddf4d41469dec92"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/leaflet.js",
+      "bytes": 147552,
+      "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/leaflet.css",
+      "bytes": 14806,
+      "sha256": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/LICENSE",
+      "bytes": 1395,
+      "sha256": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/images/layers.png",
+      "bytes": 696,
+      "sha256": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/images/layers-2x.png",
+      "bytes": 1259,
+      "sha256": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/images/marker-icon.png",
+      "bytes": 1466,
+      "sha256": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/images/marker-icon-2x.png",
+      "bytes": 2464,
+      "sha256": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528"
+    },
+    {
+      "file": "GPS_TRAINING/vendor/leaflet/images/marker-shadow.png",
+      "bytes": 618,
+      "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    },
+    {
+      "file": "GPS_TRAINING/session-adapter.js",
+      "bytes": 2795,
+      "sha256": "b397e2ff18bfc743c51c8dcfef5aae5388e2d5137d21439b99f94de306ead084"
+    },
+    {
+      "file": "index.html",
+      "bytes": 12910,
+      "sha256": "456862618ed739db92fec471ba0f8422986d2f182114d364583f2235f6455b43"
+    },
+    {
+      "file": "styles.css",
+      "bytes": 41229,
+      "sha256": "f3ef90f48542e3745a09d4a60c76befb064450d71a86d463f2a4818183a553f0"
+    },
+    {
+      "file": "data.js",
+      "bytes": 81383,
+      "sha256": "5cb0e365a461a20e6a2345754897c1bb038ae1bedd2672bbfc8b2d7f8522d27e"
+    },
+    {
+      "file": "field-geometry.js",
+      "bytes": 20952,
+      "sha256": "e175823d39b273a7999c75cdec957ce3022e9320c3541f718278902368c5a956"
+    },
+    {
+      "file": "field-replay.js",
+      "bytes": 24411,
+      "sha256": "c4a4d22369a09a70cb55956b244b2f0904ddf056b07534ab276eca45bba1474e"
+    },
+    {
+      "file": "field-map.js",
+      "bytes": 23236,
+      "sha256": "1ace599a6ac5e5e3a83d42b92a5d4b56628a20a354b618abdbcb9f2888dc57c0"
+    },
+    {
+      "file": "map-providers.js",
+      "bytes": 377,
+      "sha256": "236d47b004c1a52af98949c99e624368e4dcc6d425676d903913480b92ccfa7c"
+    },
+    {
+      "file": "assets/field-football.png",
+      "bytes": 2868478,
+      "sha256": "ab3c653463aff78cd6e5c43a0840440bf9cfc84963487f9da02dc2aab97c56eb"
+    },
+    {
+      "file": "assets/field-rugby.png",
+      "bytes": 2486059,
+      "sha256": "ee8f8341bf501495d683f39116c0e1a016dec353fcc6d8600ddf4d41469dec92"
+    },
+    {
+      "file": "vendor/leaflet/leaflet.js",
+      "bytes": 147552,
+      "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
+    },
+    {
+      "file": "vendor/leaflet/leaflet.css",
+      "bytes": 14806,
+      "sha256": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6"
+    },
+    {
+      "file": "vendor/leaflet/LICENSE",
+      "bytes": 1395,
+      "sha256": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb"
+    },
+    {
+      "file": "vendor/leaflet/images/layers.png",
+      "bytes": 696,
+      "sha256": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6"
+    },
+    {
+      "file": "vendor/leaflet/images/layers-2x.png",
+      "bytes": 1259,
+      "sha256": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf"
+    },
+    {
+      "file": "vendor/leaflet/images/marker-icon.png",
+      "bytes": 1466,
+      "sha256": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437"
+    },
+    {
+      "file": "vendor/leaflet/images/marker-icon-2x.png",
+      "bytes": 2464,
+      "sha256": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528"
+    },
+    {
+      "file": "vendor/leaflet/images/marker-shadow.png",
+      "bytes": 618,
+      "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    }
+  ]
+}

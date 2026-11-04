@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title id="page-title">ProAthleteCare | Registration</title>
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ProAthleteCare">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/ProAthleteCare-1/gps-iphone-v14/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/ProAthleteCare-1/gps-iphone-v14/assets/icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            color: #FFC72C;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 420px;
+            width: 90%;
+            padding: 40px;
+            background: rgba(17, 17, 17, 0.95);
+            border: 1px solid rgba(255, 199, 44, 0.3);
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 199, 44, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-img { width: 70px; border-radius: 50%; border: 2px solid #FFC72C; margin-bottom: 15px; }
+
+        .legal-box {
+            text-align: left;
+            margin: 25px 0;
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #222;
+        }
+
+        .legal-row {
+            display: grid;
+            grid-template-columns: 24px 1fr;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .legal-row:last-child { margin-bottom: 0; }
+
+        .legal-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: #FFC72C;
+            cursor: pointer;
+        }
+
+        .legal-text { font-size: 13px; color: #aaa; line-height: 1.5; }
+        .open-modal { color: #FFC72C; text-decoration: underline; font-weight: bold; }
+
+        input, select {
+            width: 100%; margin-bottom: 15px; padding: 14px;
+            border-radius: 12px; border: 1px solid #333;
+            background: #111; color: #fff; font-size: 15px; box-sizing: border-box;
+        }
+        input:focus { border-color: #FFC72C; outline: none; background: #151515; }
+
+        button {
+            width: 100%; padding: 16px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, #FFC72C 0%, #D4A017 100%);
+            color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255, 199, 44, 0.3); }
+        button:disabled { background: #222; color: #555; cursor: not-allowed; border: 1px solid #333; }
+
+        .divider { margin: 25px 0; color: #444; font-size: 11px; letter-spacing: 2px; }
+        #email-section, #profile-form, #go-next { display: none; }
+
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); }
+        .modal-content { background: #111; margin: 10% auto; padding: 30px; border: 1px solid #FFC72C; width: 85%; max-width: 500px; border-radius: 20px; position: relative; color: #fff; text-align: left; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 30px; color: #FFC72C; cursor: pointer; }
+    </style>
+</head>
+<body class="notranslate" translate="no">
+
+<div class="container">
+    <img src="../assets/images/AK_logo.png" class="logo-img" alt="Logo">
+    <h2 id="reg-brand" style="margin: 0; font-size: 24px;">Pro Athlete Care</h2>
+    <p id="reg-tagline" style="color: #666; font-size: 14px; margin-top: 5px;" data-i18n="tagline">Professional Performance Tracking</p>
+
+    <div class="legal-box">
+        <div class="legal-row" onclick="document.getElementById('check-terms').click()">
+            <input type="checkbox" id="check-terms" onclick="event.stopPropagation()">
+            <span class="legal-text"><span data-i18n="acceptPrefix">I accept</span> <span class="open-modal" onclick="showRules('terms'); event.stopPropagation()" data-i18n="termsLink">Terms of use</span></span>
+        </div>
+        <div class="legal-row" onclick="document.getElementById('check-data').click()">
+            <input type="checkbox" id="check-data" onclick="event.stopPropagation()">
+            <span class="legal-text"><span data-i18n="privacyPrefix">I agree with</span> <span class="open-modal" onclick="showRules('gdpr'); event.stopPropagation()" data-i18n="privacyLink">Privacy policy</span></span>
+        </div>
+    </div>
+
+    <div id="auth-selection">
+        <button id="google-btn" disabled data-i18n="googleBtn">Sign in with Google</button>
+        <div class="divider" data-i18n="authOr">OR</div>
+        <button id="show-email-btn" disabled style="background:none; border:1px solid #FFC72C; color:#FFC72C;" data-i18n="emailBtn">Sign in by Email</button>
+    </div>
+
+    <div id="email-section">
+        <input type="email" id="email-input" placeholder="Email" data-i18n-placeholder="emailPlaceholder">
+        <input type="password" id="pass-input" placeholder="Password (min 6 chars)" data-i18n-placeholder="passwordPlaceholder">
+        <button id="email-final-btn" data-i18n="emailFinalBtn">Sign in or create account</button>
+        <p id="email-back-btn" style="margin-top:15px; font-size:12px; color:#555; cursor:pointer;" onclick="location.reload()" data-i18n="backBtn">Back</p>
+    </div>
+    <div id="verification-section" style="display:none;"></div>
+
+    <form id="profile-form">
+        <h3 data-i18n="profileSetup">Profile setup</h3>
+        <input type="text" id="firstName" placeholder="First name" data-i18n-placeholder="firstNamePlaceholder" required>
+        <input type="text" id="lastName" placeholder="Last name" data-i18n-placeholder="lastNamePlaceholder" required>
+        <input type="text" id="club" placeholder="Club / Team" data-i18n-placeholder="clubPlaceholder">
+        <select id="country">
+            <option value="Ukraine" data-i18n="countryUkraine">Ukraine</option>
+            <option value="Germany" data-i18n="countryGermany">Germany</option>
+            <option value="Cyprus" data-i18n="countryCyprus">Cyprus</option>
+        </select>
+        <button type="submit" data-i18n="saveAndEnter">Save and enter</button>
+    </form>
+</div>
+
+<div id="rulesModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeRules()">&times;</span>
+        <div id="rules-body"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="../config/firebase-config.js"></script>
+<script src="../js/regist-i18n.js?v=20260927r1"></script>
+<script src="../js/regist.js?v=20260927r2"></script>
+<script src="/ProAthleteCare-1/gps-iphone-v14/js/pwa-register.js"></script>
+</body>
+</html>

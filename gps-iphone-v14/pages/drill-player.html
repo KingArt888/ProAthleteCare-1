@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drill Player | ProAthleteCare</title>
+  <link rel="stylesheet" href="../css/drill-canvas-editor.css?v=20261021-paths" />
+  <link rel="stylesheet" href="../css/drill-player.css?v=20261021-kit-v97" />
+</head>
+<body class="drill-player-body">
+  <main class="drill-player-shell">
+    <section class="drill-player-stage">
+      <a href="coach-week-editor.html" class="player-exit" aria-label="Back to Week Editor">← Week Editor</a>
+      <div id="player-konva-stage" class="player-konva-stage"></div>
+      <button id="player-focus-toggle" class="player-focus-toggle" type="button" aria-pressed="false">FOCUS</button>
+      <div class="player-hud">
+        <div>
+          <span id="player-phase">READY</span>
+          <strong id="player-title">Loading drill...</strong>
+        </div>
+        <div id="player-countdown">00.00</div>
+      </div>
+      <div class="player-controls">
+        <button id="player-play" type="button">Play</button>
+        <button id="player-pause" type="button">Pause</button>
+        <button id="player-replay" type="button">Replay</button>
+        <select id="player-speed" aria-label="Playback speed">
+          <option value="1">1×</option>
+          <option value="1.5">1.5×</option>
+          <option value="2">2×</option>
+          <option value="3">3×</option>
+        </select>
+        <a href="drill-canvas-editor.html" class="player-edit">Edit</a>
+        <input id="player-scrub" type="range" min="0" max="30" step="0.01" value="0" aria-label="Animation position, seconds" />
+      </div>
+      <div id="player-next" class="player-next">Next exercise preview: --</div>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="../js/vendor/konva-9.3.22.min.js"></script>
+  <script src="../config/firebase-config.js"></script>
+  <script src="../js/drill-local-storage.js?v=20260926-storage-v1"></script>
+<script src="../js/drill-player-kit.js?v=20261018-kit-v8"></script>
+<script src="../js/drill-equipment-playback.js?v=20261018-kit-v87"></script>
+<script src="../js/exercise-task.js?v=20261104-series-clock-v1"></script>
+<script src="../js/drill-player.js?v=20261104-series-clock-v1"></script>
+</body>
+</html>

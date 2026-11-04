@@ -1,0 +1,5 @@
+Konva 9.3.22 — MIT license; see KONVA-LICENSE.txt.
+Source: https://unpkg.com/konva@9.3.22/konva.min.js
+Downloaded 2026-09-18. No local changes.
+SHA-256: 4655b6cd12d0d2ee5f6d461fa98c3611b1f9979b9106f18221bf0e6a90ab6745
+Both Drill Editor and Athlete use this pinned local copy to avoid a runtime CDN dependency.

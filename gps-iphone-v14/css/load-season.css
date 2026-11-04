@@ -1,0 +1,489 @@
+/* =========================================================================
+    PROATLETCARE: LOAD-SEASON.CSS 
+   ========================================================================= */
+/* Активний пункт меню */
+.sidebar a.active {
+    background-color: #FFC72C; 
+    color: #000000; 
+    border-left: 2px solid #000000;
+}
+.sidebar a.active img {
+    filter: none; 
+} 
+* {
+    box-sizing: border-box; 
+}
+
+/* ОСНОВНИЙ FLEX-КОНТЕЙНЕР ДЛЯ ДВОХ КОЛОНОК */
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap; 
+    max-width: 100%;
+    align-items: stretch; /* Щоб ліва та права колонка були однакової висоти */
+}
+
+/* --- 1. СТИЛІ КАРТОК --- */
+.form-card, .stats-card, .chart-card {
+    background-color: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); 
+    margin-bottom: 0; /* Видаляємо марджини, бо використовуємо gap */
+    max-width: 100%; 
+}
+
+.form-card h3, .stats-card h3, .chart-card h4 {
+    color: #FFC72C; 
+    margin-top: 0;
+    border-bottom: 1px solid #333333; 
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+
+/* --- 2. РОЗМІРИ КОЛОНОК --- */
+
+/* 2.1. ЛІВА КОЛОНКА: ФОРМА */
+.form-container {
+    width: 35%; /* Форма займає ~35% ширини */
+    min-width: 350px;
+}
+
+/* 2.2. ПРАВА КОЛОНКА: СТАТИСТИКА + ГРАФІКИ */
+.info-column {
+    flex: 1; /* Займає всю решту ширини */
+    display: flex;
+    flex-direction: column; /* КРИТИЧНО: Вирівнює вміст у стовпець */
+    gap: 30px; /* Відступи між спідометром і графіками */
+    min-width: 450px;
+}
+
+/* 2.3. СТИЛІ ЕЛЕМЕНТІВ У ПРАВІЙ КОЛОНЦІ */
+.stats-container, .chart-card {
+    width: 100%; /* Займе 100% ширини правої колонки */
+    margin-bottom: 0; 
+}
+
+.chart-card {
+    height: clamp(250px, 42vh, 400px);
+    overflow: hidden;
+}
+
+/* Гарантуємо, що canvas займає повну висоту картки */
+.chart-card canvas {
+    display: block;
+    width: 100% !important;
+    max-height: 100%;
+    height: calc(100% - 52px) !important;
+}
+
+
+/* --- 3. СТИЛІ ЕЛЕМЕНТІВ ФОРМИ --- */
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #AAAAAA;
+    font-weight: 500;
+}
+
+input[type="date"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #1a1a1a; 
+    border: 1px solid #333;
+    color: #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    
+    /* 🔥 ЦЕЙ РЯДОК ПРИБИРАЄ ЗУМ НА IPHONE ТА ANDROID */
+    font-size: 16px !important; 
+}
+
+input[type="date"]:focus, input[type="number"]:focus {
+    border-color: #FFD700; 
+    outline: none;
+}
+
+.submit-button {
+    background-color: #FFC72C; 
+    color: #000000; 
+    padding: 12px 25px; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold; 
+    width: 100%;
+    transition: background-color 0.3s;
+    margin-top: 30px; 
+    box-shadow: none;
+}
+
+.submit-button:hover {
+    background-color: #E6B800; 
+    box-shadow: none;
+}
+
+/* --- 4. СТИЛІ RPE GROUP (Без змін) --- */
+
+.rpe-group {
+    display: flex;
+    flex-direction: row-reverse; 
+    justify-content: flex-end; 
+    align-items: flex-start; 
+    margin-bottom: 20px;
+    background-color: #1a1a1a;
+    padding: 5px;
+    border-radius: 5px;
+    flex-wrap: wrap; 
+}
+
+.rpe-group input[type="radio"] {
+    display: none;
+}
+
+.rpe-group label {
+    cursor: pointer;
+    font-size: 1.5em; 
+    width: 10%; 
+    padding: 5px 0 0 0; 
+    margin: 0; 
+    text-align: center;
+    transition: color 0.3s, transform 0.2s;
+    color: #456545; 
+    position: relative; 
+    display: block; 
+}
+
+.rpe-group label::after {
+    content: attr(data-rpe); 
+    position: absolute;
+    top: -15px; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6em; 
+    font-weight: bold;
+    color: #888888; 
+    transition: color 0.3s;
+}
+
+.rpe-group label::before {
+    content: '⚡'; 
+    padding: 0 1px;
+    display: block;
+}
+
+/* --- КОЛЬОРОВА ЛОГІКА RPE --- */
+.rpe-group input[value="1"]:checked ~ label,
+.rpe-group input[value="2"]:checked ~ label,
+/* ... (кольорова логіка RPE без змін) ... */
+.rpe-group input[value="5"]:checked ~ label {
+    color: #5cb85c; 
+}
+.rpe-group input[value="1"]:checked ~ label::after,
+.rpe-group input[value="2"]:checked ~ label::after,
+.rpe-group input[value="3"]:checked ~ label::after,
+.rpe-group input[value="4"]:checked ~ label::after,
+.rpe-group input[value="5"]:checked ~ label::after {
+    color: #5cb85c; 
+}
+
+.rpe-group input[value="6"]:checked ~ label,
+.rpe-group input[value="7"]:checked ~ label,
+.rpe-group input[value="8"]:checked ~ label {
+    color: #f0ad4e; 
+}
+.rpe-group input[value="6"]:checked ~ label::after,
+.rpe-group input[value="7"]:checked ~ label::after,
+.rpe-group input[value="8"]:checked ~ label::after {
+    color: #f0ad4e; 
+}
+
+.rpe-group input[value="9"]:checked ~ label,
+.rpe-group input[value="10"]:checked ~ label {
+    color: #d9534f; 
+}
+.rpe-group input[value="9"]:checked ~ label::after,
+.rpe-group input[value="10"]:checked ~ label::after {
+    color: #d9534f; 
+}
+
+.rpe-group input:checked + label {
+    transform: scale(1.15); 
+    text-shadow: 0 0 5px currentColor; 
+}
+
+.rpe-group label:hover {
+    color: #5cb85c; 
+}
+.rpe-group label:hover::after {
+    color: #5cb85c;
+}
+
+.rpe-group input:checked ~ label:hover {
+    color: inherit; 
+}
+.rpe-group input:checked ~ label:hover::after {
+    color: inherit; 
+}
+
+
+/* --- 5. СТИЛІ СПІДОМЕТРА ACWR (Без змін) --- */
+
+/* --- ЦЕНТРУВАННЯ ВСЬОГО КОНТЕНТУ --- */
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap; 
+    max-width: 1200px; /* Оптимальна ширина для десктопа */
+    margin: 0 auto;    /* Центрує весь дашборд */
+    justify-content: center;
+    align-items: stretch;
+}
+
+/* --- 5. ФІНАЛЬНИЙ АДАПТИВНИЙ СПІДОМЕТР ACWR (SVG VERSION) --- */
+
+/* --- 5. ФІНАЛЬНИЙ АДАПТИВНИЙ СПІДОМЕТР ACWR --- */
+
+.speedometer-widget {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.gauge-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; 
+    justify-content: center;
+    background: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 15px;
+    padding: 30px;
+    gap: 20px;
+}
+
+/* Секція з графікою (зліва) */
+.gauge-section-visual {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.gauge-svg {
+    width: 100%;
+    height: auto;
+    max-width: 240px;
+}
+
+/* Секція з текстом (справа) */
+.gauge-section-info {
+    flex: 1;
+    min-width: 260px; /* Трохи ширше, щоб текст мав простір */
+    display: flex;
+    justify-content: center; /* Центруємо всю панель у правій колонці */
+}
+
+.gauge-glass-panel {
+    border-left: 3px solid #FFC72C; /* Золота лінія-розділювач */
+    padding: 20px 40px; /* Збільшений відступ, щоб не налізало на коло */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ЦЕНТРУЄМО ТЕКСТ ТА КНОПКУ ПЕРПЕНДИКУЛЯРНО ЛІНІЇ */
+    text-align: center;
+    width: 100%;
+}
+
+#acwr-value {
+    font-size: clamp(3.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    margin: 0;
+}
+
+.acwr-label {
+    color: #FFC72C;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin: 5px 0 15px 0;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 10px 24px;
+    border-radius: 6px;
+    background: rgba(255, 199, 44, 0.1);
+    border: 1px solid rgba(255, 199, 44, 0.3);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap;
+    transition: all 0.5s ease;
+}
+
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+@media (max-width: 600px) {
+    .gauge-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .gauge-glass-panel {
+        border-left: none;
+        border-top: 2px solid rgba(255, 199, 44, 0.2);
+        padding-left: 0;
+        padding-top: 25px;
+        padding-right: 0;
+    }
+}
+
+/* --- 6. АДАПТИВНІСТЬ --- */
+
+@media (max-width: 900px) {
+
+    .dashboard-container,
+    .info-column {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-container,
+    .info-column,
+    .chart-card {
+        width: 100%;
+        min-width: unset;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content {
+        padding: 15px;
+    }
+}
+#pdf-root{
+  position: fixed;
+  inset: 0;
+  width: 210mm;
+  height: 297mm;
+  background: #fff;
+  z-index: 9999;
+  visibility: hidden;
+  pointer-events: none;
+}
+body.pac-report-mode #pdf-root{
+  visibility: visible;
+  pointer-events: auto;
+}
+#pdf-root .pac-pdf-page{
+  width: 210mm;
+  height: 297mm;
+  background:#fff;
+  padding: 16mm 14mm;
+  box-sizing:border-box;
+  overflow:hidden;
+  color:#111;
+}
+/* НЕ чіпаємо transform глобально — інакше ламається needle/графіки */
+body.pac-report-mode #pdf-root{
+  transform: none !important;
+}
+
+/* ===== LOAD PDF LAYOUT ===== */
+#pdf-root .load-top-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+#pdf-root .load-card{ background:#f7f8f9; border:1px solid rgba(0,0,0,0.08); border-radius:16px; padding:12px; }
+#pdf-root .load-card-title{ font-weight:900; font-size:14px; margin-bottom:8px; color:#111; }
+
+#pdf-root .load-gauge{ position:relative; height:160px; }
+#pdf-root .load-gauge-svg{ width:100%; height:140px; display:block; }
+#pdf-root .load-gauge-center{ position:absolute; left:0; right:0; bottom:18px; text-align:center; }
+#pdf-root .load-gauge-value{ font-size:34px; font-weight:900; line-height:1; }
+#pdf-root .load-gauge-sub{ margin-top:4px; font-size:13px; font-weight:800; }
+#pdf-root .load-gauge-scale{ display:flex; justify-content:space-between; font-size:12px; color:#666; margin-top:-6px; padding:0 6px; }
+
+#pdf-root .load-chart-wrap{ height:160px; background:#fff; border-radius:14px; border:1px solid rgba(0,0,0,0.06); padding:8px; }
+#pdf-root .load-chart-wrap canvas{ width:100% !important; height:100% !important; display:block; }
+
+#pdf-root .load-trend-top{ margin-top:8px; display:flex; justify-content:flex-end; gap:8px; font-weight:900; }
+#pdf-root .load-trend-top .lbl{ color:#666; font-weight:800; }
+
+#pdf-root .load-metrics{ margin-top:10px; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+#pdf-root .load-metrics .m{ background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:14px; padding:10px 8px; text-align:center; }
+#pdf-root .load-metrics .k{ font-size:11px; color:#666; font-weight:800; }
+#pdf-root .load-metrics .v{ margin-top:6px; font-size:22px; font-weight:900; color:#111; }
+
+#pdf-root .load-h3{ margin:12px 0 6px; font-size:18px; font-weight:900; }
+#pdf-root .load-bars-wrap{ height:110px; background:#fff; border-radius:14px; border:1px solid rgba(0,0,0,0.08); padding:8px; }
+#pdf-root .load-bars-wrap canvas{ width:100% !important; height:100% !important; display:block; }
+
+#pdf-root .load-bottom-grid{ margin-top:10px; display:grid; grid-template-columns:1.2fr 0.8fr; gap:12px; }
+
+#pdf-root .load-alert{ background:#f7f8f9; border:1px solid rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; }
+#pdf-root .load-alert .head{ display:flex; align-items:center; gap:10px; padding:10px 12px; font-weight:900; color:#fff;
+  background:linear-gradient(90deg, rgba(46,125,50,.78), rgba(46,125,50,.35));
+}
+#pdf-root .load-alert .ic{ width:26px; height:26px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,0.9); color:#2e7d32; font-weight:900;
+}
+#pdf-root .load-alert .txt{ padding:10px 12px; color:#222; font-size:13px; }
+#pdf-root .load-alert .recs{ margin:0; padding:0 16px 10px 16px; list-style:none; }
+#pdf-root .load-alert .recs li{ margin:6px 0; display:flex; gap:8px; }
+#pdf-root .load-alert .recs li::before{ content:"▶"; color:#2e7d32; }
+#pdf-root .load-alert .delta{ padding:8px 12px 12px; color:#222; font-weight:900; }
+#pdf-root .load-alert .delta .k{ color:#666; font-weight:800; margin-right:6px; }
+
+#pdf-root .load-table{ background:#f7f8f9; border:1px solid rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; }
+#pdf-root .load-table .th{ padding:10px 12px; font-weight:900; color:#111; background:rgba(0,0,0,0.04); }
+#pdf-root .load-table .tr{ display:grid; grid-template-columns:1fr 1fr 1fr; padding:8px 12px; border-top:1px solid rgba(0,0,0,0.08); font-size:13px; color:#222; }
+#pdf-root .load-table .tr.head{ font-weight:900; color:#444; background:rgba(255,199,44,0.12); }
+
+/* ===== COLOR STATES ===== */
+#pdf-root.load-low  .load-alert .head{ background:linear-gradient(90deg, rgba(46,125,50,.78), rgba(46,125,50,.35)); }
+#pdf-root.load-low  .load-alert .ic{ color:#2e7d32; }
+#pdf-root.load-low  .load-alert .recs li::before{ color:#2e7d32; }
+
+#pdf-root.load-mod  .load-alert .head{ background:linear-gradient(90deg, rgba(178,106,0,.78), rgba(178,106,0,.35)); }
+#pdf-root.load-mod  .load-alert .ic{ color:#b26a00; }
+#pdf-root.load-mod  .load-alert .recs li::before{ color:#b26a00; }
+
+#pdf-root.load-high .load-alert .head{ background:linear-gradient(90deg, rgba(179,38,30,.78), rgba(179,38,30,.35)); }
+#pdf-root.load-high .load-alert .ic{ color:#b3261e; }
+#pdf-root.load-high .load-alert .recs li::before{ color:#b3261e; }
+/* ===== PDF: fix ONLY header logo (no global img rules) ===== */
+#pdf-root .pac-pdf-brand { 
+  display: flex !important; 
+  align-items: center !important; 
+  gap: 10px !important; 
+}
+
+#pdf-root .pac-pdf-logo,
+#pdf-root #pac-pdf-logo {
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  object-fit: contain !important;
+  display: block !important;
+  flex: 0 0 34px !important;
+}
+
+#pdf-root .pac-pdf-top{
+  display:flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+}
+
+#pdf-root .pac-pdf-meta{
+  text-align: right !important;
+}
+

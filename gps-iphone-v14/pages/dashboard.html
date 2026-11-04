@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProAthleteCare | Dashboard</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+
+<body>
+<header>
+  <a href="../platform.html" class="logo-link">
+    <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo" />
+  </a>
+  <h1 class="project-title">ProAthleteCare</h1>
+  <p class="tagline">Онлайн-тренінг та професійний супровід атлетів</p>
+
+  <button class="menu-toggle" id="menu-toggle-button">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="content-wrapper">
+  <nav class="sidebar" id="main-sidebar">
+    <a href="../platform.html">About Us <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+    <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+
+    <!-- можеш додати/залишити свої пункти меню -->
+    <a class="active" href="dashboard.html">Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+
+    <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top:auto;padding:15px;border-top:1px solid #333;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../assets/images/AK_logo.png" style="width:35px;height:35px;border-radius:50%;border:1px solid #FFC72C;object-fit:cover;">
+        <span id="user-name" style="color:#FFC72C;font-weight:bold;font-size:14px;">...</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <h2>Dashboard: Wellness & Nervous System</h2>
+
+    <!-- ===== ONE PREMIUM CARD WIDGET ===== -->
+    <section class="wg-card" aria-label="Wellness gauge widget">
+      <div class="wg-top">
+        <div class="wg-title">
+          <div class="wg-kicker">WELLNESS</div>
+          <h3 class="wg-h3">Performance Readiness</h3>
+          <div class="wg-sub">Навантаження нервової системи • 7 днів</div>
+        </div>
+
+        <div class="wg-chip" id="wgChip">
+          <span class="wg-chip-dot"></span>
+          <span id="wgChipText">...</span>
+        </div>
+      </div>
+
+      <div class="wg-grid">
+        <!-- RADIAL -->
+        <div class="wg-radial">
+          <svg viewBox="0 0 120 120" class="wg-rsvg" aria-hidden="true">
+            <circle cx="60" cy="60" r="46" class="wg-rbg"></circle>
+            <circle cx="60" cy="60" r="46" class="wg-rprog" id="wgRadial"></circle>
+          </svg>
+
+          <div class="wg-rcenter">
+            <div class="wg-rvalue" id="wgToday">--%</div>
+            <div class="wg-rlabel">Today readiness</div>
+
+            <div class="wg-mini">
+              <div class="wg-mini-row">
+                <span>Weekly avg</span>
+                <strong id="wgAvg">--%</strong>
+              </div>
+              <div class="wg-mini-row">
+                <span>NS load</span>
+                <strong id="wgNsToday">--%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TREND -->
+        <div class="wg-trend">
+          <div class="wg-trend-head">
+            <div class="wg-trend-title">Nervous system load trend</div>
+            <div class="wg-trend-hint">Hover: значення + причина</div>
+          </div>
+
+          <div class="wg-canvas-wrap">
+            <canvas id="wgTrend"></canvas>
+            <div class="wg-tooltip" id="wgTooltip" style="display:none;"></div>
+          </div>
+
+          <div class="wg-reasons" id="wgReasons"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== SAME STACK AS WELLNESS PAGE (щоб були дані) ===== -->
+<footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+
+<script src="../js/libs/chart.min.js"></script>
+
+<script src="../config/firebase-config.js"></script>
+<script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+<script src="../js/settings.js"></script>
+
+<!-- wellness.js заповнює localStorage.wellnessHistory через syncWellnessFromFirebase -->
+<script src="../js/wellness.js"></script>
+
+<script src="../js/dashboard.js"></script>
+<script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+</body>
+</html>
+
+
+
+
+
+
+

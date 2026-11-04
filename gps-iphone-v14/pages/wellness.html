@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProAthleteCare | Wellness Control</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/wellness.css">
+    <link rel="stylesheet" href="../css/navigation-mobile.css"> 
+    
+    
+    </head>
+    
+
+<body>
+    <header>
+    <a href="../platform.html" class="logo-link">
+        <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo">
+        </a>
+        <h1 class="project-title">ProAthleteCare</h1>
+    
+        <p class="tagline">Онлайн-тренінг та професійний супровід атлетів</p>
+        <select id="langSelect" class="pac-lang-select" aria-label="Language selector">
+            <option value="uk">UA</option>
+            <option value="en">EN</option>
+            <option value="de">DE</option>
+            <option value="es">ES</option>
+            <option value="ru">RU</option>
+            <option value="pt">PT</option>
+        </select>
+        <button class="menu-toggle" id="menu-toggle-button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+    </header>
+    
+    <div class="content-wrapper">
+        <nav class="sidebar" id="main-sidebar">
+            <a href="dashboard_user.html"> Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            
+            <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="injury.html">Injury Story <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="load-season.html">Load Season <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="daily-individual.html">Daily Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="weekly-individual.html">Weekly Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="weight-control.html">Weight Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="power.html">Power Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+
+        <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top: auto; padding: 15px; border-top: 1px solid #333; cursor: pointer;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../assets/images/AK_logo.png" style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #FFC72C; object-fit: cover;">
+                <span id="user-name" style="color: #FFC72C; font-weight: bold; font-size: 14px;">...</span>
+            </div>
+        </div>
+        
+    </nav>
+        
+        
+
+        <main class="main-content">
+            <h2>Wellness Control: Моніторинг стану</h2>
+            <div class="pac-sensitive-disclaimer" data-pac-disclaimer="wellness" role="note" style="background:#000;border:1px solid rgba(255,199,44,0.45);border-radius:10px;color:#FFC72C;font-size:12px;line-height:1.45;padding:10px 12px;margin:0 0 14px 0;">
+                Performance and wellness insights are informational only and do not replace professional medical advice.
+            </div>
+            <div class="dashboard-container wellness-report-root">
+                
+
+                
+
+
+
+
+                
+
+                <div class="form-card">
+
+
+                    <h3>Щоденне опитування</h3>
+                    <div id="wellness-week-coverage" class="wellness-week-coverage"></div>
+                    <form id="wellness-form">
+
+                        
+                        <label>1. Якість сну (1-10, де 10 - ідеально):</label>
+                        <div class="rating-group star-group">
+                            <input type="radio" id="sleep-r10" name="sleep" value="10" /><label for="sleep-r10" title="10"></label>
+                            <input type="radio" id="sleep-r9" name="sleep" value="9" /><label for="sleep-r9" title="9"></label>
+                            <input type="radio" id="sleep-r8" name="sleep" value="8" /><label for="sleep-r8" title="8"></label>
+                            <input type="radio" id="sleep-r7" name="sleep" value="7" /><label for="sleep-r7" title="7"></label>
+                            <input type="radio" id="sleep-r6" name="sleep" value="6" /><label for="sleep-r6" title="6"></label>
+                            <input type="radio" id="sleep-r5" name="sleep" value="5" /><label for="sleep-r5" title="5"></label>
+                            <input type="radio" id="sleep-r4" name="sleep" value="4" /><label for="sleep-r4" title="4"></label>
+                            <input type="radio" id="sleep-r3" name="sleep" value="3" /><label for="sleep-r3" title="3"></label>
+                            <input type="radio" id="sleep-r2" name="sleep" value="2" /><label for="sleep-r2" title="2"></label>
+                            <input type="radio" id="sleep-r1" name="sleep" value="1" /><label for="sleep-r1" title="1"></label>
+                        </div>
+                        <p id="stat-sleep" class="wellness-stat"></p> 
+                        <div class="small-chart-container">
+                            <canvas id="chart-sleep" class="small-line-chart"></canvas>
+                        </div>
+                        <div class="mini-analysis" id="analysis-sleep"></div>
+
+
+
+                        
+                        <label>2. М'язовий біль / Втома (1-10, де 10 - сильний біль):</label>
+                        <div class="rating-group pain-group">
+                            <input type="radio" id="soreness-r10" name="soreness" value="10" /><label for="soreness-r10" title="10"></label>
+                            <input type="radio" id="soreness-r9" name="soreness" value="9" /><label for="soreness-r9" title="9"></label>
+                            <input type="radio" id="soreness-r8" name="soreness" value="8" /><label for="soreness-r8" title="8"></label>
+                            <input type="radio" id="soreness-r7" name="soreness" value="7" /><label for="soreness-r7" title="7"></label>
+                            <input type="radio" id="soreness-r6" name="soreness" value="6" /><label for="soreness-r6" title="6"></label>
+                            <input type="radio" id="soreness-r5" name="soreness" value="5" /><label for="soreness-r5" title="5"></label>
+                            <input type="radio" id="soreness-r4" name="soreness" value="4" /><label for="soreness-r4" title="4"></label>
+                            <input type="radio" id="soreness-r3" name="soreness" value="3" /><label for="soreness-r3" title="3"></label>
+                            <input type="radio" id="soreness-r2" name="soreness" value="2" /><label for="soreness-r2" title="2"></label>
+                            <input type="radio" id="soreness-r1" name="soreness" value="1" /><label for="soreness-r1" title="1"></label>
+                        </div>
+                        <p id="stat-soreness" class="wellness-stat"></p>
+                        <div class="small-chart-container">
+                            <canvas id="chart-soreness" class="small-line-chart"></canvas>
+                        </div>
+                        <div class="mini-analysis" id="analysis-soreness"></div>
+
+
+                        
+                        <label>3. Настрій / Рівень енергії (1-10, де 10 - відмінно):</label>
+                        <div class="rating-group energy-group">
+                            <input type="radio" id="mood-r10" name="mood" value="10" /><label for="mood-r10" title="10"></label>
+                            <input type="radio" id="mood-r9" name="mood" value="9" /><label for="mood-r9" title="9"></label>
+                            <input type="radio" id="mood-r8" name="mood" value="8" /><label for="mood-r8" title="8"></label>
+                            <input type="radio" id="mood-r7" name="mood" value="7" /><label for="mood-r7" title="7"></label>
+                            <input type="radio" id="mood-r6" name="mood" value="6" /><label for="mood-r6" title="6"></label>
+                            <input type="radio" id="mood-r5" name="mood" value="5" /><label for="mood-r5" title="5"></label>
+                            <input type="radio" id="mood-r4" name="mood" value="4" /><label for="mood-r4" title="4"></label>
+                            <input type="radio" id="mood-r3" name="mood" value="3" /><label for="mood-r3" title="3"></label>
+                            <input type="radio" id="mood-r2" name="mood" value="2" /><label for="mood-r2" title="2"></label>
+                            <input type="radio" id="mood-r1" name="mood" value="1" /><label for="mood-r1" title="1"></label>
+                        </div>
+                        <p id="stat-mood" class="wellness-stat"></p>
+                        <div class="small-chart-container">
+                            <canvas id="chart-mood" class="small-line-chart"></canvas>
+                        </div>
+                        <div class="mini-analysis" id="analysis-mood"></div>
+
+                        <label>4. Гідратація (1-10, де 1 склянка = 250 мл; 10 = виконано ціль по воді):</label>
+                        <div class="rating-group hydration-group">
+                            <input type="radio" id="water-r10" name="water" value="10" /><label for="water-r10" title="10"></label>
+                            <input type="radio" id="water-r9" name="water" value="9" /><label for="water-r9" title="9"></label>
+                            <input type="radio" id="water-r8" name="water" value="8" /><label for="water-r8" title="8"></label>
+                            <input type="radio" id="water-r7" name="water" value="7" /><label for="water-r7" title="7"></label>
+                            <input type="radio" id="water-r6" name="water" value="6" /><label for="water-r6" title="6"></label>
+                            <input type="radio" id="water-r5" name="water" value="5" /><label for="water-r5" title="5"></label>
+                            <input type="radio" id="water-r4" name="water" value="4" /><label for="water-r4" title="4"></label>
+                            <input type="radio" id="water-r3" name="water" value="3" /><label for="water-r3" title="3"></label>
+                            <input type="radio" id="water-r2" name="water" value="2" /><label for="water-r2" title="2"></label>
+                            <input type="radio" id="water-r1" name="water" value="1" /><label for="water-r1" title="1"></label>
+                        </div>
+                        <p id="stat-water" class="wellness-stat"></p>
+                        <div class="small-chart-container">
+                            <canvas id="chart-water" class="small-line-chart"></canvas>
+                        </div>
+                        <div class="mini-analysis" id="analysis-water"></div>
+
+                        
+                        <label>5. Психологічний стрес (1-10, де 10 - максимальний):</label>
+                        <div class="rating-group stress-group">
+                            <input type="radio" id="stress-r10" name="stress" value="10" /><label for="stress-r10" title="10"></label>
+                            <input type="radio" id="stress-r9" name="stress" value="9" /><label for="stress-r9" title="9"></label>
+                            <input type="radio" id="stress-r8" name="stress" value="8" /><label for="stress-r8" title="8"></label>
+                            <input type="radio" id="stress-r7" name="stress" value="7" /><label for="stress-r7" title="7"></label>
+                            <input type="radio" id="stress-r6" name="stress" value="6" /><label for="stress-r6" title="6"></label>
+                            <input type="radio" id="stress-r5" name="stress" value="5" /><label for="stress-r5" title="5"></label>
+                            <input type="radio" id="stress-r4" name="stress" value="4" /><label for="stress-r4" title="4"></label>
+                            <input type="radio" id="stress-r3" name="stress" value="3" /><label for="stress-r3" title="3"></label>
+                            <input type="radio" id="stress-r2" name="stress" value="2" /><label for="stress-r2" title="2"></label>
+                            <input type="radio" id="stress-r1" name="stress" value="1" /><label for="stress-r1" title="1"></label>
+                        </div>
+                        <p id="stat-stress" class="wellness-stat"></p>
+                        <div class="small-chart-container">
+                            <canvas id="chart-stress" class="small-line-chart"></canvas>
+                        </div>
+                        <div class="mini-analysis" id="analysis-stress"></div>
+
+
+                        <label>6. Суб'єктивна готовність до тренування (1-10, де 10 - повна готовність):</label>
+                        <div class="rating-group ready-group">
+                            <input type="radio" id="ready-r10" name="ready" value="10" /><label for="ready-r10" title="10"></label>
+                            <input type="radio" id="ready-r9" name="ready" value="9" /><label for="ready-r9" title="9"></label>
+                            <input type="radio" id="ready-r8" name="ready" value="8" /><label for="ready-r8" title="8"></label>
+                            <input type="radio" id="ready-r7" name="ready" value="7" /><label for="ready-r7" title="7"></label>
+                            <input type="radio" id="ready-r6" name="ready" value="6" /><label for="ready-r6" title="6"></label>
+                            <input type="radio" id="ready-r5" name="ready" value="5" /><label for="ready-r5" title="5"></label>
+                            <input type="radio" id="ready-r4" name="ready" value="4" /><label for="ready-r4" title="4"></label>
+                            <input type="radio" id="ready-r3" name="ready" value="3" /><label for="ready-r3" title="3"></label>
+                            <input type="radio" id="ready-r2" name="ready" value="2" /><label for="ready-r2" title="2"></label>
+                            <input type="radio" id="ready-r1" name="ready" value="1" /><label for="ready-r1" title="1"></label>
+                        </div>
+                        <p id="stat-ready" class="wellness-stat"></p>
+                        <div class="small-chart-container">
+                            <canvas id="chart-ready" class="small-line-chart"></canvas>
+                        </div>
+                        <div class="mini-analysis" id="analysis-ready"></div>
+
+                        
+                        <button type="submit" class="gold-button">Зберегти</button>
+
+                    </form>
+                </div>
+                
+                <div class="chart-card">
+                    
+    <div class="pac-analysis-card" style="background: #000; border: 1px solid #FFC72C; border-radius: 12px; padding: 20px; margin-bottom: 25px; font-family: 'Inter', sans-serif;">
+    <h3 id="pac-title" style="color: #FFC72C; margin: 0 0 15px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">⚡ АНАЛІЗ НЕРВОВОЇ СИСТЕМИ</h3>
+    
+    <div style="display: flex; gap: 20px; margin-bottom: 20px; align-items: center;">
+        <div id="cns-status-circle" style="min-width: 85px; height: 85px; border-radius: 50%; border: 4px solid #FFC72C; display: flex; align-items: center; justify-content: center; flex-direction: column; background: rgba(255,199,44,0.05);">
+            <span id="cns-percentage" style="color: #fff; font-size: 20px; font-weight: 900;">0%</span>
+            <span id="cns-status-label" style="color: #FFC72C; font-size: 9px; font-weight: 700;">READY</span>
+        </div>
+
+        <div style="flex: 1;">
+            <div id="cns-verdict" style="color: #fff; font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">Завантаження...</div>
+            <div id="cns-advice" style="background: rgba(255,199,44,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,199,44,0.2); min-height: 40px;">
+                <div style="color: #FFC72C; font-size: 10px; font-weight: 800; margin-bottom: 4px; text-transform: uppercase;">RECOMMENDATION:</div>
+                <div id="advice-text" style="color: #ccc; font-size: 12px; line-height: 1.4;">Аналізуємо останні показники...</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 150px; position: relative; margin-bottom: 10px;">
+        <canvas id="pac-trend-chart"></canvas>
+    </div>
+
+    <div id="pac-week-recommendation" style="margin: 10px 0 12px 0; padding: 10px; border:1px solid rgba(255,199,44,.25); border-radius:8px; background: rgba(255,199,44,.05); color:#ddd; font-size:12px; line-height:1.4;">
+      Recommendation: —
+    </div>
+
+    <div id="cns-reset-card" class="cns-reset-card">
+      <div class="cns-reset-head">
+        <strong>CNS Reset</strong>
+        <span id="cns-reset-status" class="cns-reset-status">Ready</span>
+      </div>
+      <div class="cns-programs">
+        <button id="cns-prog-auto" type="button" class="cns-prog-btn is-active">Recommend</button>
+        <button id="cns-prog-recovery" type="button" class="cns-prog-btn">Recovery</button>
+        <button id="cns-prog-focus" type="button" class="cns-prog-btn">Focus</button>
+        <button id="cns-prog-sleep" type="button" class="cns-prog-btn">Sleep</button>
+        <button id="cns-prog-match" type="button" class="cns-prog-btn">Match</button>
+      </div>
+      <div id="cns-program-desc" class="cns-program-desc"></div>
+      <div id="cns-program-reason" class="cns-program-reason"></div>
+      <div class="cns-reset-monitor">
+        <div class="cns-breath-visual">
+          <div class="cns-lung">
+            <div id="cns-lung-left" class="cns-lung-fill"></div>
+          </div>
+          <div class="cns-orb-wrap">
+            <div id="cns-orb" class="cns-orb">
+              <span id="cns-phase" class="cns-phase">Inhale</span>
+            </div>
+            <div id="cns-phase-timer" class="cns-phase-timer">4</div>
+          </div>
+          <div class="cns-lung">
+            <div id="cns-lung-right" class="cns-lung-fill"></div>
+          </div>
+        </div>
+        <div id="cns-session-timer" class="cns-session-timer">00:00</div>
+        <div id="cns-cycle-counter" class="cns-cycle-counter">Cycle 0/10</div>
+      </div>
+      <div class="cns-reset-controls">
+        <button id="cns-start-btn" type="button" class="cns-btn">Start</button>
+        <button id="cns-pause-btn" type="button" class="cns-btn cns-btn--ghost">Pause</button>
+        <button id="cns-reset-btn" type="button" class="cns-btn cns-btn--ghost">Reset</button>
+      </div>
+      <label class="cns-sound-toggle">
+        <input id="cns-sound-toggle" type="checkbox" checked />
+        <span>Sound signal</span>
+      </label>
+    </div>
+</div>
+
+    <div class="pac-ui-controls" style="display:none;">
+  <label id="wellness-report-date-label" style="display:block; color:#FFC72C; font-size:12px; margin-bottom:6px;">
+    Report date:
+  </label>
+  <input type="date" id="report-date"
+         style="padding:10px; border-radius:10px; border:1px solid rgba(255,199,44,0.4); background:#000; color:#fff; width: 220px;"/>
+
+  <button id="wellness-export-report-btn" onclick="generateDailyReportPDF()"
+          class="btn-premium-gold"
+          style="margin-top:10px;">
+    📄 Export Daily Report
+  </button>
+  <button id="wellness-export-data-btn" onclick="pacExportMyData()" class="btn-premium-gold" style="margin-top:10px;">
+  ⬇️ Export my data (JSON)
+</button>
+
+<button id="wellness-delete-data-btn" onclick="pacDeleteMyData()" class="btn-premium-gold" style="margin-top:10px; background:#DA3E52; border-color:#DA3E52;">
+  🗑️ Delete my data
+</button>
+
+</div>
+
+
+
+
+
+
+    <h3 style="margin-top: 30px;">Індивідуальна динаміка Wellness</h3>
+    <div class="chart-area wellness-spider-area" style="height: 350px;">
+        <canvas id="wellnessChart"></canvas>
+    </div>
+
+    <details style="margin-top: 20px; background: #000; border: 1px solid #FFC72C; border-radius: 8px;">
+        <summary style="padding: 12px; cursor: pointer; color: #FFC72C; font-weight: 700; font-size: 12px; outline: none; list-style: none; text-transform: uppercase;">
+            📜 Історія WELLNESS (Натисніть для перегляду)
+        </summary>
+        <div id="wellness-history-list" style="max-height: 250px; overflow-y: auto; padding: 10px;">
+            <div style="color: #444; font-size: 11px; text-align: center;">Завантаження історії...</div>
+        </div>
+    </details>
+    <details class="pac-ui-controls">...</details>
+
+</div>
+    <div id="pdf-root" class="report-only">
+  <section class="pac-pdf-page" id="pac-pdf-page">
+    <!-- TOP HEADER -->
+    <div class="pac-pdf-top">
+      <div>
+        <div class="pac-pdf-brand">
+          <img class="pac-pdf-logo" id="pac-pdf-logo" alt="ProAthleteCare Logo">
+          <div class="pac-pdf-brandname">ProAthleteCare®</div>
+        </div>
+        <h1 class="pac-pdf-h1">Щоденний звіт самопочуття</h1>
+      </div>
+
+      <div class="pac-pdf-meta">
+        <div class="pac-pdf-athlete" id="pac-pdf-athlete">—</div>
+        <div class="pac-pdf-date" id="pac-pdf-date">—</div>
+      </div>
+    </div>
+
+    <div class="pac-divider"></div>
+
+    <!-- READINESS CARD -->
+    <div class="pac-pdf-card pac-pdf-readiness">
+      <div class="pac-gauge" id="pac-gauge" style="--pct: 0%;">
+        <div class="pac-gauge-inner">
+          <div class="pac-gauge-val" id="pac-pdf-ready-pct">0%</div>
+          <div class="pac-gauge-sub">ГОТОВНІСТЬ</div>
+        </div>
+      </div>
+
+      <div class="pac-ready-right">
+        <div class="pac-ready-title" id="pac-pdf-ready-label">ПОМІРНА ГОТОВНІСТЬ</div>
+        <div class="pac-ready-big" id="pac-pdf-ready-line">0% · ПОМІРНА ГОТОВНІСТЬ</div>
+        <div class="pac-ready-pill" id="pac-pdf-ready-pill">Тренуйся з контрольованим навантаженням</div>
+      </div>
+    </div>
+
+    <!-- COACH REC -->
+    <div class="pac-section-title">Рекомендації тренера (сьогодні)</div>
+    <div class="pac-pdf-card pac-coach-card">
+      <div class="pac-coach-bar"></div>
+      <ul class="pac-coach-list" id="pac-pdf-coach-list"></ul>
+    </div>
+
+    <!-- KEY METRICS -->
+    <div class="pac-section-title">Ключові показники</div>
+    <div class="pac-pdf-card">
+      <table class="pac-table">
+        <thead>
+          <tr>
+            <th>Показник</th>
+            <th>Оцінка</th>
+            <th>Статус</th>
+            <th>Тренд</th>
+          </tr>
+        </thead>
+        <tbody id="pac-pdf-metrics-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- CHARTS (BOTTOM) -->
+    <div class="pac-charts">
+      <div class="pac-chart-card">
+        <div class="pac-chart-title">Динаміка за 7 днів</div>
+        <div class="pac-chart-canvas-wrap">
+          <canvas id="pac-pdf-line"></canvas>
+        </div>
+      </div>
+
+      <div class="pac-chart-card">
+        <div class="pac-chart-title">Радар самопочуття</div>
+        <div class="pac-chart-canvas-wrap">
+          <canvas id="pac-pdf-radar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- GDPR FOOTER -->
+    <div class="pac-foot">
+  <div>
+    <strong>Політика конфіденційності (GDPR / DSGVO)</strong><br>
+    Володілець даних: ProAthleteCare (контакт: proathletecare.com@gmail.com).
+  </div>
+  <div>
+    Оброблювані дані: щоденні показники самопочуття, дата звіту та ідентифікатор користувача.
+    Мета обробки: моніторинг здоров’я спортсмена та тренувального навантаження, для планування тренувань , збільшення продуктивності, не перенавантаження.
+  </div>
+  <div>
+    Правова підстава: згода користувача (ст. 6(1)(a) GDPR) або договір (ст. 6(1)(b) GDPR).
+    Термін зберігання даних: 6 місяців.
+  </div>
+  <div>
+    Права користувача: доступ до даних, виправлення, видалення («право бути забутим»),
+    експорт даних та відкликання згоди згідно з законом.
+  </div>
+</div>
+
+  </section>
+</div>
+    
+    <footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    
+    <script src="../js/libs/chart.min.js"></script>
+
+    <script src="../config/firebase-config.js"></script>
+    <script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+    
+
+    
+    <script src="../js/settings.js"></script>
+    <!-- html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="../js/wellness.js"></script>
+    <script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+
+
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+

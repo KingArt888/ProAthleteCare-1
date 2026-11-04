@@ -1,0 +1,169 @@
+.drill-player-body {
+  margin: 0;
+  background: #020202;
+  color: #fff;
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+}
+
+.drill-player-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: stretch;
+}
+
+.drill-player-stage {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #050505;
+}
+
+.player-konva-stage {
+  width: 100vw;
+  height: 100vh;
+  background: #0d3b19;
+}
+
+.player-focus-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 8;
+  min-width: 72px;
+  height: 34px;
+  border: 1px solid rgba(255,199,44,.48);
+  border-radius: 999px;
+  background: rgba(5,5,5,.78);
+  color: #ffc72c;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  box-shadow: 0 12px 28px rgba(0,0,0,.34), 0 0 16px rgba(255,199,44,.12);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.player-focus-toggle.is-active {
+  background: #ffc72c;
+  color: #050505;
+  border-color: #ffc72c;
+}
+
+.player-hud {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.player-hud span {
+  display: block;
+  color: #ffc72c;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .14em;
+}
+
+.player-hud strong {
+  display: block;
+  max-width: 62vw;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+#player-countdown {
+  padding: 8px 10px;
+  border: 1px solid rgba(255,199,44,.45);
+  border-radius: 8px;
+  background: rgba(0,0,0,.7);
+  color: #ffc72c;
+  font-size: 28px;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+
+.player-controls {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 48px;
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.player-controls button {
+  min-height: 40px;
+  border: 1px solid rgba(255,199,44,.55);
+  border-radius: 8px;
+  background: rgba(0,0,0,.72);
+  color: #ffc72c;
+  font-weight: 950;
+}
+
+.player-controls input {
+  width: 100%;
+  accent-color: #ffc72c;
+}
+
+.player-next {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 10px;
+  color: #aaa;
+  font-size: 12px;
+}
+
+.drill-player-body.drill-player-embed,
+.drill-player-body.drill-player-embed .drill-player-shell,
+.drill-player-body.drill-player-embed .drill-player-stage,
+.drill-player-body.drill-player-embed .player-konva-stage {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background: #000;
+}
+
+.drill-player-body.drill-player-embed .player-hud,
+.drill-player-body.drill-player-embed .player-controls,
+.drill-player-body.drill-player-embed .player-next {
+  display: none;
+}
+
+.drill-player-body.drill-player-compact,
+.drill-player-body.drill-player-compact .drill-player-shell,
+.drill-player-body.drill-player-compact .drill-player-stage,
+.drill-player-body.drill-player-compact .player-konva-stage {
+  min-height: 100vh;
+}
+
+.drill-player-body.drill-player-compact .player-konva-stage {
+  filter: saturate(1.06) contrast(1.04);
+}
+
+@media (max-width: 640px) {
+  .player-controls {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .player-controls input {
+    grid-column: 1 / -1;
+  }
+  #player-countdown {
+    font-size: 21px;
+  }
+}
+
+.player-exit { position:fixed; top:16px; left:16px; z-index:1000; padding:10px 16px; border:1px solid #ffc72c; border-radius:24px; background:#080808; color:#ffc72c; text-decoration:none; font:700 13px sans-serif; }
+
+.drill-player-body .player-hud { top:64px; }
+
+.player-controls .player-edit { color:#ffc72c; border:1px solid #ffc72c; border-radius:8px; padding:10px 16px; text-decoration:none; font-weight:700; }
+.player-controls select { background:#080808; color:#ffc72c; border:1px solid #ffc72c; border-radius:8px; padding:10px; }

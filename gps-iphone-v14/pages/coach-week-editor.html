@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COACH WEEKLY PLANER | ProAthleteCare</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/weekly-individual.css?v=20260411m1">
+    <link rel="stylesheet" href="../css/navigation-mobile.css">
+</head>
+<body>
+    <header>
+    <a href="../platform.html" class="logo-link">
+        <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo">
+        </a>
+        <h1 class="project-title">ProAthleteCare</h1>
+    
+        <p class="tagline">Онлайн-тренінг та професійний супровід атлетів</p>
+        <button class="menu-toggle" id="menu-toggle-button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+    
+    <div class="content-wrapper">
+        <nav class="sidebar" id="main-sidebar">
+            <a id="cwe-nav-dashboard" href="coach-dashboard.html">Coach Workspace <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a id="cwe-nav-week" href="coach-week-editor.html">Week Editor <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a id="cwe-nav-drill-canvas" href="drill-canvas-editor.html">Drill Canvas <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a id="cwe-nav-date" href="coach-date-plan.html">Date Plan <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            
+
+        <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top: auto; padding: 15px; border-top: 1px solid #333; cursor: pointer;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../assets/images/AK_logo.png" style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #FFC72C; object-fit: cover;">
+                <span id="user-name" style="color: #FFC72C; font-weight: bold; font-size: 14px;">...</span>
+            </div>
+        </div>
+    </nav>
+
+        <main class="main-content">
+            <h2 id="cwe-title">Coach Weekly Planer: Планування мікроциклу</h2>
+            <p id="cwe-subtitle" class="sub-header">Ваш тижневий план, цикли навантаження та шаблони завдань.</p>
+            <div id="week-history-mini" style="
+  position: sticky; top: 10px; z-index: 50;
+  background:#050505; border:1px solid #222; border-radius:14px;
+  padding:8px 10px; max-width: 100%; width: 100%;
+  overflow: hidden;
+">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+    <div id="cwe-weeks-label" style="color:#d4af37; font-weight:900; font-size:0.75rem; letter-spacing:0.5px;">WEEKS</div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button type="button" id="week-mini-prev" style="height:24px;min-width:24px;padding:0 6px;border-radius:8px;border:1px solid #353535;background:#121212;color:#f4c62d;font-weight:900;cursor:pointer;">&#x2039;</button>
+      <div id="week-mini-label" style="color:#666; font-size:0.7rem; min-width:140px; text-align:center;"></div>
+      <button type="button" id="week-mini-next" style="height:24px;min-width:24px;padding:0 6px;border-radius:8px;border:1px solid #353535;background:#121212;color:#f4c62d;font-weight:900;cursor:pointer;">&#x203A;</button>
+    </div>
+  </div>
+
+  <div id="week-mini-list" style="
+    display:grid; gap:8px; padding-top:6px;
+    width:100%; overflow:hidden;
+  "></div>
+</div>
+
+            
+            <form id="weekly-plan-form">
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0 14px 0;">
+  <button type="button" id="mode-standard" class="gold-button">STANDARD</button>
+  <button type="button" id="mode-custom" class="gold-button" style="opacity:.6;">CUSTOM</button>
+
+  <button type="button" id="btn-save-draft" class="gold-button">Save draft</button>
+  <button type="button" id="btn-publish" class="gold-button">Publish</button>
+  <button type="button" id="btn-apply-all" class="gold-button">Apply to ALL</button>
+  <a href="drill-canvas-editor.html" class="gold-button" style="text-decoration:none;display:inline-flex;align-items:center;">Drill Canvas</a>
+
+</div>
+
+<div id="coach-week-info" style="color:#777;margin-bottom:10px;"></div>
+
+            <section class="pac-drill-library-panel" data-coach-admin-only="true" style="display:none;">
+                <div class="pac-drill-library-head">
+                    <div>
+                        <span>TACTICAL DRILLS</span>
+                        <strong>Coach Week Planner</strong>
+                    </div>
+                    <a href="drill-canvas-editor.html">Create drill</a>
+                </div>
+                <div id="pac-weekly-drill-library"></div>
+            </section>
+
+                <div class="table-container">
+                    <table class="weekly-table">
+                        <thead>
+                            <tr>
+                                <th id="cwe-th-day" class="table-header-day">День</th>
+                                <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Нд</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="md-colors-row">
+                                <td id="cwe-md-status-label">MD Status</td>
+                                <td class="cycle-day" data-day-index="0" id="day-status-0"><span class="md-status color-dark-grey">TRAIN</span></td>
+                                <td class="cycle-day" data-day-index="1" id="day-status-1"><span class="md-status color-dark-grey">TRAIN</span></td>
+                                <td class="cycle-day" data-day-index="2" id="day-status-2"><span class="md-status color-dark-grey">TRAIN</span></td>
+                                <td class="cycle-day" data-day-index="3" id="day-status-3"><span class="md-status color-dark-grey">TRAIN</span></td>
+                                <td class="cycle-day" data-day-index="4" id="day-status-4"><span class="md-status color-dark-grey">TRAIN</span></td>
+                                <td class="cycle-day" data-day-index="5" id="day-status-5"><span class="md-status color-dark-grey">TRAIN</span></td>
+                                <td class="cycle-day" data-day-index="6" id="day-status-6"><span class="md-status color-dark-grey">TRAIN</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td id="cwe-activity-label">Активність</td>
+                                <td data-day-index="0">
+                                    <select name="activity_0" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                                <td data-day-index="1">
+                                    <select name="activity_1" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                                <td data-day-index="2">
+                                    <select name="activity_2" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                                <td data-day-index="3">
+                                    <select name="activity_3" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                                <td data-day-index="4">
+                                    <select name="activity_4" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                                <td data-day-index="5">
+                                    <select name="activity_5" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                                <td data-day-index="6">
+                                    <select name="activity_6" class="activity-type-select">
+                                        <option value="TRAIN">Тренування</option><option value="MATCH">Матч</option><option value="REST">Відпочинок</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <section class="daily-task-section">
+                    <h3 id="cwe-templates-title">📝 Налаштування Шаблонів Вправ</h3>
+                    <p id="cwe-templates-note" class="note-info">❗ Тут ви вказуєте **яку категорію** і **скільки вправ** генерувати для MD-статусу, який має цей день.</p>
+                    
+                    <div class="tasks-grid">
+                        
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-0"></h4>
+                            <div class="task-day-container" data-day-index="0">
+                            </div>
+                        </div>
+
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-1"></h4>
+                            <div class="task-day-container" data-day-index="1"></div>
+                        </div>
+                        
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-2"></h4>
+                            <div class="task-day-container" data-day-index="2"></div>
+                        </div>
+                        
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-3"></h4>
+                            <div class="task-day-container" data-day-index="3"></div>
+                        </div>
+                        
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-4"></h4>
+                            <div class="task-day-container" data-day-index="4"></div>
+                        </div>
+                        
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-5"></h4>
+                            <div class="task-day-container" data-day-index="5"></div>
+                        </div>
+                        
+                        <div class="day-template-wrapper">
+                            <h4 class="day-md-title" id="md-title-6"></h4>
+                            <div class="task-day-container" data-day-index="6"></div>
+                        </div>
+
+                    </div>
+                </section>
+                
+                <div class="form-actions">
+                    <button id="cwe-save-main" type="submit" class="save-button gold-button">Зберегти Тижневий План та Шаблони</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    
+    <div id="exercise-selection-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            <h3 id="modal-title-context">Вибір вправи</h3>
+
+            <h4 id="cwe-filter-title">Фільтр за якістю навантаження:</h4>
+            <div id="quality-filters" class="quality-filters-container">
+                </div>
+            
+            <hr>
+
+            <div id="exercise-list-container" class="exercise-list-container">
+                </div>
+            
+            <button id="add-selected-btn" class="gold-button" style="display: none; margin-top: 20px;">
+                Додати вибрані (0)
+            </button>
+        </div>
+    </div>
+
+    <footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    
+    
+    
+    <script src="../config/firebase-config.js"></script>
+    
+    <script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+    
+
+    <script src="../js/settings.js"></script>
+    <script src="../js/exercise_library.js?v=20260411z3"></script>
+    <script src="../js/drill-local-storage.js?v=20260926-storage-v1"></script>
+<script src="../js/drill-library-integration.js?v=20261016-sport-library"></script>
+    <script src="../js/exercise-task.js?v=20261104-series-clock-v1"></script>
+    <script src="../js/coach-week-editor.js?v=20261103-task-v1"></script>
+    <script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+

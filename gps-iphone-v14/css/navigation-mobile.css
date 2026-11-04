@@ -1,0 +1,345 @@
+/* ======================================================= */
+/* 0. ДЕСКТОП — ЗАЛІЗНИЙ ЗАХИСТ (НІКОЛИ НЕ ЛАМАЄТЬСЯ) */
+/* ======================================================= */
+@media (min-width: 901px) {
+
+    .menu-toggle {
+        display: none !important;
+    }
+
+    .sidebar {
+        position: relative !important;
+        width: 250px !important;
+        min-width: 250px;
+        max-width: 250px;
+        height: auto;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .content-wrapper {
+        display: flex;
+        flex-direction: row;
+        padding-top: 0;
+        width: 100%;
+    }
+
+    header {
+        position: relative;
+        width: 100%;
+    }
+}
+
+/* ======================================================= */
+/* 1. MOBILE / TABLET */
+/* ======================================================= */
+@media (max-width: 900px) {
+
+    /* ХЕДЕР */
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        padding: 10px 10px;
+        background-color: #000;
+    }
+
+    header .logo { 
+        width: 40px; 
+        height: 40px;
+    }
+
+    header .project-title {
+        font-size: 1.1em; 
+        margin-left: 10px;
+        flex-shrink: 1;
+    }
+
+    header .tagline {
+        display: none;
+    }
+
+    /* КНОПКА БУРГЕР */
+    .menu-toggle {
+        display: block !important;    /* Змінюємо на block для точного позиціювання спанів */
+        position: fixed;
+        top: 13px;                    /* Підібрали, щоб було в лінію з лого */
+        right: 15px;
+        z-index: 1010;
+        background: #FFD700;          /* Твоє золото */
+        border: none;
+        width: 36px;                  /* Твої розміри, які спрацювали */        height: 32px;
+        cursor: pointer;
+        border-radius: 6px;
+        padding: 0;
+        -webkit-appearance: none;     /* Фікс для iPhone */
+    }
+
+    /* МАЛЮЄМО ЛІНІЇ (span) */
+    .menu-toggle span {
+        display: block;
+        position: absolute;
+        width: 20px;                  /* Довжина ліній */
+        height: 2px;                  /* Товщина ліній */
+        background: #000;             /* Чорний колір ліній */
+        left: 8px;                    /* Центруємо по горизонталі */
+        border-radius: 2px;
+        transition: 0.3s;
+    }
+
+    /* Розставляємо 3 лінії по вертикалі всередині кнопки 32px */
+    .menu-toggle span:nth-child(1) { top: 9px; }
+    .menu-toggle span:nth-child(2) { top: 15px; }
+    .menu-toggle span:nth-child(3) { top: 21px; }
+
+    /* Анімація хрестика (якщо в JS додається клас is-open) */
+    .menu-toggle.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .menu-toggle.is-open span:nth-child(2) { opacity: 0; }
+    .menu-toggle.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    /* ОБГОРТКА */
+    .content-wrapper {
+        padding-top: 55px;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    /* SIDEBAR OVERLAY */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 320px; /* 🔥 КЛЮЧОВИЙ ФІКС */
+        height: 100%;
+        padding-top: 70px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 999;
+        background-color: #111;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* ОСНОВНИЙ КОНТЕНТ */
+    .main-content {
+        width: 100%;
+        padding: 10px;
+        margin-left: 0;
+    }
+}
+/* ==============================================
+   ProAthleteCare • Premium Notification Bell
+   Clean / Safe / Header-native
+   ============================================== */
+
+#mail-button{
+  position: fixed;
+  top: 10px;
+  right: 60px;              /* keep clear distance from profile block */
+  z-index: 1011;
+
+  width: 38px;
+  height: 38px;
+
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  outline: none !important;
+
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 🔔 wrapper */
+#mail-button .bell-wrap{
+  position: relative;
+  display: inline-flex;
+}
+
+/* 🔔 icon — only outline */
+#mail-button .bell-icon{
+  width: 30px;
+  height: 30px;
+  display: block;
+  fill: none !important;
+  stroke: #FFC72C;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  filter: drop-shadow(0 0 10px rgba(255,199,44,.25));
+  transition: transform .18s ease, filter .18s ease, stroke .18s ease;
+}
+
+#mail-button:hover .bell-icon{
+  stroke: #FFD700;
+  filter: drop-shadow(0 0 14px rgba(255,199,44,.35));
+  transform: translateY(-0.5px);
+}
+
+/* 🔴 badge */
+#mail-button .bell-badge{
+  position: absolute;
+  top: 2px;
+  right: -2px;
+
+  min-width: 5px;
+  height: 10px;
+  padding: 0 5px;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  background: #DA3E52;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 16px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.6);
+  box-shadow: 0 0 10px rgba(218,62,82,.45);
+}
+
+/* state from JS */
+#mail-button.has-unread .bell-badge{
+  display: inline-flex;
+  animation: bellBadgePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes bellBadgePulse{
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.08); }
+}
+/* ===== Messages Modal (Premium Transparent) ===== */
+#messagesModal{
+  position: fixed; inset: 0;
+  display: none;
+  z-index: 2000;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+}
+
+#messagesModal .mm-box{
+  width: min(520px, 92vw);
+  max-height: 78vh;
+  margin: 9vh auto 0;
+  border-radius: 18px;
+  border: 1px solid rgba(255,199,44,.28);
+  background: rgba(0,0,0,.55);
+  box-shadow: 0 18px 60px rgba(0,0,0,.55);
+  overflow: hidden;
+}
+
+#messagesModal .mm-top{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+#messagesModal .mm-title{
+  color:#FFC72C; font-weight:950; letter-spacing:.08em;
+  text-transform:uppercase; font-size:12px;
+}
+
+#messagesModal .mm-close{
+  background: transparent; border:0; color:#FFC72C;
+  font-size:20px; cursor:pointer;
+}
+
+#messagesModal .mm-tabs{
+  display:flex; gap:8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+#messagesModal .mm-tab{
+  flex:1;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.9);
+  font-weight:900;
+  font-size:12px;
+  cursor:pointer;
+}
+#messagesModal .mm-tab.is-active{
+  border-color: rgba(255,199,44,.35);
+  background: rgba(255,199,44,.12);
+}
+
+#messagesModal .mm-body{
+  padding: 12px 14px;
+}
+
+#messagesModal .mm-list{
+  display:flex; flex-direction:column; gap:10px;
+  max-height: 46vh;
+  overflow:auto;
+}
+
+#messagesModal .mm-item{
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  cursor:pointer;
+}
+#messagesModal .mm-item:hover{ border-color: rgba(255,199,44,.25); }
+
+#messagesModal .mm-item-top{
+  display:flex; justify-content:space-between; gap:10px;
+  font-size:12px; font-weight:900;
+}
+#messagesModal .mm-item-name{ color: rgba(255,255,255,.95); }
+#messagesModal .mm-item-time{ color: rgba(255,255,255,.55); font-weight:800; font-size:11px; }
+#messagesModal .mm-item-last{
+  margin-top:6px;
+  color: rgba(255,255,255,.70);
+  font-size:12px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+#messagesModal .mm-compose{
+  display:flex; flex-direction:column; gap:10px;
+}
+
+#messagesModal select, #messagesModal textarea{
+  width:100%;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.92);
+  border-radius: 12px;
+  padding: 10px;
+  outline: none;
+}
+
+#messagesModal textarea{ min-height: 110px; resize: none; }
+
+#messagesModal .mm-send{
+  width:100%;
+  border-radius: 14px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255,199,44,.35);
+  background: rgba(255,199,44,.14);
+  color:#fff;
+  font-weight:950;
+  cursor:pointer;
+}

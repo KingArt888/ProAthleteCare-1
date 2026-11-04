@@ -1,0 +1,697 @@
+/* ======================================================= */
+/* BASE */
+/* ======================================================= */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #000000;
+    color: #CCCCCC;
+}
+
+/* ======================================================= */
+/* HEADER */
+/* ======================================================= */
+header {
+    background-color: #0d0d0d;
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid #FFC72C;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.logo {
+    height: 70px;
+    margin-right: 15px;
+    border-radius: 50%;
+}
+
+.project-title {
+    margin: 0;
+    font-size: 1.8em;
+    color: #FFC72C;
+}
+
+.tagline {
+    margin-left: 20px;
+    color: #888888;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* ======================================================= */
+/* LAYOUT */
+/* ======================================================= */
+.content-wrapper {
+    display: flex;
+    min-height: calc(100vh - 100px);
+    width: 100%;
+}
+
+/* ======================================================= */
+/* SIDEBAR */
+/* ======================================================= */
+.sidebar {
+    width: 250px;
+    min-width: 250px;
+    max-width: 250px;
+    flex-shrink: 0;
+    background-color: #0d0d0d;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(255, 199, 44, 0.2);
+    box-sizing: border-box;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    color: #CCCCCC;
+    text-decoration: none;
+    padding: 15px 10px;
+    margin-bottom: 10px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    transition: background-color 0.3s, border-left 0.3s, color 0.3s;
+    border-left: 2px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #1f1f1f;
+    border-left: 2px solid #FFC72C;
+    color: #FFC72C;
+}
+
+.menu-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-left: auto;
+}
+
+/* ======================================================= */
+/* MAIN CONTENT */
+/* ======================================================= */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #000000;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.main-content h2 {
+    color: #FFC72C;
+    margin-bottom: 20px;
+}
+
+/* ======================================================= */
+/* HERO */
+/* ======================================================= */
+.hero {
+    position: relative;
+    max-width: 80%;
+    margin: 0 auto 20px auto;
+    height: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(60%);
+}
+
+.hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35%;
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+}
+
+.hero-overlay h2 {
+    color: #FFC72C;
+    font-size: 2.2em;
+    margin: 0 0 5px 0;
+}
+
+.hero-overlay p {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+/* ======================================================= */
+/* MENU BUTTON */
+/* ======================================================= */
+.menu-toggle {
+    display: none;
+}
+
+/* ======================================================= */
+/* MOBILE / TABLET */
+/* ======================================================= */
+@media (max-width: 900px) {
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        padding: 10px;
+        background-color: #000;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    .project-title {
+        font-size: 1.1em;
+        margin-left: 10px;
+    }
+
+    .tagline {
+        display: none;
+    }
+
+    .content-wrapper {
+        padding-top: 55px;
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 320px;
+        height: 100%;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+}
+
+/* ======================================================= */
+/* DESKTOP — ЗАЛІЗНИЙ ФІКС */
+/* ======================================================= */
+/* 🔥 ГАРАНТОВАНИЙ FLEX LAYOUT ДЛЯ DESKTOP */
+@media (min-width: 901px) {
+    html, body {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .content-wrapper {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        min-height: calc(100vh - 100px) !important;
+    }
+
+    .sidebar {
+        flex: 0 0 250px !important;
+        width: 250px !important;
+        min-width: 250px !important;
+        max-width: 250px !important;
+        position: relative !important;
+    }
+
+    .main-content {
+        flex: 1 1 auto !important;
+        width: auto !important;
+    }
+}
+/* Стиль модального вікна профілю */
+/* Саме вікно налаштувань - ТЕПЕР ПО ЦЕНТРУ */
+.profile-modal {
+    position: fixed;            /* Фіксуємо відносно екрана */
+    top: 50%;                   /* Зсуваємо на 50% вниз */
+    left: 50%;                  /* Зсуваємо на 50% вправо */
+    transform: translate(-50%, -50%); /* Точне центрування за центром вікна */
+    
+    width: 90%;
+    max-width: 450px;
+    background: linear-gradient(145deg, #111 0%, #000 100%);
+    border: 2px solid #FFC72C;  /* Трішки товстіша рамка для стилю */
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 0 60px rgba(255, 199, 44, 0.2);
+    z-index: 10001;             /* Щоб було поверх усього */
+}
+
+/* Фон, який закриває сторінку, коли вікно відкрите */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 10000; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.85); /* Затемнення */
+    backdrop-filter: blur(8px);           /* Розмиття фону */
+}
+
+.avatar-big {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border: 2px solid #FFC72C;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #000;
+}
+
+.avatar-big img { width: 100%; height: 100%; object-fit: cover; }
+
+.save-btn {
+    background: linear-gradient(135deg, #FFC72C 0%, #D4A017 100%);
+    color: #000;
+    margin-top: 15px;
+    font-weight: 800;
+}
+
+.logout-btn {
+    background: none;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 13px;
+    width: 100%;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.logout-btn:hover { background: rgba(255, 68, 68, 0.1); }
+
+.modal-item {
+    width: 100%;           /* Робимо на всю ширину контейнера */
+    display: block;        /* Щоб посилання <a> розтягнулося як кнопка */
+    box-sizing: border-box; /* Важливо! Щоб внутрішні відступи не розширювали кнопку */
+    padding: 12px 15px;
+    background: rgba(255, 199, 44, 0.05);
+    border: 1px solid rgba(255, 199, 44, 0.2);
+    border-radius: 12px;
+    color: #fff;
+    text-align: left;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none; /* Прибираємо підкреслення для посилання */
+    margin-bottom: 8px;    /* Невеликий відступ між кнопками */
+}
+
+.modal-item:hover {
+    background: rgba(255, 199, 44, 0.1);
+    border-color: #FFC72C;
+    color: #FFC72C;
+}
+.modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.cab-section { animation: fadeIn 0.3s ease; }
+.btn-premium-gold {
+    background: linear-gradient(135deg, #FFC72C, #D4AF37);
+    color: #000; border: none; padding: 12px; border-radius: 8px;
+    width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px;
+}
+.btn-outline-gold {
+    background: transparent; border: 1px solid #FFC72C;
+    color: #FFC72C; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer;
+}
+.logout-btn { color: #ff4d4d !important; border-color: rgba(255, 77, 77, 0.2) !important; }
+.danger-link { color: #555; background: none; border: none; cursor: pointer; text-decoration: underline; font-size: 12px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+.last-activity {
+  color: rgba(255, 199, 44, 0.6); /* gold muted */
+}
+
+@media (max-width: 900px) {
+
+  .profile-modal {
+    width: calc(100% - 20px);
+    max-width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .modal-grid-2,
+  .modal-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .profile-modal input,
+  .profile-modal select,
+  .profile-modal button {
+    width: 100% !important;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .modal-input-group {
+    width: 100%;
+  }
+
+  .modal-item {
+    width: 100%;
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .avatar-big {
+    width: 70px;
+    height: 70px;
+  }
+
+  .user-name-display {
+    font-size: 16px;
+  }
+}
+@media (max-width: 900px) {
+
+  /* дозволяємо скрол усередині модалки */
+  .profile-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+}
+@media (max-width: 900px) {
+
+  /* Скрол всередині модалки */
+  .profile-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Щоб модалка не “роз’їжджалась” по ширині */
+  .profile-modal * {
+    box-sizing: border-box;
+  }
+}
+/* CAB HEADER FIX */
+#cab-header {
+  justify-content: flex-start !important;
+  gap: 10px;
+}
+
+#cab-title {
+  margin: 0 !important;
+  text-align: left;
+}
+@media (max-width: 900px) {
+  #cab-header {
+    justify-content: flex-start !important;
+    gap: 10px;
+  }
+
+  #cab-title {
+    margin: 0 !important;
+    text-align: left;
+  }
+}
+.report-only { display:none; }
+.pac-report-mode .report-only { display:block !important; }
+
+/* PDF-only блоки (текст репорту) */
+.report-only { display: none; }
+.pac-report-mode .report-only { display: block !important; }
+
+/* ===============================
+   PUBLIC PAGES (Index / Pricing / Payment)
+   =============================== */
+
+body.public-page {
+  background-color: #000;
+}
+
+.public-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.public-hero {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.public-hero h1 {
+  color: #FFC72C;
+  font-size: 2.6em;
+  margin-bottom: 10px;
+}
+
+.public-hero p {
+  color: #aaa;
+  font-size: 1.1em;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.public-section {
+  background: #0d0d0d;
+  border: 1px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.public-footer {
+  border-top: 1px solid #1a1a1a;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.85em;
+  color: #777;
+}
+
+/* Unified site footer across public and app pages */
+.pac-footer,
+.pac-global-footer,
+.public-footer {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 36px calc(50% - 50vw) 0 !important;
+  padding: 22px 16px !important;
+  background: #050505 !important;
+  border-top: 1px solid rgba(255, 199, 44, 0.18) !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  box-shadow: none !important;
+  text-align: center !important;
+  color: rgba(255, 255, 255, 0.62) !important;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.pac-footer-nav {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  margin: 0 0 10px !important;
+}
+
+.pac-footer-nav a {
+  color: #FFC72C !important;
+  text-decoration: none !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.pac-footer-copy,
+.pac-global-footer span,
+.public-footer {
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.62) !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+@media (max-width: 640px) {
+  .pac-footer,
+  .pac-global-footer,
+  .public-footer {
+    margin: 28px calc(50% - 50vw) 0 !important;
+    padding: 18px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .pac-footer-copy,
+  .pac-global-footer span,
+  .public-footer {
+    font-size: 12px !important;
+  }
+}
+
+
+/* GLOBAL HEADER + LANG ALIGN (safe override) */
+header {
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 199, 44, 0.24) !important;
+}
+
+#langSelect.pac-global-lang {
+  position: fixed;
+  top: 10px;
+  right: 104px;
+  z-index: 1012;
+  width: 58px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 199, 44, 0.45);
+  background: rgba(0, 0, 0, 0.84);
+  color: #FFC72C;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  padding: 0 8px;
+  line-height: 38px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  #langSelect.pac-global-lang {
+    top: 10px;
+    right: 104px;
+    width: 58px;
+    height: 38px;
+    font-size: 12px;
+    line-height: 38px;
+  }
+}
+.pac-drill-library-panel {
+  margin: 14px 0 22px;
+  padding: 12px;
+  border: 1px solid rgba(255, 199, 44, .22);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 199, 44, .08), rgba(0, 0, 0, .24));
+}
+
+.pac-drill-library-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.pac-drill-library-head span {
+  display: block;
+  color: #a88928;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .14em;
+}
+
+.pac-drill-library-head strong {
+  color: #ffc72c;
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.pac-drill-library-head a {
+  color: #050505;
+  background: #ffc72c;
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.pac-drill-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+}
+
+.pac-drill-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 86px;
+  padding: 10px;
+  border: 1px solid #242424;
+  border-radius: 8px;
+  background: #090909;
+  color: #f4f4f4;
+  text-decoration: none;
+}
+
+.pac-drill-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.pac-drill-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid rgba(255,199,44,.4);
+  border-radius: 7px;
+  color: #ffc72c;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pac-drill-card:hover {
+  border-color: rgba(255, 199, 44, .65);
+  box-shadow: 0 0 0 2px rgba(255, 199, 44, .09);
+}
+
+.pac-drill-card span {
+  color: #ffc72c;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .08em;
+}
+
+.pac-drill-card strong {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.pac-drill-card small,
+.pac-drill-empty {
+  color: #8a8a8a;
+  font-size: 12px;
+}

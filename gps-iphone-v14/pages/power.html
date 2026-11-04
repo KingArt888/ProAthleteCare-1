@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Power Control | ProAthleteCare</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/power.css">
+  <link rel="stylesheet" href="../css/navigation-mobile.css">
+</head>
+
+<body>
+  <div id="camModal" class="cam-modal hidden">
+    <div class="cam-modal-top">
+      <img src="../assets/images/AK_logo.png" class="cam-logo" alt="AK">
+      <button id="camClose" class="gold-button secondary">Close</button>
+    </div>
+
+    <div class="cam-modal-stage">
+      <video id="jl-video-modal" playsinline muted></video>
+      <canvas id="jl-canvas-modal"></canvas>
+    </div>
+
+    <div class="cam-modal-bottom">
+      <div id="jlCountdownModal">Ready.</div>
+    </div>
+  </div>
+
+  <header>
+    <a href="../platform.html" class="logo-link">
+      <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo">
+    </a>
+    <h1 class="project-title">ProAthleteCare</h1>
+    <p id="power-tagline" class="tagline">Professional athlete support online</p>
+
+    <button class="menu-toggle" id="menu-toggle-button">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="content-wrapper">
+    <nav class="sidebar" id="main-sidebar">
+      <a href="dashboard_user.html"> Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="injury.html">Injury Story <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="load-season.html">Load Season <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="daily-individual.html">Daily Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="weekly-individual.html">Weekly Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="weight-control.html">Weight Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+      <a href="power.html">Power Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+
+      <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top: auto; padding: 15px; border-top: 1px solid #333; cursor: pointer;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <img src="../assets/images/AK_logo.png" style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #FFC72C; object-fit: cover;" alt="AK">
+          <span id="user-name" style="color: #FFC72C; font-weight: bold; font-size: 14px;">...</span>
+        </div>
+      </div>
+    </nav>
+
+    <div id="shareCard" class="share-card hidden">
+      <div class="share-head">
+        <img src="../assets/images/AK_logo.png" class="share-logo" alt="AK">
+        <div id="power-share-title" class="share-title">ProAthleteCare • POWER TEST</div>
+      </div>
+      <div class="share-body">
+        <div class="share-kpi" id="shareKpi"></div>
+        <div class="share-verdict" id="shareVerdict"></div>
+        <div class="share-date" id="shareDate"></div>
+      </div>
+    </div>
+
+    <main class="main-content">
+      <h2 id="power-page-title" style="letter-spacing:.08em;">POWER TEST</h2>
+      <p id="power-sub-header" class="sub-header">15s Jump Test • ProAtletCare</p>
+      <div class="pac-sensitive-disclaimer" data-pac-disclaimer="power" role="note" style="background:#000;border:1px solid rgba(255,199,44,0.45);border-radius:10px;color:#FFC72C;font-size:12px;line-height:1.45;padding:10px 12px;margin:0 0 14px 0;">
+        Power Test is intended for fitness and performance tracking only. It is not a medical test or diagnosis.
+      </div>
+
+      <div class="dashboard-container">
+        <div class="form-card">
+          <h3 id="power-live-title">📷 LIVE TEST</h3>
+
+          <div class="stage">
+            <div id="jlPlaceholder" class="placeholder">
+              <div class="card">
+                <img src="../assets/images/AK_logo.png" alt="AK">
+                <div class="t1">ProAthleteCare</div>
+                <div id="power-placeholder-cta" class="t2">Tap "Start Test"</div>
+              </div>
+            </div>
+
+            <video id="jl-video" playsinline muted></video>
+            <canvas id="jl-canvas"></canvas>
+          </div>
+
+          <div class="row">
+            <button id="jlStartCam" class="gold-button">Start Test</button>
+            <button id="jlReset" class="gold-button secondary">Reset</button>
+          </div>
+
+          <div class="power-brief" id="power-brief">
+            <div class="power-brief-title" id="power-brief-title">Before camera start</div>
+            <ul class="power-brief-list">
+              <li id="power-brief-1">Step back 2–3 meters so full body is visible.</li>
+              <li id="power-brief-2">Do a 3–5 minute warm-up before the test.</li>
+              <li id="power-brief-3">Land softly and keep stable rhythm for 15 seconds.</li>
+              <li id="power-brief-4">Stop immediately if you feel pain or dizziness.</li>
+            </ul>
+            <label class="power-brief-check">
+              <input type="checkbox" id="power-brief-confirm">
+              <span id="power-brief-confirm-label">I read and understand the instructions.</span>
+            </label>
+          </div>
+
+          <div id="power-hint" class="hint">
+            Tip: full body in frame, good lighting. The system auto-starts countdown when you stay stable.
+          </div>
+
+          <details class="details-block">
+            <summary id="power-details-summary">⚙️ Details</summary>
+            <div class="status">
+              <div id="jlLib" class="pill bad">Libs: —</div>
+              <div id="jlCam" class="pill bad">Camera: —</div>
+              <div id="jlPose" class="pill bad">Pose: —</div>
+              <div id="jlFull" class="pill bad">Full body: —</div>
+              <div id="jlStable" class="pill bad">Stable: —</div>
+            </div>
+          </details>
+        </div>
+
+        <div class="chart-card">
+          <h3 id="power-results-title">📊 RESULTS</h3>
+          <div id="jlShots" class="shots"></div>
+
+          <div class="kpi">
+            <div id="jlCountdown" class="pill" style="margin-top:10px;">Ready.</div>
+            <div id="jlVerdict" class="verdict ok">GREEN • STABLE</div>
+            <div id="jlVerdictWhy" class="verdict-why">All systems normal.</div>
+
+            <div class="k"><div id="power-kpi-jumps-label" class="label">Jumps</div><div id="jlJumps" class="val">0</div></div>
+            <div class="k"><div id="power-kpi-avg-label" class="label">Avg height</div><div id="jlFlight" class="val">—</div></div>
+            <div class="k"><div id="power-kpi-best-label" class="label">Best height</div><div id="jlHeight" class="val">—</div></div>
+            <div class="k"><div id="power-kpi-state-label" class="label">State</div><div id="jlState" class="val mono">IDLE</div></div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <canvas id="jlChart" style="width:100%; height:220px;"></canvas>
+          </div>
+
+          <details open>
+            <summary id="power-history-summary">📜 History (tap to view)</summary>
+            <div id="attempts" class="mono">No attempts yet.</div>
+          </details>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="../js/libs/pose.js"></script>
+  <script src="../js/libs/drawing_utils.js"></script>
+  <script src="../js/libs/camera_utils.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+  <script src="../config/firebase-config.js"></script>
+  <script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+  <script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+  <script src="../js/settings.js"></script>
+  <script src="../js/power.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

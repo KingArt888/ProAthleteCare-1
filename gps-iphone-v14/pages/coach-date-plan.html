@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProAthleteCare | Coach Date Plan</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css" />
+  <link rel="stylesheet" href="../css/dashboard_user.css" />
+</head>
+<body>
+<header>
+  <a href="../platform.html" class="logo-link"><img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo" /></a>
+  <h1 class="project-title">ProAthleteCare</h1>
+  <p class="tagline">Онлайн-тренінг та професійний супровід атлетів</p>
+  <button class="menu-toggle" id="menu-toggle-button"><span></span><span></span><span></span></button>
+</header>
+<div class="content-wrapper">
+  <nav class="sidebar" id="main-sidebar">
+    <a href="coach-dashboard.html"> Coach Workspace <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+    <a href="coach-week-editor.html">Week Editor <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+    <a href="coach-date-plan.html">Date Plan <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+  </nav>
+  <main class="main-content">
+    <section id="week-history-mini" style="
+      position: sticky; top: 10px; z-index: 50;
+      background:#050505; border:1px solid #222; border-radius:14px;
+      padding:8px 10px; max-width: 100%; width: 100%;
+      overflow: hidden;
+    ">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div id="cwe-weeks-label" style="color:#d4af37; font-weight:900; font-size:0.75rem; letter-spacing:0.5px;">WEEKS</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button type="button" id="week-mini-prev" style="height:24px;min-width:24px;padding:0 6px;border-radius:8px;border:1px solid #353535;background:#121212;color:#f4c62d;font-weight:900;cursor:pointer;">&#x2039;</button>
+          <div id="week-mini-label" style="color:#666; font-size:0.7rem; min-width:170px; text-align:center;"></div>
+          <button type="button" id="week-mini-next" style="height:24px;min-width:24px;padding:0 6px;border-radius:8px;border:1px solid #353535;background:#121212;color:#f4c62d;font-weight:900;cursor:pointer;">&#x203A;</button>
+        </div>
+      </div>
+
+      <div id="week-mini-list" style="
+        display:grid; gap:8px; padding-top:6px;
+        width:100%; overflow:hidden;
+      "></div>
+    </section>
+
+    <section class="ud-card ud-card--accent" style="margin-top:14px;">
+      <div class="ud-kicker">DATE PLAN</div>
+      <div class="ud-card-top" style="margin-top:8px;">
+        <div>
+          <div class="ud-title" id="selected-week-title">Selected week</div>
+          <div class="ud-mini" id="selected-week-status">Choose a week above to open it in Week Editor.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="ud-btn ud-btn--ghost" id="btn-refresh-plan" type="button">Refresh</button>
+          <button class="ud-btn" id="btn-open-current-plan" type="button">Open Current Week</button>
+        </div>
+      </div>
+      <div id="selected-week-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;"></div>
+      <div id="date-plan-week-preview" style="display:grid;gap:10px;margin-top:14px;"></div>
+    </section>
+  </main>
+</div>
+<footer class="pac-global-footer"><span>&copy; 2026 ProAthleteCare. All rights reserved.</span></footer>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config/firebase-config.js"></script>
+<script src="../js/auth-guard.js"></script>
+<script src="../js/navigation-common.js"></script>
+<script src="../js/coach-date-plan.js"></script>
+</body>
+</html>

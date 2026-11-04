@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProAthleteCare | Dashboard</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css" />
+  <link rel="stylesheet" href="../css/dashboard_user.css?v=20260409a" />
+</head>
+
+<body>
+<header>
+  <a href="../platform.html" class="logo-link">
+    <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo" />
+  </a>
+  <h1 class="project-title">ProAthleteCare</h1>
+  <p class="tagline">Онлайн-тренінг та професійний супровід атлетів</p>
+
+  <button class="menu-toggle" id="menu-toggle-button">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="content-wrapper">
+  <nav class="sidebar" id="main-sidebar">
+    <a href="dashboard_user.html"> Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="injury.html">Injury Story <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="load-season.html">Load Season <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="daily-individual.html">Daily Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="weekly-individual.html">Weekly Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="weight-control.html">Weight Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            <a href="power.html">Power Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="АК"></a>
+            
+    <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top:auto;padding:15px;border-top:1px solid #333;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../assets/images/AK_logo.png" style="width:35px;height:35px;border-radius:50%;border:1px solid #FFC72C;object-fit:cover;">
+        <span id="user-name" style="color:#FFC72C;font-weight:bold;font-size:14px;">...</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="ud-page-loader" id="udPageLoader" aria-hidden="false" aria-live="polite" aria-busy="true">
+      <div class="ud-loader-shell">
+        <div class="ud-loader-brand">
+          <img src="../assets/images/AK_logo.png" alt="AK" class="ud-loader-logo" />
+        </div>
+        <div class="ud-loader-title">ProAthleteCare</div>
+        <div class="ud-loader-sub" id="udLoaderText">...</div>
+        <div class="ud-loader-track" aria-hidden="true">
+          <span class="ud-loader-track-fill"></span>
+        </div>
+        <div class="ud-loader-tags" aria-hidden="true">
+          <span>WELLNESS</span>
+          <span>LOAD</span>
+          <span>READINESS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ud-head">
+      <div>
+        <h2 class="ud-h2">My Dashboard</h2>
+        <div class="ud-sub" id="udSub">...</div>
+      </div>
+      <div class="ud-head-actions">
+        <button class="ud-btn ud-btn--ghost" id="udBackBtn" type="button">← Back</button>
+        <button class="ud-btn ud-btn--ghost" id="udToggleInsights" type="button" aria-expanded="false">Show detailed insights</button>
+      </div>
+    </div>
+
+    <section class="ud-launch" aria-label="Execution Center">
+      <div class="ud-card ud-card--accent">
+        <div class="ud-kicker">EXECUTION CENTER</div>
+        <div class="ud-launch-top">
+          <div>
+            <div class="ud-title" id="udCompletionTitle">Readiness 0%</div>
+            <div class="ud-status-pills" id="udDailyStatusPills">
+              <span class="ud-pill ud-pill--mode" id="udModePill">—</span>
+            </div>
+            <div class="ud-mini" id="udCompletionSub">Complete daily checks to unlock full plan quality.</div>
+          </div>
+          <div class="ud-score-ring">
+            <svg viewBox="0 0 120 120" class="ud-ring-svg" aria-hidden="true">
+              <circle cx="60" cy="60" r="52" class="ud-ring-bg"></circle>
+              <circle cx="60" cy="60" r="52" class="ud-ring-fg" id="udRingFg"></circle>
+            </svg>
+            <div class="ud-ring-label" id="udRingLabel">0%</div>
+          </div>
+        </div>
+        <div class="ud-progress-list" id="udProgressList"></div>
+        <div class="ud-mini" id="udYesterdaySummary" style="margin-top:10px;">Yesterday snapshot: —</div>
+      </div>
+
+      <div class="ud-card">
+        <div class="ud-kicker" id="udWeeklyKicker">WEEKLY PERFORMANCE</div>
+        <div class="ud-launch-top">
+          <div>
+            <div class="ud-title" id="udWeeklyTitle">—</div>
+            <div class="ud-mini" id="udWeeklySub">—</div>
+          </div>
+          <div class="ud-score-ring">
+            <svg viewBox="0 0 120 120" class="ud-ring-svg" aria-hidden="true">
+              <circle cx="60" cy="60" r="52" class="ud-ring-bg"></circle>
+              <circle cx="60" cy="60" r="52" class="ud-ring-fg" id="udWeeklyRingFg"></circle>
+            </svg>
+            <div class="ud-ring-label" id="udWeeklyRingLabel">0%</div>
+          </div>
+        </div>
+        <div class="ud-progress-list" id="udWeeklyProgressList"></div>
+        <div class="ud-mini" id="udWeeklyHint" style="margin-top:12px;">—</div>
+      </div>
+    </section>
+
+    <section class="ud-two" aria-label="Sync Center" style="margin-top:12px;">
+      <div class="ud-card ud-card--accent">
+        <div class="ud-kicker" id="syncKicker">SYNC CENTER</div>
+        <div class="ud-launch-top">
+          <div>
+            <div class="ud-title" id="syncTitle">Manual-first sync</div>
+            <div class="ud-mini" id="syncStatus">Ready to sync.</div>
+            <div class="ud-mini" id="syncLastAt" style="margin-top:4px;">Last sync: —</div>
+            <div class="ud-mini" id="syncFreshness" style="margin-top:4px;">Freshness: —</div>
+            <div class="ud-mini" id="syncConnected" style="margin-top:4px;">Connected: —</div>
+          </div>
+          <div class="ud-head-actions">
+            <button class="ud-btn" id="syncTodayBtn" type="button">SYNC TODAY</button>
+          </div>
+        </div>
+        <div class="ud-split" style="margin-top:10px;">
+          <div class="ud-metric">
+            <div class="ud-metric-label" id="syncRiskLabel">Risk</div>
+            <div class="ud-metric-val" id="syncRisk">—</div>
+          </div>
+          <div class="ud-metric">
+            <div class="ud-metric-label" id="syncModeLabel">Mode</div>
+            <div class="ud-metric-val" id="syncMode">—</div>
+          </div>
+          <div class="ud-metric">
+            <div class="ud-metric-label" id="syncSourceLabel">Source</div>
+            <div class="ud-metric-val" id="syncSource">Manual</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="ud-kicker" id="syncAdviceTitle">WHY + RECOMMENDATIONS</div>
+          <div class="ud-list" id="syncAdvice">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="udInsights" class="ud-insights" hidden>
+      <section class="ud-two">
+        <div class="ud-card">
+          <div class="ud-kicker" id="rxpKicker">RECOVERY × POWER</div>
+
+          <div class="ud-card-top" style="margin-top:8px;">
+            <div>
+              <div class="ud-title" id="rxpTitle">—</div>
+              <div class="ud-mini" id="rxpSub">—</div>
+            </div>
+            <div class="ud-pill" id="rxpPill">—</div>
+          </div>
+
+          <div class="ud-split" style="margin-top:10px;">
+            <div class="ud-metric">
+              <div class="ud-metric-label" id="rxpRecoveryLabel">Recovery</div>
+              <div class="ud-metric-val" id="rxpRecovery">—</div>
+            </div>
+            <div class="ud-metric">
+              <div class="ud-metric-label" id="rxpPowerLabel">Power (CNS)</div>
+              <div class="ud-metric-val" id="rxpPower">—</div>
+            </div>
+            <div class="ud-metric">
+              <div class="ud-metric-label" id="rxpActionLabel">Action</div>
+              <div class="ud-metric-val" id="rxpAction">—</div>
+            </div>
+          </div>
+
+          <div class="ud-list" id="rxpWhy" style="margin-top:10px;">—</div>
+        </div>
+      </section>
+
+    </section>
+  </main>
+</div>
+
+<div class="sync-overlay" id="syncOverlay" aria-hidden="true">
+  <div class="sync-overlay-card">
+    <h3 class="sync-overlay-title" id="syncOverlayTitle">Sync in progress</h3>
+    <div class="sync-overlay-sub" id="syncOverlaySub">Збираємо ваші дані та готуємо рішення на сьогодні.</div>
+    <div class="sync-spinner" id="syncOverlaySpinner"></div>
+    <div class="sync-result" id="syncOverlayResult" style="display:none;">
+      <div class="sync-result-row"><span id="syncResultLabelStatus">Status</span><b id="syncResultStatus">OK</b></div>
+      <div class="sync-result-row"><span id="syncResultLabelReceived">Received</span><b id="syncResultReceived">—</b></div>
+      <div class="sync-result-row"><span id="syncResultLabelMissing">Missing</span><b id="syncResultMissing">—</b></div>
+      <div class="sync-result-row"><span id="syncResultLabelMode">Mode</span><b id="syncResultMode">—</b></div>
+      <div class="sync-result-row"><span id="syncResultLabelRisk">Risk</span><b id="syncResultRisk">—</b></div>
+      <div class="sync-result-row"><span id="syncResultLabelTraining">Training</span><b id="syncResultTraining">—</b></div>
+      <div class="sync-result-row"><span id="syncResultLabelBreath">Breathing</span><b id="syncResultBreath">—</b></div>
+      <div class="sync-result-list" id="syncResultTips"></div>
+    </div>
+    <div class="sync-overlay-actions">
+      <button class="ud-btn ud-btn--ghost" id="syncOverlayClose" type="button">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+
+<script src="../config/firebase-config.js"></script>
+<script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+<script src="../js/settings.js"></script>
+
+<!-- ✅ Core (single source of truth) -->
+<script src="../js/athlete-core.js?v=20260403c"></script>
+<script src="../js/session-normalizer.js?v=20261104-journal-v1"></script>
+<script src="../js/session-journal.js?v=20261104-journal-v1"></script>
+<script src="../js/athlete-core-loader.js?v=20261104-journal-v1"></script>
+
+<!-- Dashboard UI -->
+<script src="../js/dashboard_user.js?v=20260409a"></script>
+<script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+</body>
+</html>
+
+
+
+
+
+

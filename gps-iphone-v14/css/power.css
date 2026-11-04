@@ -1,0 +1,908 @@
+/* ================================
+   ProAtletCare • Power Page CSS
+   Black + Gold (Premium)
+   ================================ */
+
+:root{
+  --bg:#070707;
+  --panelA: rgba(255,255,255,.03);
+  --panelB: rgba(0,0,0,.35);
+  --line: rgba(255,255,255,.08);
+
+  --gold:#FFC72C;
+  --goldLine: rgba(255,199,44,.28);
+  --goldSoft: rgba(255,199,44,.12);
+
+  --text: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.62);
+
+  --danger:#DA3E52;
+  --dangerLine: rgba(218,62,82,.38);
+
+  --radius:16px;
+  --radius2:14px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(255,199,44,.10), transparent 55%),
+    radial-gradient(900px 500px at 90% 10%, rgba(255,199,44,.06), transparent 60%),
+    var(--bg);
+}
+
+a{ color: var(--gold); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+.main-content{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 16px 28px;
+}
+
+.main-content h2{
+  margin: 0 0 6px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  font-weight: 950;
+  font-size: 20px;
+  color: rgba(255,255,255,.96);
+}
+
+.sub-header{
+  margin: 0 0 16px;
+  color: rgba(255,199,44,.78);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+
+/* =========================
+   Layout
+   ========================= */
+
+.dashboard-container{
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  margin-top: 12px;
+  align-items: start;
+}
+
+@media (max-width: 900px){
+  .dashboard-container{
+    grid-template-columns: 1fr;
+  }
+}
+.sub-header{
+  margin: 0 0 14px;
+  color: rgba(255,199,44,.78);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+
+.form-card, .chart-card{
+  flex: 1;
+  min-width: 320px;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,199,44,.14);
+  background: linear-gradient(180deg, var(--panelA), rgba(0,0,0,.28));
+  box-shadow: 0 18px 55px rgba(0,0,0,.55);
+}
+
+.form-card h3, .chart-card h3{
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  color: rgba(255,199,44,.88);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+
+/* =========================
+   Stage (Video + Canvas)
+   ========================= */
+
+.stage{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid rgba(255,199,44,.16);
+  background: rgba(0,0,0,.45);
+}
+
+.stage video, .stage canvas{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(1200px 600px at 50% 40%, rgba(255,199,44,.10) 0%, rgba(0,0,0,.85) 70%),
+    rgba(0,0,0,.65);
+  z-index: 5;
+  transition: opacity .25s ease;
+  pointer-events:none;
+}
+.placeholder.hidden{ opacity:0; }
+
+.placeholder .card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  padding:18px 22px;
+  border:1px solid rgba(255,199,44,.28);
+  border-radius: 18px;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+
+.placeholder img{
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,199,44,.55);
+  object-fit: cover;
+}
+
+.placeholder .t1{
+  color: var(--gold);
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.placeholder .t2{
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+  opacity: .90;
+}
+
+/* =========================
+   Buttons
+   ========================= */
+
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top: 12px;
+}
+
+.power-brief{
+  margin-top:12px;
+  border:1px solid rgba(255,199,44,.28);
+  border-radius:12px;
+  background:rgba(255,199,44,.06);
+  padding:10px 12px;
+}
+.power-brief.is-pulsing{
+  animation: pacBriefGlow 2.8s ease-in-out infinite;
+}
+@keyframes pacBriefGlow{
+  0%,100%{ border-color: rgba(255,199,44,.22); box-shadow: inset 0 0 0 0 rgba(255,199,44,0); }
+  50%{ border-color: rgba(255,199,44,.45); box-shadow: inset 0 0 0 1px rgba(255,199,44,.14); }
+}
+.power-brief-title{
+  color:rgba(255,199,44,.96);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.power-brief-list{
+  margin:8px 0 0;
+  padding-left:18px;
+  color:rgba(255,255,255,.85);
+  font-size:12px;
+  line-height:1.4;
+}
+.power-brief-check{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  color:rgba(255,255,255,.9);
+  font-size:12px;
+}
+.power-brief-check input{
+  margin-top:2px;
+  accent-color:#FFC72C;
+}
+
+.gold-button{
+  border: 1px solid rgba(255,199,44,.45);
+  background: linear-gradient(180deg, rgba(255,199,44,.22), rgba(255,199,44,.12));
+  color: rgba(255,255,255,.96);
+  padding: 11px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  box-shadow: 0 0 0 2px rgba(255,199,44,.10), 0 14px 38px rgba(0,0,0,.40);
+  transition: transform .08s ease, background .12s ease, border-color .12s ease;
+}
+.gold-button.cta-pulse{
+  animation: pacGoldPulse 2.1s ease-in-out infinite;
+}
+@keyframes pacGoldPulse{
+  0%,100%{ box-shadow: 0 0 0 2px rgba(255,199,44,.10), 0 14px 38px rgba(0,0,0,.40), 0 0 0 0 rgba(255,199,44,.0); }
+  50%{ box-shadow: 0 0 0 2px rgba(255,199,44,.30), 0 18px 42px rgba(0,0,0,.45), 0 0 28px 2px rgba(255,199,44,.20); }
+}
+.gold-button:hover{
+  background: linear-gradient(180deg, rgba(255,199,44,.28), rgba(255,199,44,.14));
+  border-color: rgba(255,199,44,.60);
+}
+.gold-button:active{ transform: translateY(1px); }
+
+.gold-button.secondary{
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,199,44,.92);
+  box-shadow: none;
+}
+.gold-button.secondary:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,199,44,.22);
+}
+
+.gold-button:disabled{
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.gold-button.cta-pulse:disabled{
+  opacity:.88;
+  box-shadow: 0 0 0 2px rgba(255,199,44,.16), 0 14px 38px rgba(0,0,0,.40);
+}
+
+/* =========================
+   Pills / Status
+   ========================= */
+
+.status{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top: 12px;
+}
+
+.pill{
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.72);
+}
+
+.pill.ok{
+  border-color: rgba(255,199,44,.45);
+  color: rgba(255,199,44,.95);
+  box-shadow: 0 0 0 2px rgba(255,199,44,.08);
+}
+
+.pill.bad{
+  border-color: var(--dangerLine);
+  color: rgba(218,62,82,.95);
+  box-shadow: 0 0 0 2px rgba(218,62,82,.10);
+}
+
+/* =========================
+   Hint
+   ========================= */
+
+.hint{
+  color: rgba(255,255,255,.62);
+  font-size: 12px;
+  margin-top: 10px;
+  line-height: 1.35;
+}
+
+/* =========================
+   KPI grid (Results card)
+   ========================= */
+
+.kpi{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+
+.k{
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,199,44,.12);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.k .label{
+  color: rgba(255,255,255,.55);
+  font-size: 10px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  font-weight: 850;
+}
+
+.k .val{
+  color: var(--gold);
+  font-size: 22px;
+  font-weight: 950;
+  margin-top: 6px;
+}
+
+.mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* countdown pill inside KPI area */
+#jlCountdown{
+  grid-column: 1 / -1;
+  text-align:center;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,199,44,.22);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.92);
+  font-weight: 950;
+  letter-spacing: .04em;
+  box-shadow: 0 0 0 2px rgba(255,199,44,.08);
+  position: relative;
+  overflow: hidden;
+}
+#jlCountdown::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:999px;
+  background: conic-gradient(from 0deg, rgba(255,199,44,.0), rgba(255,199,44,.65), rgba(255,199,44,.0));
+  filter: blur(4px);
+  opacity:0;
+  transform: rotate(0deg);
+  pointer-events:none;
+}
+#jlCountdown.is-active::before{
+  opacity:.9;
+  animation: pacRingRotate 1.8s linear infinite;
+}
+#jlCountdown.is-demo::before{
+  opacity:.9;
+  animation: pacRingRotate 1.8s linear infinite;
+}
+@keyframes pacRingRotate{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+
+/* =========================
+   Verdict (NEW)
+   ========================= */
+
+.verdict{
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  text-align:center;
+  font-weight: 950;
+  letter-spacing: .10em;
+  border: 1px solid rgba(255,199,44,.22);
+  background: rgba(0,0,0,.35);
+}
+
+.verdict.ok{
+  border-color: rgba(255,199,44,.45);
+  box-shadow: 0 0 0 2px rgba(255,199,44,.10), 0 10px 26px rgba(0,0,0,.35);
+}
+.verdict.warn{
+  border-color: rgba(255,200,90,.45);
+  box-shadow: 0 0 0 2px rgba(255,200,90,.14), 0 10px 26px rgba(0,0,0,.35);
+}
+.verdict.bad{
+  border-color: rgba(218,62,82,.55);
+  box-shadow: 0 0 0 2px rgba(218,62,82,.16), 0 10px 26px rgba(0,0,0,.35);
+}
+
+.verdict-why{
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: rgba(255,255,255,.70);
+  min-height: 36px;
+}
+
+/* =========================
+   Details / History
+   ========================= */
+
+details{
+  margin-top: 14px;
+  border: 1px solid rgba(255,199,44,.18);
+  border-radius: 14px;
+  background: rgba(0,0,0,.28);
+  overflow:hidden;
+}
+
+summary{
+  padding: 12px;
+  cursor: pointer;
+  color: rgba(255,199,44,.92);
+  font-weight: 950;
+  font-size: 12px;
+  list-style: none;
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  user-select: none;
+}
+summary::-webkit-details-marker{ display:none; }
+
+#attempts{
+  padding: 10px 12px;
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+/* Chart canvas spacing */
+canvas#jlChart{
+  display:block;
+  width: 100% !important;
+  height: 220px !important;
+}
+
+/* Responsive touch */
+@media (max-width: 520px){
+  .form-card, .chart-card{ padding: 14px; }
+  .gold-button{ width: 100%; }
+  .kpi{ grid-template-columns: 1fr; }
+  #jlCountdown, .verdict, .verdict-why{ grid-column: 1 / -1; }
+}
+/* ===== DESKTOP FIX: header must be on top, dashboard under it ===== */
+.main-content{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100%;
+  max-width: none;            /* важливо, щоб не стискало контент */
+}
+
+.main-content > h2,
+.main-content > .sub-header{
+  width: 100%;
+  max-width: none;
+}
+/* ===== Power history entries ===== */
+.history-empty{
+  padding: 12px;
+  color: rgba(255,255,255,.55);
+  text-align: center;
+}
+
+.test-entry{
+  margin: 10px 0;
+  border: 1px solid rgba(255,199,44,.16);
+  border-radius: 14px;
+  background: rgba(0,0,0,.25);
+  overflow: hidden;
+}
+
+.test-summary{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content: space-between;
+  padding: 12px;
+  cursor:pointer;
+  user-select:none;
+  list-style:none;
+}
+
+.test-summary::-webkit-details-marker{ display:none; }
+
+.ts-left{ min-width: 160px; }
+.ts-title{
+  color: rgba(255,255,255,.92);
+  font-weight: 950;
+  letter-spacing: .04em;
+}
+.ts-date{
+  margin-top: 4px;
+  color: rgba(255,255,255,.55);
+  font-size: 12px;
+}
+
+.ts-right{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:flex-end;
+}
+
+.chip{
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+}
+
+.chip.ok{
+  border-color: rgba(255,199,44,.35);
+  color: rgba(255,199,44,.92);
+}
+.chip.warn{
+  border-color: rgba(255,200,90,.40);
+  color: rgba(255,200,90,.92);
+}
+.chip.bad{
+  border-color: rgba(218,62,82,.45);
+  color: rgba(218,62,82,.95);
+}
+
+.test-body{
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.test-row{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap:10px;
+}
+
+.kv{
+  border: 1px solid rgba(255,199,44,.10);
+  border-radius: 12px;
+  background: rgba(0,0,0,.30);
+  padding: 10px;
+}
+.kv .k{
+  color: rgba(255,255,255,.55);
+  font-size: 10px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  font-weight: 850;
+}
+.kv .v{
+  margin-top: 6px;
+  color: rgba(255,255,255,.90);
+  font-weight: 950;
+}
+
+.test-actions{
+  margin-top: 10px;
+}
+
+@media (max-width: 520px){
+  .test-row{ grid-template-columns: 1fr; }
+  .ts-left{ min-width: 0; }
+}
+/* =========================
+   PREMIUM CAMERA MODAL (FULL SCREEN)
+   ========================= */
+
+.cam-modal{
+  position: fixed;
+  inset: 0;
+  background: #050505;
+  z-index: 9999;
+  overflow: hidden;
+}
+.cam-modal.hidden{ display:none; }
+
+/* stage = весь екран */
+.cam-modal-stage{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* камера/канвас = cover (як premium apps) */
+#jl-video-modal,
+#jl-canvas-modal{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: cover !important;
+  object-position: center center !important;
+  background: #000;
+}
+
+/* TOP BAR overlay (не забирає місце у відео) */
+.cam-modal-top{
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding: calc(env(safe-area-inset-top) + 10px) 12px 10px;
+  pointer-events: none;
+}
+
+/* преміум градієнт зверху */
+.cam-modal-top::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,.80), rgba(0,0,0,0));
+  z-index:-1;
+}
+
+.cam-modal-top *{ pointer-events: auto; }
+
+.cam-logo{
+  height: 28px;
+  width: auto;
+  opacity: .95;
+}
+
+/* кнопка "закрити" як у апках */
+#camClose{
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,199,44,.22);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,199,44,.95);
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+/* BOTTOM overlay (підказка) */
+.cam-modal-bottom{
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+  z-index: 20;
+
+  padding: 10px 12px calc(env(safe-area-inset-bottom) + 12px);
+  pointer-events: none;
+}
+.cam-modal-bottom *{ pointer-events: auto; }
+
+/* текст підказок — завжди видимий */
+#jlCountdownModal{
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+
+  background: transparent !important;   /* ✅ НІЯКОГО ФОНУ */
+  border: none !important;              /* ✅ НІЯКОЇ РАМКИ */
+  box-shadow: none !important;          /* ✅ НІЯКОЇ ТІНІ */
+  backdrop-filter: none !important;
+
+  padding: 0 !important;
+  border-radius: 0 !important;
+
+  color: #fff;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+
+  /* ✅ читабельність без фону */
+  text-shadow:
+    0 2px 8px rgba(0,0,0,0.85),
+    0 0 18px rgba(0,0,0,0.65);
+}
+
+
+/* very small screens */
+@media (max-width: 380px){
+  #camClose{ min-height: 42px; padding: 0 14px; }
+  #jlCountdownModal{ font-size: 12px; }
+}
+.cam-modal-stage{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100svh; /* ✅ iOS safe viewport */
+}
+
+.share-card{
+  width: 1080px; padding: 28px;
+  background: radial-gradient(1200px 600px at 20% 0%, rgba(255,210,120,.16), transparent 60%),
+              linear-gradient(180deg, #070707, #000);
+  border: 1px solid rgba(255, 215, 120, .35);
+  border-radius: 22px;
+  color: #fff;
+}
+.share-card.hidden{ display:none; }
+.share-head{ display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+.share-logo{ height:46px; }
+.share-title{ font-weight:700; letter-spacing:.08em; color:#ffd27a; }
+.shots{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:10px;
+  margin-top:12px;
+}
+.jump-shot{
+  width:100%;
+  border-radius:14px;
+  border:1px solid rgba(212,175,55,0.35);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+@media (min-width: 900px){
+  .shots{ grid-template-columns: repeat(3, 1fr); }
+}
+.test-summary {
+  position: relative;
+  padding-right: 34px; /* місце під хрестик */
+}
+
+.test-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  border: none;
+  background: rgba(255,255,255,0.08);
+  color: #ccc;
+
+  font-size: 16px;
+  line-height: 24px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s ease;
+}
+
+.test-delete:hover {
+  background: #b3261e;
+  color: #fff;
+}
+/* === PREMIUM MODAL LAYERS (FIX) === */
+.cam-modal { position: fixed; inset: 0; background:#050505; z-index: 9999; }
+.cam-modal.hidden { display:none; }
+
+/* stage = video/canvas background */
+.cam-modal-stage{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100svh; /* iOS safe */
+  background:#000;
+  z-index: 1;
+}
+
+/* video/canvas нижче ніж UI */
+#jl-video-modal, #jl-canvas-modal{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
+/* TOP BAR поверх всього */
+.cam-modal-top{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: 12px;
+  padding-top: calc(12px + env(safe-area-inset-top));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background: linear-gradient(to bottom, rgba(0,0,0,.75), rgba(0,0,0,0));
+}
+
+/* BOTTOM HINT поверх всього */
+.cam-modal-bottom{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,0));
+}
+
+/* ТВОЯ ПІДКАЗКА (видима 100%) */
+#jlCountdownModal{
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: .02em;
+  font-size: 14px;
+  line-height: 1.25;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,199,44,.35);
+  box-shadow: 0 10px 28px rgba(0,0,0,.45);
+}
+
+/* щоб кліки по кнопках точно працювали */
+.cam-modal-top, .cam-modal-bottom{ pointer-events:auto; }
+.cam-modal-stage{ pointer-events:none; }
+/* ===== BIG CALIBRATION HINT ===== */
+#jlCountdown.big,
+#jlCountdownModal.big{
+  background: transparent !important;  /* ✅ */
+  border: none !important;             /* ✅ */
+  box-shadow: none !important;         /* ✅ */
+
+  padding: 0 !important;
+  border-radius: 0 !important;
+
+  font-size: clamp(28px, 5.2vw, 64px);
+  line-height: 1.15;
+  font-weight: 950;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 3px 10px rgba(0,0,0,0.90),
+    0 0 22px rgba(0,0,0,0.70);
+}
+.cam-modal-bottom{
+  bottom: 30% !important;   /* ✅ підняли з самого низу */
+  background: none !important;
+}
+
+/* ще агресивніше для WARNING */
+#jlCountdown.big.bad,
+#jlCountdownModal.big.bad{
+  border-color: rgba(255,80,80,1);
+  background: rgba(20,0,0,.88);
+}
+
+/* OK */
+#jlCountdown.big.ok,
+#jlCountdownModal.big.ok{
+  border-color: rgba(0,220,120,1);
+}
+#jlCountdown.big,
+#jlCountdownModal.big{
+  font-size: clamp(40px, 5.2vw, 64px);
+}

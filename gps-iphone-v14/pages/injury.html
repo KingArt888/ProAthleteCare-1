@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="pinterest" content="nopin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injury Story | ProAthleteCare</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/injury.css">
+    <link rel="stylesheet" href="../css/navigation-mobile.css">
+</head>
+<body>
+    <header>
+        <a href="../platform.html" class="logo-link">
+            <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo">
+        </a>
+        <h1 class="project-title">ProAthleteCare</h1>
+        <p class="tagline">Professional athlete support online</p>
+        <button class="menu-toggle" id="menu-toggle-button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <div class="content-wrapper">
+        <nav class="sidebar" id="main-sidebar">
+            <a href="dashboard_user.html"> Dashboard <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="wellness.html">Wellness Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="injury.html">Injury Story <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="load-season.html">Load Season <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="daily-individual.html">Daily Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="weekly-individual.html">Weekly Individual <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="weight-control.html">Weight Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+            <a href="power.html">Power Control <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+
+            <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top: auto; padding: 15px; border-top: 1px solid #333; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="../assets/images/AK_logo.png" style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #FFC72C; object-fit: cover;">
+                    <span id="user-name" style="color: #FFC72C; font-weight: bold; font-size: 14px;">...</span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <h2>Injury Story: Tracking and Recovery</h2>
+            <div class="pac-sensitive-disclaimer" data-pac-disclaimer="injury" role="note" style="background:#000;border:1px solid rgba(255,199,44,0.45);border-radius:10px;color:#FFC72C;font-size:12px;line-height:1.45;padding:10px 12px;margin:0 0 14px 0;">
+                ProAthleteCare stores injury notes and training-support files only. It does not provide medical diagnosis or treatment.
+            </div>
+
+            <div class="dashboard-container">
+                <div class="form-card" style="width: 40%; min-width: 400px;">
+                    <h3>Injury location and details</h3>
+
+                    <div class="body-map-container" id="bodyMapContainer">
+                        <img src="../assets/images/human_body_outline.png" alt="Body map" id="body-map-image" data-pin-nopin="true">
+                        <div id="click-marker" class="click-marker"></div>
+                    </div>
+
+                    <form id="injury-form">
+                        <input type="hidden" id="coordX" name="coordX">
+                        <input type="hidden" id="coordY" name="coordY">
+                        <p style="color: #FFC72C; font-weight: bold;">Tap body map to mark injury area.</p>
+
+                        <label for="injury-date">Injury date:</label>
+                        <input type="date" id="injury-date" name="date" required style="width: 100%; padding: 8px; margin-bottom: 15px; background-color: #1a1a1a; border: 1px solid #333; color: #CCCCCC;">
+
+                        <label for="injury-location">Short name (example: hamstring strain):</label>
+                        <input type="text" id="injury-location" name="location" placeholder="Ankle, knee, shoulder" required style="width: 100%; padding: 8px; margin-bottom: 15px; background-color: #1a1a1a; border: 1px solid #333; color: #CCCCCC;">
+
+                        <label>Pain scale (0-10, where 0 means no pain):</label>
+                        <div class="rating-group pain-group" id="pain-rating-group">
+                            <input type="radio" id="pain10" name="pain" value="10"><label for="pain10" title="10"></label>
+                            <input type="radio" id="pain9" name="pain" value="9"><label for="pain9" title="9"></label>
+                            <input type="radio" id="pain8" name="pain" value="8"><label for="pain8" title="8"></label>
+                            <input type="radio" id="pain7" name="pain" value="7"><label for="pain7" title="7"></label>
+                            <input type="radio" id="pain6" name="pain" value="6"><label for="pain6" title="6"></label>
+                            <input type="radio" id="pain5" name="pain" value="5"><label for="pain5" title="5"></label>
+                            <input type="radio" id="pain4" name="pain" value="4"><label for="pain4" title="4"></label>
+                            <input type="radio" id="pain3" name="pain" value="3"><label for="pain3" title="3"></label>
+                            <input type="radio" id="pain2" name="pain" value="2"><label for="pain2" title="2"></label>
+                            <input type="radio" id="pain1" name="pain" value="1"><label for="pain1" title="1"></label>
+                            <input type="radio" id="pain0" name="pain" value="0"><label for="pain0" title="0"></label>
+                        </div>
+
+                        <div id="notes-section">
+                            <label for="injury-notes">Details (mechanism, feeling, treatment):</label>
+                            <textarea id="injury-notes" name="notes" rows="4" style="width: 100%; padding: 8px; margin-top: 5px; background-color: #0d0d0d; border: 1px solid #333; color: #CCCCCC; resize: vertical;"></textarea>
+                        </div>
+
+                        <button type="submit" class="gold-button" id="save-injury-button">Save / Update injury</button>
+                    </form>
+                </div>
+
+                <div class="chart-card" style="flex-grow: 1;">
+                    <h3>Recovery trend (Pain chart)</h3>
+                    <div class="chart-area" style="height: 300px;">
+                        <canvas id="painChart"></canvas>
+                    </div>
+
+                    <h3 style="margin-top: 30px; border-bottom: 1px solid #333333; padding-bottom: 10px;">Injury history</h3>
+
+                    <section class="inj-vault-card" id="inj-vault-card" style="display:none;">
+                        <div class="inj-vault-head">
+                            <h4 id="inj-vault-title">Medical Documents Vault</h4>
+                            <p id="inj-vault-subtitle">Upload MRI / X-ray files for your coach and team doctor.</p>
+                            <p id="inj-vault-context" class="inj-vault-context" style="display:none;"></p>
+                        </div>
+
+                        <div class="inj-vault-toolbar">
+                            <button type="button" class="btn-premium-gold inj-vault-open-btn" id="inj-vault-open-btn">Add data</button>
+                        </div>
+
+                        <div id="inj-vault-readonly" class="inj-vault-readonly" style="display:none;"></div>
+                        <div id="inj-vault-empty" class="inj-vault-empty">No uploaded documents yet.</div>
+                        <div id="inj-vault-list" class="inj-vault-list"></div>
+                    </section>
+
+                    <div class="inj-vault-modal" id="inj-vault-modal" style="display:none;" aria-hidden="true">
+                        <div class="inj-vault-modal-backdrop" id="inj-vault-modal-backdrop"></div>
+                        <div class="inj-vault-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="inj-vault-modal-title">
+                            <div class="inj-vault-modal-head">
+                                <h4 id="inj-vault-modal-title">Add medical document</h4>
+                                <button type="button" class="inj-vault-modal-close" id="inj-vault-modal-close" aria-label="Close">×</button>
+                            </div>
+
+                            <form id="inj-vault-form" class="inj-vault-form">
+                                <div class="inj-vault-grid">
+                                    <div>
+                                        <label for="inj-doc-type" id="inj-vault-type-label">Document type</label>
+                                        <select id="inj-doc-type">
+                                            <option value="mri">MRI</option>
+                                            <option value="xray">X-ray</option>
+                                            <option value="ct">CT</option>
+                                            <option value="us">Ultrasound</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="inj-doc-title" id="inj-vault-name-label">Document name</label>
+                                        <input id="inj-doc-title" type="text" maxlength="80" placeholder="Right knee MRI 2026-05-01">
+                                    </div>
+                                </div>
+
+                                <label for="inj-doc-notes" id="inj-vault-notes-label">Notes (optional)</label>
+                                <textarea id="inj-doc-notes" rows="2" maxlength="280" placeholder="Optional context for coach / doctor"></textarea>
+
+                                <div class="inj-vault-upload-row">
+                                    <label class="inj-vault-file-btn" for="inj-doc-file" id="inj-vault-file-label">Choose file</label>
+                                    <input id="inj-doc-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.dcm,.dicom,application/pdf,image/*">
+                                    <span id="inj-vault-file-name">—</span>
+                                </div>
+
+                                <label class="inj-vault-consent">
+                                    <input id="inj-doc-consent" type="checkbox">
+                                    <span id="inj-vault-consent-text">I consent to processing of my health files for training support.</span>
+                                </label>
+
+                                <p class="inj-vault-disclaimer" id="inj-vault-disclaimer">
+                                    Platform stores files only. No diagnosis or treatment is provided.
+                                </p>
+
+                                <button type="submit" class="btn-premium-gold" id="inj-vault-upload-btn">Upload document</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="injury-list">
+                        <p class="placeholder-text">Tap body marker to add first injury record.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDF ROOT (visible only in pac-report-mode) -->
+            <div id="pdf-root" class="report-only">
+                <section class="pac-pdf-page" id="pac-injury-pdf-page">
+                    <div class="pac-pdf-top">
+                        <div>
+                            <div class="pac-pdf-brand">
+                                <img class="pac-pdf-logo" id="pac-pdf-logo" alt="ProAthleteCare Logo">
+                                <div class="pac-pdf-brandname">ProAthleteCare</div>
+                            </div>
+                            <h1 class="pac-pdf-h1" id="inj-pdf-title">Pain trend report</h1>
+                        </div>
+
+                        <div class="pac-pdf-meta">
+                            <div class="pac-pdf-athlete" id="inj-pdf-athlete">-</div>
+                            <div class="pac-pdf-date" id="inj-pdf-date">-</div>
+                        </div>
+                    </div>
+
+                    <div class="pac-divider"></div>
+
+                    <div class="pac-charts">
+                        <div class="pac-chart-card">
+                            <div class="pac-chart-title" id="inj-pdf-location-title">Injury location</div>
+                            <div class="inj-pdf-map-wrap">
+                                <img id="inj-pdf-body-img" data-pin-nopin="true" src="../assets/images/human_body_outline.png" alt="Body map">
+                                <div id="inj-pdf-marker" class="inj-pdf-marker"></div>
+                            </div>
+
+                            <div class="inj-pdf-map-meta" style="margin-top:10px; font-size:12px; line-height:1.4;">
+                                <div><b id="inj-pdf-name-label">Name:</b> <span id="inj-pdf-location">-</span></div>
+                                <div><b id="inj-pdf-latestpain-label">Latest pain:</b> <span id="inj-pdf-lastpain">-</span></div>
+                            </div>
+                        </div>
+
+                        <div class="pac-chart-card">
+                            <div class="pac-chart-title" id="inj-pdf-trend7-title">Pain trend for 7 days</div>
+                            <div class="pac-chart-canvas-wrap">
+                                <canvas id="inj-pdf-line"></canvas>
+                            </div>
+
+                            <div class="inj-pdf-metrics">
+                                <div class="inj-metric">
+                                    <div class="inj-metric-label" id="inj-pdf-metric-last-label">Latest pain</div>
+                                    <div class="inj-metric-value red" id="inj-pdf-stat-last">-</div>
+                                </div>
+
+                                <div class="inj-metric">
+                                    <div class="inj-metric-label" id="inj-pdf-metric-avg7-label">Average for<br>7 days</div>
+                                    <div class="inj-metric-value" id="inj-pdf-stat-avg">-</div>
+                                </div>
+
+                                <div class="inj-metric-trend" id="inj-pdf-stat-trend">
+                                    <div class="inj-metric-label" id="inj-pdf-metric-trend-label">Trend</div>
+                                    <div class="inj-metric-trend" id="inj-pdf-stat-trend-inner">
+                                        <span class="arrow">↓</span><span class="pct">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <section class="inj-risk-block" id="inj-pdf-risk">
+                        <div class="inj-risk-head">
+                            <div class="inj-risk-icon" id="inj-pdf-risk-icon">✓</div>
+                            <div>
+                                <div class="inj-risk-title" id="inj-pdf-risk-title">Low risk</div>
+                                <div class="inj-risk-sub" id="inj-pdf-risk-sub">Status: low pain with stable or positive dynamics.</div>
+                            </div>
+                        </div>
+
+                        <div class="inj-risk-box">
+                            <div class="inj-risk-datebar">
+                                <div class="lbl" id="inj-pdf-risk-date-label">Date</div>
+                                <div class="val" id="inj-pdf-risk-range">-</div>
+                            </div>
+                            <ul class="inj-risk-list" id="inj-pdf-risk-list"></ul>
+                        </div>
+                    </section>
+
+                    <div class="pac-section-title" id="inj-pdf-history-title">Injury history</div>
+                    <section class="inj-history-card">
+                        <div class="inj-history-head">
+                            <div class="left">
+                                <span class="okdot">✓</span>
+                                <span id="inj-pdf-history-risk">Low risk</span>
+                            </div>
+                            <div class="right">
+                                <span class="lbl" id="inj-pdf-history-pain-label">Pain:</span>
+                                <span class="val" id="inj-pdf-history-pain">-</span>
+                            </div>
+                        </div>
+
+                        <div class="inj-history-rows" id="inj-pdf-history-rows"></div>
+                    </section>
+
+                    <div class="pac-foot">
+                        <div>
+                            <strong>Privacy Policy (GDPR / DSGVO)</strong><br>
+                            Data controller: ProAthleteCare (contact: proathletecare.com@gmail.com).
+                        </div>
+                        <div>
+                            Processed data: wellness and injury indicators, report date, and user identifier.
+                            Purpose: athlete monitoring and training load planning.
+                        </div>
+                        <div>
+                            Legal basis: consent (Art. 6(1)(a) GDPR) or contract (Art. 6(1)(b) GDPR).
+                            Retention period: up to 6 months.
+                        </div>
+                        <div>
+                            User rights: access, correction, deletion, export, and consent withdrawal.
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <script src="../js/libs/chart.min.js"></script>
+    <script src="../config/firebase-config.js"></script>
+    <script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/injury.js?v=20260502a"></script>
+    <script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+</body>
+</html>
+
+
+
+
+
+
+

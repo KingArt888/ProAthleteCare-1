@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Drill Canvas | ProAthleteCare</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css" />
+  <link rel="stylesheet" href="../css/drill-canvas-editor.css?v=20261021-paths" />
+</head>
+<body class="drill-editor-body">
+<header class="drill-topbar">
+  <a href="../platform.html" class="logo-link">
+    <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo" />
+  </a>
+  <div>
+    <h1 class="project-title">ProAthleteCare</h1>
+    <p class="tagline">Elite  drill  editor</p>
+  </div>
+  <button class="menu-toggle" id="menu-toggle-button"><span></span><span></span><span></span></button>
+</header>
+
+<div class="content-wrapper drill-shell">
+  <nav class="sidebar" id="main-sidebar">
+    <a href="coach-dashboard.html">Coach Workspace <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    <a href="coach-week-editor.html">Week Editor <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    <a class="active" href="drill-canvas-editor.html">Drill Canvas <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    <a id="cwe-nav-date" href="coach-date-plan.html">Date Plan <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+  </nav>
+
+  <main class="drill-editor">
+    <section class="coach-progress" aria-label="Drill creation steps" hidden>
+      <span class="is-active">1 Upload field</span>
+      <span>2 Draw arrow</span>
+      <span>3 Add cones</span>
+      <span>4 Set timer</span>
+      <span>5 Test</span>
+      <span>6 Save to library</span>
+    </section>
+
+    <section class="drill-header">
+      <div>
+        <div class="drill-kicker">TACTICAL ANIMATION BUILDER</div>
+        <h2>Tacktick drill planner</h2>
+      </div>
+      <div id="library-meta-panel" class="drill-header-actions drill-library-meta-panel" hidden>
+        <input id="drill-title" class="drill-input drill-title-input" value="Untitled speed drill" />
+        <input id="drill-tags" class="drill-input" placeholder="Tags: speed, sprint, reaction" />
+        <select id="drill-category" class="drill-input">
+          <option value="Speed">Speed</option>
+          <option value="Acceleration">Acceleration</option>
+          <option value="Speed Endurance">Speed Endurance</option>
+          <option value="Repeated Sprint Ability">Repeated Sprint Ability</option>
+          <option value="Aerobic Endurance">Aerobic Endurance</option>
+          <option value="Anaerobic Intervals">Anaerobic Intervals</option>
+          <option value="High Intensity Intervals">High Intensity Intervals</option>
+          <option value="Change of Direction">Change of Direction</option>
+          <option value="Deceleration">Deceleration</option>
+          <option value="Agility / Reaction">Agility / Reaction</option>
+          <option value="Activation">Activation</option>
+          <option value="Strength / Power">Strength / Power</option>
+          <option value="Plyometrics">Plyometrics</option>
+          <option value="Mobility">Mobility</option>
+          <option value="Recovery">Recovery</option>
+          <option value="Return to Play">Return to Play</option>
+          <option value="Football Tactical">Football Tactical</option>
+          <option value="Rugby Tactical">Rugby Tactical</option>
+        </select>
+        <select id="drill-subcategory" class="drill-input">
+          <option value="Top speed exposure">Top speed exposure</option>
+          <option value="Sprint mechanics">Sprint mechanics</option>
+          <option value="Drive phase">Drive phase</option>
+          <option value="Repeated sprint">Repeated sprint</option>
+          <option value="Tempo intervals">Tempo intervals</option>
+          <option value="Shuttle intervals">Shuttle intervals</option>
+          <option value="Braking mechanics">Braking mechanics</option>
+          <option value="Reactive cue">Reactive cue</option>
+          <option value="Neural activation">Neural activation</option>
+          <option value="Controlled RTP">Controlled RTP</option>
+        </select>
+        <select id="drill-md-status" class="drill-input">
+          <option value="TRAIN">TRAIN</option>
+          <option value="MD-4">MD-4</option>
+          <option value="MD-3">MD-3</option>
+          <option value="MD-2">MD-2</option>
+          <option value="MD-1">MD-1</option>
+          <option value="MD">MD</option>
+          <option value="MD+1">MD+1</option>
+          <option value="REST">REST</option>
+        </select>
+        <select id="drill-intensity" class="drill-input">
+          <option value="medium">Medium intensity</option>
+          <option value="low">Low intensity</option>
+          <option value="high">High intensity</option>
+          <option value="max">Max intensity</option>
+        </select>
+        <select id="drill-type" class="drill-input">
+          <option value="template">Reusable template</option>
+          <option value="exercise">Exercise</option>
+          <option value="tactical_animation">Tactical animation</option>
+          <option value="speed_drill">Speed drill</option>
+          <option value="activation_drill">Activation drill</option>
+        </select>
+        <select id="drill-load-type" class="drill-input">
+          <option value="neural">Neural load</option>
+          <option value="metabolic">Metabolic load</option>
+          <option value="mechanical">Mechanical load</option>
+          <option value="technical">Technical load</option>
+          <option value="recovery">Recovery load</option>
+        </select>
+        <select id="drill-goal" class="drill-input">
+          <option value="develop">Develop</option>
+          <option value="maintain">Maintain</option>
+          <option value="prime">Prime</option>
+          <option value="recover">Recover</option>
+          <option value="test">Test</option>
+          <option value="return_to_play">Return to play</option>
+        </select>
+        <select id="drill-risk-level" class="drill-input">
+          <option value="low">Low risk</option>
+          <option value="medium">Medium risk</option>
+          <option value="high">High risk</option>
+        </select>
+        <input id="drill-distance" class="drill-input" type="number" min="0" step="1" placeholder="Distance m" />
+        <input id="drill-player-count" class="drill-input" type="number" min="1" step="1" placeholder="Players" />
+        <select id="drill-surface" class="drill-input">
+          <option value="grass">Grass</option>
+          <option value="turf">Turf</option>
+          <option value="indoor">Indoor</option>
+          <option value="gym">Gym</option>
+          <option value="track">Track</option>
+        </select>
+        <input id="drill-equipment-tags" class="drill-input" placeholder="Equipment: cones, hurdles" />
+        <input id="drill-position-tags" class="drill-input" placeholder="Positions: winger, striker" />
+        <input id="drill-injury-tags" class="drill-input" placeholder="Injury tags: hamstring, groin" />
+      </div>
+    </section>
+
+    <section class="mode-switch" aria-label="Editor mode" hidden>
+      <button data-mode="select" class="is-active" type="button">SELECT</button>
+      <button data-mode="draw-arrow" type="button">DRAW ARROW</button>
+      <button data-mode="equipment" type="button">ADD EQUIPMENT</button>
+      <button data-mode="timing" type="button">TIMING</button>
+      <button data-mode="save" type="button">SAVE</button>
+      <strong id="mode-hint">Select an object or choose DRAW ARROW.</strong>
+    </section>
+
+    <section class="drill-workspace">
+      <aside id="drill-tools-panel" class="drill-panel drill-tools" aria-label="Drill tools">
+        <div class="mobile-tools-head">
+          <strong>Drill tools</strong>
+          <button id="mobile-tools-close" type="button" aria-label="Close drill tools">×</button>
+        </div>
+        <details class="tool-section">
+          <summary><span>1. Field</span></summary>
+          <div class="sport-profile-switch" role="group" aria-label="Sport field">
+            <button type="button" class="is-active" data-sport-profile="football">Football</button>
+            <button type="button" data-sport-profile="rugby">Rugby</button>
+          </div>
+          <div id="sport-profile-hint" class="sport-profile-hint">Football field · 105 × 68 m</div>
+          <div class="field-orientation-switch" role="group" aria-label="Tactical field orientation">
+            <button type="button" class="is-active" data-field-orientation="horizontal" aria-pressed="true">Horizontal attack</button>
+            <button type="button" data-field-orientation="vertical" aria-pressed="false">Vertical attack</button>
+          </div>
+        </details>
+
+        <section id="equipment-section" class="tool-section equipment-launcher-section">
+          <button id="equipment-panel-toggle" class="equipment-panel-toggle" type="button" aria-expanded="false" aria-controls="equipment-panel" aria-label="Open equipment panel" title="Open equipment panel">
+            <span><b aria-hidden="true">+</b>2. Equipment</span>
+            <small>Open</small>
+          </button>
+          <div id="equipment-panel" class="equipment-launcher-panel" hidden>
+          <template id="legacy-sport-formation-actions">
+            <button id="add-full-sport-formation" type="button">+ Add Football XI · 4–3–3</button>
+            <button id="add-yellow-football-formation" type="button">+ Add Yellow XI &middot; 4&ndash;3&ndash;3</button>
+            <small id="sport-formation-hint">Adds missing shirt numbers 1–11 without clearing the field.</small>
+          </template>
+          <div class="inventory-select-row">
+            <select id="equipment-select" class="drill-input">
+              <option value="cone">Cone</option>
+            </select>
+            <button id="add-selected-equipment" class="drill-icon-btn" type="button">Add</button>
+          </div>
+          <div class="equipment-grid"></div>
+          </div>
+        </section>
+
+        <details id="movement-arrows-section" class="tool-section">
+          <summary><span>3. Movement Arrows</span></summary>
+          <div id="movement-arrows-panel" class="arrow-preset-list is-standalone" aria-label="Movement arrow types">
+            <button data-arrow-preset="acceleration" type="button"><span class="preset-line acceleration"></span><span class="preset-copy"><b>ACC</b><strong>Acceleration</strong></span></button>
+            <button data-arrow-preset="sprint" class="is-active" type="button"><span class="preset-line sprint"></span><span class="preset-copy"><b>SPRINT</b><strong>Sprint</strong></span></button>
+            <button data-arrow-preset="hspd" type="button"><span class="preset-line hspd"></span><span class="preset-copy"><b>HSPD</b><strong>High speed</strong></span></button>
+            <button data-arrow-preset="deceleration" type="button"><span class="preset-line deceleration"></span><span class="preset-copy"><b>DCC</b><strong>Deceleration</strong></span></button>
+            <button data-arrow-preset="turn360" type="button"><span class="preset-line turn360"></span><span class="preset-copy"><b>TURN</b><strong>360 turn</strong></span></button>
+            <button data-arrow-preset="jump" type="button"><span class="preset-line jump"></span><span class="preset-copy"><b>JUMP</b><strong>Jump</strong></span></button>
+            <button data-arrow-preset="changeDirection" type="button"><span class="preset-line change-direction"></span><span class="preset-copy"><b>COD</b><strong>Change direction</strong></span></button>
+            <button data-arrow-preset="pass" type="button"><span class="preset-line pass"></span><span class="preset-copy"><b>PASS</b><strong>Pass</strong></span></button>
+            <button data-arrow-preset="touch" type="button"><span class="preset-line touch"></span><span class="preset-copy"><b>TOUCH</b><strong>Push ahead</strong></span></button>
+            <button data-arrow-preset="shot" type="button"><span class="preset-line shot"></span><span class="preset-copy"><b>SHOT</b><strong>Shot</strong></span></button>
+            <button data-arrow-preset="footballCross" data-football-movement type="button"><b>⌒</b>Cross</button>
+                <button data-arrow-preset="save" data-football-movement type="button"><span class="preset-line save"></span><span class="preset-copy"><b>SAVE</b><strong>Goalkeeper save</strong></span></button>
+            <button data-arrow-preset="recovery" type="button"><span class="preset-line recovery"></span><span class="preset-copy"><b>REC</b><strong>Recovery</strong></span></button>
+            <button data-arrow-preset="pause" type="button"><span class="preset-line pause"></span><span class="preset-copy"><b>PAUSE</b><strong>Pause</strong></span></button>
+            <button data-arrow-preset="jog" type="button"><span class="preset-line jog"></span><span class="preset-copy"><b>JOG</b><strong>Jog / tempo</strong></span></button>
+            <button data-arrow-preset="roll" type="button"><span class="preset-line roll"></span><span class="preset-copy"><b>ROLL</b><strong>Roll</strong></span></button>
+            <button data-arrow-preset="circleRun" type="button"><span class="preset-line circle-run"></span><span class="preset-copy"><b>LOOP</b><strong>Loop run</strong></span></button>
+            <button data-arrow-preset="rugbyScrum" data-rugby-movement type="button" hidden><span class="preset-line rugby-scrum"></span><span class="preset-copy"><b>SCRUM</b><strong>Group scrum</strong></span></button>
+            <button data-arrow-preset="rugbyLineoutLift" data-rugby-movement type="button" hidden><span class="preset-line rugby-lineout"></span><span class="preset-copy"><b>LIFT</b><strong>Lineout lift</strong></span></button>
+            <button data-arrow-preset="rugbyRuck" data-rugby-movement type="button" hidden><span class="preset-line rugby-ruck"></span><span class="preset-copy"><b>RUCK</b><strong>Ruck → #9</strong></span></button>
+            <button data-arrow-preset="rugbyDropGoal" data-rugby-movement type="button" hidden><span class="preset-line rugby-drop-goal"></span><span class="preset-copy"><b>DROP</b><strong>Drop goal</strong></span></button>
+            <button data-arrow-preset="rugbyHighKick" data-rugby-movement type="button" hidden><span class="preset-line rugby-high-kick"></span><span class="preset-copy"><b>HIGH</b><strong>High kick</strong></span></button>
+            <button data-arrow-preset="rugbyCarry" data-rugby-movement type="button" hidden><span class="preset-line rugby-carry"></span><span class="preset-copy"><b>CARRY</b><strong>Carry with ball</strong></span></button>
+            <button data-arrow-preset="rugbyGrubber" data-rugby-movement type="button" hidden><span class="preset-line rugby-grubber"></span><span class="preset-copy"><b>GRUB</b><strong>Grubber kick</strong></span></button>
+          </div>
+        </details>
+
+        <details class="tool-section">
+          <summary><span>4. Text</span></summary>
+          <button id="add-text-object" class="wide-action" type="button">Add Text</button>
+
+          <details class="advanced-panel">
+            <summary>Advanced controls</summary>
+            <select id="arrow-style" class="drill-input">
+              <option value="sprint">Sprint arrow</option>
+              <option value="solid">Solid arrow</option>
+              <option value="dashed">Dashed arrow</option>
+              <option value="curved">Curved arrow</option>
+              <option value="acceleration">Acceleration arrow</option>
+              <option value="pass">Pass arrow</option>
+              <option value="touch">Push-ahead arrow</option>
+              <option value="passing">Passing arrow</option>
+              <option value="drop-goal">Rugby drop goal</option>
+              <option value="high-kick">Rugby high kick</option>
+            </select>
+            <select id="animation-type" class="drill-input">
+              <option value="sprint">Sprint animation</option>
+              <option value="none">No animation</option>
+              <option value="pulse">Pulse</option>
+              <option value="flow">Flow</option>
+              <option value="moving_dash">Moving dash</option>
+              <option value="footsteps">Footsteps</option>
+              <option value="fade">Fade</option>
+              <option value="glow">Glow</option>
+            </select>
+          </details>
+        </details>
+
+        <details class="tool-section">
+          <summary><span>5. Phase Zones</span></summary>
+          <button id="add-phase-zone" class="wide-action" type="button">Add Phase Zone</button>
+          <div class="phase-zone-form">
+            <label>Title<input id="phase-zone-title" class="drill-input" value="Side Shuffle"></label>
+            <label>Phase label<input id="phase-zone-label" class="drill-input" value="Phase 1"></label>
+            <div class="split-inputs">
+              <label>Start<input id="phase-zone-start" type="number" min="0" step="0.5" value="0"></label>
+              <label>Duration<input id="phase-zone-duration" type="number" min="1" step="0.5" value="15"></label>
+            </div>
+            <label>Movement pattern
+              <select id="phase-zone-pattern" class="drill-input">
+                <option value="side_shuffle">Side Shuffle</option>
+                <option value="backwards_slalom">Backwards Slalom</option>
+                <option value="hop_and_hold">Hop and Hold</option>
+                <option value="ladder_side_shuffle">Ladder Side Shuffle</option>
+                <option value="cone_slalom">Cone Slalom</option>
+                <option value="rondo">Rondo</option>
+                <option value="possession">Possession</option>
+                <option value="custom">Custom</option>
+              </select>
+            </label>
+          </div>
+          <button id="apply-phase-pattern" class="wide-action" type="button">Animate Players in Zone</button>
+        </details>
+
+        <details class="tool-section">
+          <summary><span>6. Tabata / Intervals</span></summary>
+          <div class="interval-form">
+            <label>Preparation seconds<input id="prep-sec" type="number" min="0" step="0.1" value="5"></label>
+            <label>Work seconds<input id="work-sec" type="number" min="0.1" step="0.1" value="20"></label>
+            <label>Rest seconds<input id="rest-sec" type="number" min="0" step="0.1" value="10"></label>
+            <label>Rounds<input id="rounds-count" type="number" min="1" step="1" value="8"></label>
+            <label>Sets<input id="sets-count" type="number" min="1" step="1" value="1"></label>
+            <label>Rest between sets<input id="set-rest-sec" type="number" min="0" step="0.1" value="60"></label>
+            <label>Start delay<input id="start-delay-sec" type="number" min="0" step="0.1" value="0"></label>
+            <label>Voice language
+              <select id="voice-lang" class="drill-input">
+                <option value="en-US">English</option>
+                <option value="uk-UA">Ukrainian</option>
+                <option value="de-DE">German</option>
+                <option value="es-ES">Spanish</option>
+              </select>
+            </label>
+            <label class="check-row"><input id="enable-beep" type="checkbox" checked> Enable beep</label>
+            <label class="check-row"><input id="enable-whistle" type="checkbox" checked> Enable whistle</label>
+            <label class="check-row"><input id="enable-voice" type="checkbox" checked> Enable voice cues</label>
+          </div>
+          <button id="generate-timeline" class="wide-action" type="button">Generate Timeline</button>
+        </details>
+      </aside>
+      <button id="mobile-tools-backdrop" class="mobile-tools-backdrop" type="button" aria-label="Close drill tools" hidden></button>
+
+      <section class="canvas-zone">
+        <div id="field-workspace-viewport" class="field-workspace-viewport">
+          <div class="field-viewport-toolbar">
+            <div class="canvas-history-controls" role="group" aria-label="Field editing actions">
+              <button id="undo-action" class="canvas-undo-btn" type="button" title="Undo" aria-label="Undo" disabled>
+                <span aria-hidden="true">↶</span>
+              </button>
+              <button id="redo-action" class="canvas-undo-btn canvas-redo-btn" type="button" title="Redo" aria-label="Redo" disabled>
+                <span aria-hidden="true">↷</span>
+              </button>
+              <button id="clear-active-exercise" class="canvas-undo-btn canvas-clear-field-btn" type="button" title="Clear active exercise field" aria-label="Clear active exercise field">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <path d="M8 8v10m4-10v10m4-10v10M5 5h14m-10-2h6l1 2M7 5l1 16h8l1-16" />
+                </svg>
+              </button>
+            </div>
+            <button id="action-dock-toggle" class="canvas-undo-btn action-dock-toggle" type="button" title="Player actions" aria-label="Open player actions" aria-controls="group-quick-actions" aria-expanded="false" onclick="window.pacToggleActionDock && window.pacToggleActionDock(event)">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><path d="M9 6h11M9 18h11M5 10v4M15 10l4 2-4 2z"/></svg>
+              <span class="field-action-label">Actions</span>
+            </button>
+            <button id="mobile-tools-toggle" class="canvas-tools-btn" type="button" title="Drill tools" aria-label="Open drill tools" aria-controls="drill-tools-panel" aria-expanded="false">
+              <span aria-hidden="true">☰</span>
+            </button>
+            <nav id="vertical-field-zone-nav" class="vertical-field-zone-nav" aria-label="Vertical field work area">
+              <button type="button" class="is-active" data-field-zone="overview">Overview · 2 halves</button>
+              <button type="button" data-field-zone="full">Full field</button>
+              <button type="button" data-field-zone="defence">Defence</button>
+              <button type="button" data-field-zone="middle">Middle</button>
+              <button type="button" data-field-zone="attack">Attack</button>
+            </nav>
+            <div class="canvas-view-menu">
+              <button id="open-player-add-menu" class="canvas-view-btn player-add-icon-btn" type="button" title="Add players" aria-label="Add players">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="7" r="3"/><path d="M6.5 20c.5-5 2.3-7.5 5.5-7.5s5 2.5 5.5 7.5M9 13.5 6 16m9-2.5 3 2.5"/></svg><i aria-hidden="true">+</i>
+              </button>
+              <button id="camera-view-toggle" class="canvas-view-btn" type="button" title="Animation view" aria-label="Animation view" aria-expanded="false">
+                <span aria-hidden="true">⌕</span>
+              </button>
+              <div id="camera-view-options" class="canvas-view-options" hidden>
+                <button data-camera-view="full" class="is-active" type="button">Full field</button>
+                <button data-camera-view="focus" type="button">Focus</button>
+                <button data-camera-view="reels" type="button">Reels · 9:16</button>
+              </div>
+              <details id="player-add-menu" class="player-add-menu field-player-add-popover">
+                <summary>+ Add players</summary>
+                <div class="player-add-menu-body">
+                  <div class="player-add-controls">
+                    <label>Quantity<input id="player-add-count" type="number" min="1" max="99" step="1" value="1"></label>
+                    <label>Layout<select id="player-add-layout"><option value="default">Team formation</option><option value="row">Horizontal line</option><option value="column">Vertical line</option><option value="two-lines">Two lines</option><option value="grid">Grid</option></select></label>
+                    <label>Spacing (m)<input id="player-add-spacing" type="number" min="1" max="15" step="0.5" value="3"></label>
+                    <label>Team<select id="player-add-team">
+                      <option value="black">Team 1</option>
+                      <option value="yellow">Team 2</option>
+                    </select></label>
+                    <div class="player-kit-picker"><div class="player-kit-heading"><span>Shirt colour</span><label class="player-kit-custom" title="Choose any colour"><input id="player-add-kit-color" type="color" value="#3288ff" aria-label="Choose any shirt colour"></label></div><input id="player-add-kit-mode" type="hidden" value="default"><div class="player-kit-swatches"><button type="button" data-kit-swatch="#171717" style="--kit-colour:#171717" aria-label="Black" title="Black" aria-pressed="false"></button><button type="button" data-kit-swatch="#ffcd28" style="--kit-colour:#ffcd28" aria-label="Yellow" title="Yellow" aria-pressed="false"></button><button type="button" data-kit-swatch="#3288ff" style="--kit-colour:#3288ff" aria-label="Blue" title="Blue" aria-pressed="false"></button><button type="button" data-kit-swatch="#e63b36" style="--kit-colour:#e63b36" aria-label="Red" title="Red" aria-pressed="false"></button><button type="button" data-kit-swatch="#ffffff" style="--kit-colour:#ffffff" aria-label="White" title="White" aria-pressed="false"></button></div></div>
+                    <label id="player-add-formation-wrap" class="player-add-formation">Formation<select id="player-add-formation">
+                      <option value="4-3-3">4-3-3</option>
+                      <option value="4-2-4">4-2-4</option>
+                    </select></label>
+                  </div>
+                  <div class="player-add-actions">
+                    <button id="add-player-count" type="button">Add selected</button>
+                    <button id="smart-add-team-xi" type="button">Smart Add XI</button>
+                  </div>
+                  <small>Smart XI adds only missing numbers for the selected team.</small>
+                </div>
+              </details>
+            </div>
+          </div>
+          <div id="group-quick-actions" class="group-quick-actions" aria-label="Quick Group Part actions" hidden>
+            <div class="action-dock-head">
+              <strong>Actions</strong>
+              <div class="action-dock-tabs" role="tablist" aria-label="Action category">
+                <button data-action-dock-tab="movement" class="is-active" type="button">↗ Movement</button>
+                <button data-action-dock-tab="ball" type="button">◆ Ball</button>
+                <button data-action-dock-tab="team" type="button">◉ Team phases</button>
+              </div>
+            </div>
+            <div class="group-quick-action-strip" role="toolbar" aria-label="Active player movement actions">
+              <div data-action-dock-panel="movement" class="action-dock-panel is-active">
+                <button data-arrow-preset="jog" type="button"><b>↗</b>Jog</button>
+                <button data-arrow-preset="sprint" type="button"><b>➤</b>Sprint</button>
+                <button data-arrow-preset="acceleration" type="button"><b>≫</b>ACC</button>
+                <button data-arrow-preset="hspd" type="button"><b>⇢</b>HSPD</button>
+                <button data-arrow-preset="deceleration" type="button"><b>≪</b>DCC</button>
+                <button data-arrow-preset="turn360" type="button"><b>↻</b>360 Turn</button>
+                <button data-arrow-preset="jump" type="button"><b>⌃</b>Jump</button>
+                <button data-arrow-preset="changeDirection" type="button"><b>⌁</b>Change direction</button>
+                <button data-arrow-preset="roll" type="button"><b>◌</b>Roll</button>
+                <button data-arrow-preset="circleRun" type="button"><b>↻</b>Loop run</button>
+                <button data-arrow-preset="pause" type="button"><b>Ⅱ</b>Pause</button>
+                <button data-arrow-preset="recovery" type="button"><b>↘</b>Recovery</button>
+              </div>
+              <div data-action-dock-panel="ball" class="action-dock-panel" hidden>
+                <button data-arrow-preset="pass" type="button"><b>➜</b>Pass</button>
+                <button data-arrow-preset="touch" type="button"><b>⌁</b>Touch</button>
+                <button data-arrow-preset="shot" type="button"><b>●</b>Shot</button>
+                <button data-arrow-preset="footballCross" data-football-movement type="button"><b>⌒</b>Cross</button>
+                <button data-arrow-preset="save" data-football-movement type="button"><b>◇</b>Goalkeeper Save</button>
+                <button data-arrow-preset="rugbyCarry" data-rugby-movement type="button" hidden><b>◒</b>Carry</button>
+                <button data-arrow-preset="rugbyGrubber" data-rugby-movement type="button" hidden><b>⌁</b>Grubber</button>
+                <button data-arrow-preset="rugbyHighKick" data-rugby-movement type="button" hidden><b>⌒</b>High Kick</button>
+                <button data-arrow-preset="rugbyDropGoal" data-rugby-movement type="button" hidden><b>⌃</b>Drop Goal</button>
+              </div>
+              <div data-action-dock-panel="team" class="action-dock-panel" hidden>
+                <button data-football-set-piece="Free kick" data-football-movement type="button">Free kick</button>
+                <button data-football-set-piece="Corner" data-football-movement type="button">Corner</button>
+                <button data-football-set-piece="Throw-in" data-football-movement type="button">Throw-in</button>
+                <button data-group-follow class="group-quick-follow" type="button"><b>⇉</b>Defender follow</button>
+                <button data-arrow-preset="rugbyScrum" data-rugby-movement type="button" hidden><b>◉</b>Scrum</button>
+                <button data-arrow-preset="rugbyLineoutLift" data-rugby-movement type="button" hidden><b>⇧</b>Lineout</button>
+                <button data-arrow-preset="rugbyMaul" data-rugby-movement type="button" hidden><b>⬢</b>Maul</button>
+                <button data-arrow-preset="rugbyRuck" data-rugby-movement type="button" hidden><b>◆</b>Ruck</button>
+              </div>
+              <button data-group-quick-finish class="group-quick-finish" type="button">Finish</button>
+            </div>
+          </div>
+            <nav id="field-player-switcher" class="field-player-switcher" aria-label="Selected players" hidden>
+              <div class="field-player-switcher-head">
+                <div class="field-player-switcher-tabs" role="tablist" aria-label="Player or tactical group view">
+                  <button data-player-switcher-mode="players" class="is-active" type="button">PLAYERS</button>
+                  <button data-player-switcher-mode="groups" type="button">GROUPS</button>
+                </div>
+                <span id="field-player-switcher-summary">Fixed team numbers</span>
+                <button id="field-player-switcher-collapse" class="field-player-switcher-collapse" type="button" aria-expanded="true" aria-label="Hide player bench" title="Hide player bench">−</button>
+              </div>
+<div id="field-player-switcher-rail" class="field-player-switcher-rail" role="tablist"></div>
+            </nav>
+          <div id="konva-stage" class="konva-stage"></div>
+          <div class="field-bottom-controls">
+            <div class="field-playback-dock" aria-label="Field playback controls">
+              <button id="field-play-toggle" class="field-play-primary" type="button" title="Play animation" aria-label="Play animation"><span aria-hidden="true">▶</span></button>
+              <button id="field-stop-playback" type="button" title="Stop animation" aria-label="Stop animation"><span aria-hidden="true">■</span></button>
+              <button id="field-open-timeline" type="button" title="Go to player tracks" aria-label="Go to player tracks"><span aria-hidden="true">≡</span><strong>Tracks</strong></button>
+            </div>
+          </div>
+        </div>
+        <section class="timeline-panel">
+          <button id="mobile-close-timeline" class="mobile-timeline-continue" type="button">← Continue on field</button>
+          <div class="timeline-head">
+            <div>
+              <div class="drill-kicker">PREMIERE-STYLE TIMELINE</div>
+              <strong>Object Timing</strong>
+            </div>
+            <div class="playback-controls" aria-label="Timeline playback controls">
+              <button id="replay-timeline" class="player-icon-btn" type="button" title="Restart timeline" aria-label="Restart timeline">↺</button>
+              <button id="play-timeline" class="player-icon-btn player-icon-btn-primary" type="button" title="Play timeline" aria-label="Play timeline" onclick="window.pacDrillPlayTimeline && window.pacDrillPlayTimeline(event)">▶</button>
+              <button id="pause-timeline" class="player-icon-btn" type="button" title="Pause timeline" aria-label="Pause timeline">Ⅱ</button>
+              <button id="stop-timeline" class="player-icon-btn" type="button" title="Stop timeline" aria-label="Stop timeline">■</button>
+              <select id="playback-rate" class="drill-input drill-rate-select" title="Playback speed">
+                <option value="0.25">0.25x</option>
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+                <option value="3">3x</option>
+                <option value="4">4x</option>
+              </select>
+            </div>
+            <div class="timeline-exercise-actions">
+              <button id="play-all-exercises" class="timeline-add-phase" type="button">Play all</button>
+              <button id="waiting-positions" class="timeline-add-phase" type="button">Waiting positions</button>
+              <button id="delete-exercise" class="timeline-add-phase" type="button">Delete exercise</button>
+              <button id="clear-exercise-timeline" class="timeline-add-phase" type="button" title="Remove actions; keep players and equipment">Clear timeline</button>
+              <button id="clear-workspace" class="timeline-add-phase" type="button">Clear workspace</button>
+              <button id="add-next-exercise" class="timeline-add-phase" type="button">+ Next Exercise</button>
+            </div>
+            <div id="timeline-clock">0.0s</div>
+          </div>
+          <div class="timeline-guide" aria-label="Timeline editing help">
+            <span><b>1</b> Move the playhead</span>
+            <span><b>2</b> Select a player and add movement</span>
+            <span><b>3</b> Drag clip to move · drag right edge to change speed</span>
+          </div>
+<div class="timeline-scroll">
+            <div class="scrub-row">
+            <input id="timeline-scrub" type="range" min="0" max="30" step="0.01" value="0" />
+            <span id="timeline-readout">00.00 / 30.00</span>
+            </div>
+          <div id="timeline-ruler" class="timeline-ruler"></div>
+          <div id="timeline-phases" class="timeline-phases"></div>
+          <div id="timeline-tracks" class="timeline-tracks"></div>
+          <div id="timeline-playhead" class="timeline-playhead" data-time="0.00s" aria-hidden="true"></div>
+          </div>
+        </section>
+        <div class="drill-bottom-save">
+          <button id="save-draft" class="drill-btn drill-btn-secondary" type="button">Draft</button>
+          <button id="restore-draft" class="drill-btn drill-btn-secondary" type="button">Restore</button>
+          <button id="import-json" class="drill-btn drill-btn-secondary" type="button">Import JSON</button>
+          <input id="import-json-file" type="file" accept="application/json,.json" hidden />
+          <button id="select-all-field" class="drill-btn drill-btn-secondary" type="button">Select All</button>
+          <button id="save-drill" class="drill-btn" type="button">Save</button>
+          <button id="save-library" class="drill-btn drill-btn-primary" type="button">Save to Exercise Library</button>
+          <details class="canvas-export-menu save-export-menu">
+            <summary>Export</summary>
+            <button id="export-png" class="drill-icon-btn" type="button" title="Export PNG">PNG</button>
+            <button id="export-json" class="drill-icon-btn" type="button" title="Export FFmpeg JSON">FFmpeg JSON</button>
+          </details>
+        </div>
+      </section>
+
+      <aside class="drill-panel drill-properties" aria-label="Object properties">
+        <div class="drill-panel-title">Properties</div>
+        <div id="text-controls" class="text-controls">
+          <div class="drill-panel-title">Text Controls</div>
+          <label>Text</label>
+          <textarea id="text-content" class="drill-input" rows="3" placeholder="Coach note"></textarea>
+          <label>Font size</label>
+          <div class="split-inputs">
+            <input id="text-size-number" type="number" min="10" max="96" value="28" />
+            <input id="text-size" type="range" min="10" max="96" value="28" />
+          </div>
+          <label>Weight</label>
+          <select id="text-weight" class="drill-input">
+            <option value="900">Bold</option>
+            <option value="700">Semi bold</option>
+            <option value="400">Regular</option>
+          </select>
+        </div>
+        <div id="arrow-simple-controls">
+          <div class="drill-panel-title">Arrow Controls</div>
+          <label>Style</label>
+          <select id="simple-arrow-style" class="drill-input">
+            <option value="sprint">Sprint</option>
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="pass">Pass</option>
+            <option value="passing">Passing</option>
+            <option value="curved">Curve</option>
+            <option value="acceleration">Acceleration</option>
+            <option value="deceleration">Deceleration</option>
+            <option value="hspd">High speed</option>
+            <option value="turn360">360 Turn</option>
+            <option value="jump">Jump</option>
+            <option value="shot">Shot</option>
+            <option value="touch">Push ahead</option>
+            <option value="recovery">Recovery</option>
+            <option value="pause">Pause</option>
+            <option value="jog">Jog / tempo</option>
+            <option value="roll">Roll</option>
+            <option value="circle-run">Loop run</option>
+          </select>
+          <label>Thickness</label>
+          <div class="split-inputs">
+            <input id="simple-thickness-number" type="number" min="2" max="18" value="6" />
+            <input id="simple-thickness" type="range" min="2" max="18" value="6" />
+          </div>
+          <label>Start time</label>
+          <input id="simple-start-time" type="number" min="0" step="0.1" value="0" />
+          <label>Duration</label>
+          <input id="simple-duration" type="number" min="0.1" step="0.1" value="3" />
+          <label>Animation</label>
+          <select id="simple-animation" class="drill-input">
+            <option value="none">Off</option>
+            <option value="flow">Flow</option>
+            <option value="sprint">Sprint</option>
+            <option value="pulse">Pulse</option>
+            <option value="footsteps">Footsteps</option>
+          </select>
+        </div>
+
+        <details class="advanced-panel">
+          <summary>Advanced object styling</summary>
+          <label>Thickness <span id="thickness-value">6</span></label>
+          <input id="thickness" type="range" min="2" max="18" value="6" />
+
+          <label>Glow</label>
+          <input id="glow" type="range" min="0" max="40" value="0" />
+
+          <label>Animation speed <span id="speed-value">1.0x</span></label>
+          <input id="speed" type="range" min="0.2" max="4" step="0.1" value="1" />
+
+          <label>Arrow head</label>
+          <select id="head-style" class="drill-input">
+            <option value="sharp">Sharp</option>
+            <option value="wide">Wide</option>
+            <option value="compact">Compact</option>
+          </select>
+
+          <label>Start time <span id="start-value">0.0s</span></label>
+          <input id="start-time" type="range" min="0" max="30" step="0.5" value="0" />
+
+          <label>Duration <span id="duration-value">3.0s</span></label>
+          <input id="duration" type="range" min="0.5" max="20" step="0.5" value="3" />
+        </details>
+
+        <div class="drill-panel-title">Manual Cue Edit</div>
+        <div id="cue-editor" class="cue-editor">
+          <label>Label<input id="cue-label" type="text" placeholder="GO"></label>
+          <label>Start time<input id="cue-start" type="number" min="0" step="0.1"></label>
+          <label>Duration<input id="cue-duration" type="number" min="0.1" step="0.1"></label>
+          <label>Sound type
+            <select id="cue-sound" class="drill-input">
+              <option value="">None</option>
+              <option value="beep">Short beep</option>
+              <option value="long_beep">Long beep</option>
+              <option value="whistle">Whistle</option>
+              <option value="female_voice">Female voice</option>
+              <option value="male_voice">Male voice</option>
+              <option value="custom_audio">Custom audio</option>
+            </select>
+          </label>
+          <label>Voice text<input id="cue-voice" type="text" placeholder="Go"></label>
+        </div>
+
+        <div class="event-buttons">
+          <button data-event="beep" type="button">Add beep</button>
+          <button data-event="long_beep" type="button">Long beep</button>
+          <button data-event="whistle" type="button">Add whistle</button>
+          <button data-event="female_voice" type="button">Female voice</button>
+          <button data-event="male_voice" type="button">Male voice</button>
+          <button data-event="rest" type="button">Rest overlay</button>
+        </div>
+        <label class="custom-audio-upload">
+          Custom audio
+          <input id="custom-audio-upload" type="file" accept="audio/*" />
+        </label>
+        <p id="save-status" class="save-status">Ready.</p>
+      </aside>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="../js/vendor/konva-9.3.22.min.js"></script>
+<script src="../config/firebase-config.js"></script>
+<script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+<script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+<script src="../js/drill-canvas-scheduler.js?v=20260914-reception-v3"></script>
+<script src="../js/drill-local-storage.js?v=20260926-storage-v1"></script>
+<script src="../js/drill-player-kit.js?v=20261021-kit-v9"></script>
+<script src="../js/drill-equipment-playback.js?v=20261018-kit-v87"></script>
+<script src="../js/drill-reels.js?v=20261018-reels-speed-v8"></script>
+<script src="../js/drill-canvas-editor.js?v=20261021-facing-paths-v105"></script>
+</body>
+</html>

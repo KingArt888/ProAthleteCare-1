@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProAthleteCare | Coach Workspace</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css" />
+  <link rel="stylesheet" href="../css/dashboard_user.css" />
+  <style>
+    .main-content .ud-card{opacity:1;transform:none}
+    .coach-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .coach-title{margin:0;font-size:28px;font-weight:900;color:#FFC72C}
+    .coach-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .coach-top-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .coach-chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,199,44,.35);background:rgba(255,199,44,.1);color:#FFC72C;font-size:12px;font-weight:800}
+    .coach-alert-item,.coach-action-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border:1px solid #232323;border-radius:10px;background:#0f0f0f}
+    .coach-alert-item.is-high{border-color:rgba(255,77,77,.45);background:rgba(100,0,0,.15)}
+    .coach-alert-item.is-med{border-color:rgba(255,199,44,.45);background:rgba(90,70,0,.18)}
+    .coach-inline-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .coach-inline-actions .ud-btn{padding:6px 10px;font-size:12px}
+    .coach-pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:900}
+    .coach-pill.up{background:rgba(0,255,0,.16);color:#00ff88;border:1px solid rgba(0,255,0,.35)}
+    .coach-pill.down{background:rgba(255,77,77,.16);color:#ff7a7a;border:1px solid rgba(255,77,77,.35)}
+    .coach-pill.flat{background:rgba(255,255,255,.1);color:#ddd;border:1px solid rgba(255,255,255,.2)}
+  </style>
+</head>
+<body>
+<header>
+  <a href="../platform.html" class="logo-link">
+    <img src="../assets/images/AK_logo.png" alt="ProAthleteCare Logo" class="logo" />
+  </a>
+  <h1 class="project-title">ProAthleteCare</h1>
+  <p class="tagline" id="coach-tagline">Online training and professional athlete support</p>
+  <button class="menu-toggle" id="menu-toggle-button"><span></span><span></span><span></span></button>
+</header>
+
+<div class="content-wrapper">
+  <nav class="sidebar" id="main-sidebar">
+    <a id="nav-coach-dashboard" href="coach-dashboard.html">Coach Workspace <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    <a id="nav-coach-week" href="coach-week-editor.html">Week Editor <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    <a id="nav-drill-canvas" href="drill-canvas-editor.html">Drill Canvas <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    <a id="nav-coach-date" href="coach-date-plan.html">Date Plan <img src="../assets/images/AK_logo.png" class="menu-icon" alt="AK"></a>
+    
+    <div class="user-sidebar-profile" onclick="openProfile()" style="margin-top:auto;padding:15px;border-top:1px solid #333;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../assets/images/AK_logo.png" class="user-avatar" style="width:35px;height:35px;border-radius:50%;border:1px solid #FFC72C;object-fit:cover;">
+        <span id="user-name" class="user-name-display" style="color:#FFC72C;font-weight:bold;font-size:14px;">...</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="coach-head">
+      <div>
+        <h2 class="coach-title" id="coach-page-title">Coach Workspace</h2>
+        <div class="coach-top-meta">
+          <span class="coach-chip" id="coach-top-readiness">Team readiness: -</span>
+          <span class="coach-chip" id="coach-top-next-session">Next key session: -</span>
+        </div>
+      </div>
+      <div class="coach-actions">
+        <button class="ud-btn ud-btn--ghost" id="btn-refresh" type="button">Refresh</button>
+        <button class="ud-btn" id="btn-open-current" type="button">Open Week</button>
+        <a class="ud-btn" href="drill-canvas-editor.html" style="text-decoration:none;">Create Drill</a>
+        <a class="ud-btn ud-btn--ghost" id="btn-date-plan" href="coach-date-plan.html" style="text-decoration:none;">Date Plan</a>
+      </div>
+    </div>
+
+    <section id="coach-context" class="ud-card ud-card--accent" style="display:none;"></section>
+
+    <section class="ud-launch" aria-label="Coach decisions">
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-alerts">ALERTS</div>
+        <div class="ud-title" id="coach-alerts-title">Attention</div>
+        <div class="ud-progress-list" id="coach-alerts-list"></div>
+      </div>
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-decisions">QUICK DECISIONS</div>
+        <div class="ud-title" id="coach-title-actions">Today actions</div>
+        <div class="ud-progress-list" id="coach-quick-actions-list"></div>
+      </div>
+    </section>
+
+    <section class="ud-launch" aria-label="Coach summary">
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-team">TEAM STATUS</div>
+        <div class="ud-progress-list" id="coach-summary-cards"></div>
+      </div>
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-earnings">COACH EARNINGS</div>
+        <div class="ud-progress-list" id="coach-earnings-cards"></div>
+      </div>
+    </section>
+
+    <section class="ud-card">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+        <div>
+          <div class="ud-kicker" id="coach-kicker-clients">MY CLIENTS</div>
+          <div class="ud-mini" id="athletes-count">0 clients</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input id="coach-search-input" type="text" placeholder="Search (name / email / uid)"
+                 style="min-width:260px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.35);color:#fff;" />
+        </div>
+      </div>
+      <div id="athletes-table" class="sticky-table-container" style="margin-top:12px;"></div>
+    </section>
+
+    <section class="ud-card">
+      <div class="ud-kicker" id="coach-kicker-notes">COACH NOTES</div>
+      <div class="ud-mini" id="coach-notes-box">No notes yet.</div>
+    </section>
+  </main>
+</div>
+
+<footer class="pac-global-footer">
+  <span>&copy; 2026 ProAthleteCare. All rights reserved.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="../config/firebase-config.js"></script>
+<script src="../js/auth-guard.js?v=20261104-access-modal-v2"></script>
+<script src="../js/navigation-common.js?v=20261104-field-labels-v1"></script>
+<script src="../js/session-normalizer.js?v=20261104-journal-v1"></script>
+<script src="../js/session-journal.js?v=20261104-journal-v1"></script>
+<script src="../js/coach-dashboard.js?v=20261104-journal-v1"></script>
+</body>
+</html>
+
+

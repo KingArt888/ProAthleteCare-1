@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261104-v1",
-  "builtAt": "2026-11-04T21:16:07.695Z",
+  "build": "daily-phone-20261104-v2",
+  "builtAt": "2026-11-04T21:22:06.678Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -332,8 +332,8 @@
     },
     {
       "file": "js/navigation-common.js",
-      "bytes": 185359,
-      "sha256": "e1eeb56789ce5933bca7d6e91c1b75bb55e28d6fdfe225ca25639f74cf92c42d"
+      "bytes": 185528,
+      "sha256": "33492674e563c8b99648a908ef45d23c8f08b4c4ad1ef7140372b079e881119c"
     },
     {
       "file": "js/power.js",
@@ -362,8 +362,8 @@
     },
     {
       "file": "js/session-journal.js",
-      "bytes": 13705,
-      "sha256": "053fb01082479bc4d12a58e7ebbfcd2a3a7831005f636042c616dec10e4cb977"
+      "bytes": 14036,
+      "sha256": "07f1c17851f69250deed43e43f46dfb6408502faf17ceaedc97775654119e39f"
     },
     {
       "file": "js/session-normalizer.js",

@@ -43,7 +43,7 @@
     function read(uid){const raw=local.getItem(queueKey(uid));if(!raw)return{};const parsed=JSON.parse(raw);if(!parsed||Array.isArray(parsed)||typeof parsed!=='object')throw Error('INVALID_OUTBOX');return parsed;}
     function store(uid,data){local.setItem(queueKey(uid),JSON.stringify(data));}
     function ensure(uid){if(owner()!==uid)throw Error('OWNER_MISMATCH');}
-    async function uploadRoute(item,uid){
+    async function prepareRoute(item,uid){
       if(!item.gpsLocalSessionId||!item.record.actual.gps?.hasMeasurements)return;
       const route=await readRoute(item.gpsLocalSessionId,uid);
       if(route.executionId!==item.record.executionId)throw Error('ROUTE_EXECUTION_MISMATCH');
@@ -51,13 +51,13 @@
       if(bytes.length>20*1024*1024)throw Error('ROUTE_TOO_LARGE');
       const digest=await crypto.subtle.digest('SHA-256',bytes),sha256=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
       const path=`training-routes/${uid}/${item.record.executionId}.json`;ensure(uid);
-      await storage.ref(path).putString(text,'raw',{contentType:'application/json',customMetadata:{userId:uid,executionId:item.record.executionId,sha256}});
       item.record.route={path,sha256,bytes:bytes.length};
+      return async()=>{ensure(uid);const task=storage.ref(path).putString(text,'raw',{contentType:'application/json',customMetadata:{userId:uid,executionId:item.record.executionId,sha256}});const timeout=setTimeout(()=>task.cancel?.(),12000);try{await task;}finally{clearTimeout(timeout);}};
     }
     async function send(item,uid){
       ensure(uid);
       if(item.kind==='execution'){
-        await uploadRoute(item,uid);ensure(uid);
+        const upload=await prepareRoute(item,uid);ensure(uid);
         const record=item.record,sessionId=`daily-${record.date}`,parent=db.collection('load_season_reports').doc(`${uid}_${sessionId}`),child=parent.collection('executions').doc(record.executionId);
         const profile=record.kind==='gym'?db.collection('users').doc(uid).collection('training_profiles').doc(encodeURIComponent(record.task.exerciseId)):null;
         const context=record.task.context,progress=context.weekId&&Number.isInteger(context.dayIdx)?db.collection('athlete_daily_progress').doc(`${uid}_${context.weekId}_${context.dayIdx}`):null;
@@ -74,6 +74,7 @@
             }
           }
         });
+        if(upload)await upload();
       }else if(item.kind==='profile'){
         const ref=db.collection('users').doc(uid).collection('training_profiles').doc(encodeURIComponent(item.exerciseId));
         await db.runTransaction(async tx=>{const snapshot=await tx.get(ref);ensure(uid);const p=snapshot.exists?snapshot.data().performance:{};
@@ -95,10 +96,12 @@
       if(working)return working;
       const uid=owner();
       working=(async()=>{
-        while(true){ensure(uid);const queue=read(uid),key=Object.keys(queue)[0];if(!key)break;
+        const failures=[];
+        for(const key of Object.keys(read(uid))){ensure(uid);const queue=read(uid);if(!queue[key])continue;
           const item=copy(queue[key]);onStatus({state:'syncing',pending:Object.keys(queue).length});
-          await send(item,uid);ensure(uid);const fresh=read(uid);if(JSON.stringify(fresh[key])===JSON.stringify(queue[key]))delete fresh[key];store(uid,fresh);
+          try{await send(item,uid);}catch(error){ensure(uid);failures.push(error);continue;}ensure(uid);const fresh=read(uid);if(JSON.stringify(fresh[key])===JSON.stringify(queue[key]))delete fresh[key];store(uid,fresh);
         }
+        if(failures.length)throw failures[0];
         onStatus({state:'synced',pending:0});
       })().catch(error=>{onStatus({state:'pending',error:error.message,pending:Object.keys(read(uid)).length});throw error;}).finally(()=>{working=null;});
       return working;

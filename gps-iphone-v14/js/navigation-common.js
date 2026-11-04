@@ -1588,7 +1588,7 @@ async function handleDeleteAccount() {
 
 // ПУНКТ 5: Вихід
 // PATCH START: unified logout to index (absolute-safe)
-function getSiteBase() {
+function getSiteBase() { return '/ProAthleteCare-1/gps-iphone-v14/';
   const baseTag = document.querySelector('base[href]');
   if (baseTag) return new URL(baseTag.getAttribute('href'), window.location.origin).pathname;
 
@@ -1596,6 +1596,8 @@ function getSiteBase() {
   const parts = window.location.pathname.split('/').filter(Boolean);
 
   if (isGithub) {
+    const pagesIndex = parts.indexOf('pages');
+    if (pagesIndex > 0) return `/${parts.slice(0, pagesIndex).join('/')}/`;
     // якщо перший сегмент "pages" — це точно не repo
     if (parts[0] && parts[0] !== "pages") return `/${parts[0]}/`;
     // fallback: repo з hardcode (твій проект)

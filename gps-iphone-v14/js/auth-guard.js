@@ -83,7 +83,7 @@
 
   function isAuthPage(pathname) {
     const path = normPath(pathname);
-    return path.endsWith("/ProAthleteCare-1/gps-iphone-v14/pages/regist.html") || path.endsWith("/ProAthleteCare-1/gps-iphone-v14/pages/auth.html");
+    return path.endsWith("/pages/regist.html") || path.endsWith("/pages/auth.html");
   }
 
   const AUTH_REDIRECT = "/ProAthleteCare-1/gps-iphone-v14/pages/regist.html";
@@ -508,7 +508,7 @@ window.pacShowPlanReadError=function(error){
     // Logged in, but email NOT verified → allow ONLY regist page (verification screen)
     // Everything else -> back to regist
     if (!user.emailVerified) {
-      if (!path.endsWith("/ProAthleteCare-1/gps-iphone-v14/pages/regist.html")) go(AUTH_REDIRECT);
+      if (!path.endsWith("/pages/regist.html")) go(AUTH_REDIRECT);
       return;
     }
 

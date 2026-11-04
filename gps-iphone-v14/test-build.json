@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261104-v2",
-  "builtAt": "2026-11-04T21:22:06.678Z",
+  "build": "daily-phone-20261104-v3",
+  "builtAt": "2026-11-04T21:24:29.710Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -127,8 +127,8 @@
     },
     {
       "file": "js/auth-guard.js",
-      "bytes": 24368,
-      "sha256": "2978bb70563cf06ec19c5144036cb4855de40a7322f0bc9fe9c9b307aaf4d2b2"
+      "bytes": 24272,
+      "sha256": "f27c6a6e6a6e87bf38f14a8f2a0b4904a60f3014d3c14580ea23073675543a74"
     },
     {
       "file": "js/auth-v9.js",
@@ -187,8 +187,8 @@
     },
     {
       "file": "js/drill-canvas-editor.js",
-      "bytes": 1223999,
-      "sha256": "e82ff6163db79097043f569060d087248e6c63d1854b16ef6bcc56fc22699b84"
+      "bytes": 1223935,
+      "sha256": "63cf7fcd272981f6a509b33d485bfee09aa4031328b61708a79c6cb0583ac6c4"
     },
     {
       "file": "js/drill-canvas-scheduler.js",
@@ -352,8 +352,8 @@
     },
     {
       "file": "js/regist.js",
-      "bytes": 40699,
-      "sha256": "7386eebba1f7702ec8891d00fbf5f5b6b516e92a989c54b5f2d596c8609cc32a"
+      "bytes": 40635,
+      "sha256": "9a1eb56130e448e1c313f39eb1abb9e804fadb55ead836dad8b7668378480251"
     },
     {
       "file": "js/script.js",

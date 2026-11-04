@@ -850,7 +850,7 @@ return;
   if (!auth || !db) return;
   function isRegistRoute(pathname) {
     const path = String(pathname || "").toLowerCase().replace(/\/+$/, "");
-    return path.endsWith("/ProAthleteCare-1/gps-iphone-v14/pages/regist") || path.endsWith("/ProAthleteCare-1/gps-iphone-v14/pages/regist.html");
+    return path.endsWith("/pages/regist") || path.endsWith("/pages/regist.html");
   }
   const forceOnboardingGlobal = (function () {
     try {

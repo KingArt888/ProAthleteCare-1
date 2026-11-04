@@ -19250,8 +19250,8 @@
     return !clean
       || clean === DEFAULT_FIELD_ASSET
       || clean === RUGBY_FIELD_ASSET
-      || clean.endsWith("/ProAthleteCare-1/gps-iphone-v14/assets/images/drill-field-proathletecare-stadium.png")
-      || clean.endsWith("/ProAthleteCare-1/gps-iphone-v14/assets/images/drill-field-proathletecare-rugby.png");
+      || clean.endsWith("/assets/images/drill-field-proathletecare-stadium.png")
+      || clean.endsWith("/assets/images/drill-field-proathletecare-rugby.png");
   }
 
   function normalizedFieldImageUrl() {

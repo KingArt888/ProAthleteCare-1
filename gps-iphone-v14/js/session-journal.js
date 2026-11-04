@@ -96,8 +96,8 @@
       if(working)return working;
       const uid=owner();
       working=(async()=>{
-        const failures=[];
-        for(const key of Object.keys(read(uid))){ensure(uid);const queue=read(uid);if(!queue[key])continue;
+        const failures=[],attempted=new Set();
+        while(true){ensure(uid);const queue=read(uid),key=Object.keys(queue).find(key=>!attempted.has(key));if(!key)break;attempted.add(key);
           const item=copy(queue[key]);onStatus({state:'syncing',pending:Object.keys(queue).length});
           try{await send(item,uid);}catch(error){ensure(uid);failures.push(error);continue;}ensure(uid);const fresh=read(uid);if(JSON.stringify(fresh[key])===JSON.stringify(queue[key]))delete fresh[key];store(uid,fresh);
         }

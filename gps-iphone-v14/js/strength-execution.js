@@ -72,14 +72,23 @@
       if (run.activeSince != null) { run.activeMs += Math.max(0, now() - run.activeSince); run.activeSince = now(); }
       save(run);
     }
-    function startSet(run) {
+    function startSet(run, options = {}) {
       assertOwner(run);
       if (run.status !== 'in-progress') throw Error('EXECUTION_CLOSED');
       if (run.activeSince != null) return;
       if (!run.timed || run.pending.loadKg != null) kg(run.pending.loadKg);
       if (run.mode === 'test3' && (!(run.pending.loadKg > 0) || run.pending.loadKg < (run.rows.at(-1)?.loadKg || 0))) throw Error('TEST_LOAD_PROGRESSION');
       const last = run.rows.at(-1);
-      if (last && last.elapsedBetweenSetsSec == null) last.elapsedBetweenSetsSec = Math.max(0, Math.round((now() - last.endedAt) / 100) / 10);
+      if (last && last.elapsedBetweenSetsSec == null) {
+        last.elapsedBetweenSetsSec = Math.max(0, Math.round((now() - last.endedAt) / 100) / 10);
+        if(last.setIndex!==run.index){
+          const planned=Number(options.plannedRestSec??run.task.planned.restSec);
+          last.rest={plannedSec:Number.isFinite(planned)&&planned>=0?planned:null,elapsedSec:last.elapsedBetweenSetsSec,
+            timerCompletionPct:planned>0?Math.min(100,Math.round(last.elapsedBetweenSetsSec/planned*100)):null,
+            startSource:options.startSource==='automatic-rest-signal'?'automatic-rest-signal':'athlete-button',
+            actualAdherencePct:null,quality:'app-clock-only'};
+        }
+      }
       run.phase = 'active'; run.startedAt ||= now(); run.activeSince = now(); save(run);
     }
     function pause(run) {

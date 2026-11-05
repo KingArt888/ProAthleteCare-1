@@ -1608,7 +1608,7 @@
         more.addEventListener('click',async()=>{more.disabled=true;try{
           const rows=await reader.executions(entry.data.sessionId,uid);if(CURRENT_UID!==uid)return;
           for(const record of rows){const p=document.createElement('pre');p.style.cssText='white-space:pre-wrap;font-size:.78rem';const a=record.payload.actual;
-            p.textContent=(a.strengthSets||a.runningIntervals||[]).map(row=>row.setIndex?`#${row.setIndex}${row.side?`/${row.side}`:''}: ${row.loadKg??'—'} kg × ${row.reps??`${row.workSec}s`}`:`#${row.round}: ${row.workSec}s · ${row.distanceM??'—'} m`).join('\n');details.append(p);
+            p.textContent=(a.strengthSets||a.runningIntervals||[]).map(row=>row.setIndex?`#${row.setIndex}${row.side?`/${row.side}`:''}: ${row.loadKg??'—'} kg × ${row.reps??`${row.workSec}s`}${row.rest?`\n  ${eliteUi('Пауза: план','Rest: planned')} ${row.rest.plannedSec??'—'} s · ${eliteUi('за годинником застосунку','app clock')} ${row.rest.elapsedSec} s · ${eliteUi('відлік виконано','timer completed')} ${row.rest.timerCompletionPct??'—'}%\n  ${eliteUi('Фактичний початок роботи не підтверджений датчиком.','Actual work start is not sensor-confirmed.')}`:''}`:`#${row.round}: ${row.workSec}s · ${row.distanceM??'—'} m`).join('\n');details.append(p);
             if(record.payload.route){const route=document.createElement('button');route.type='button';route.textContent=eliteUi("Завантажити маршрут","Download route");route.addEventListener('click',async()=>{const url=await firebase.storage().ref(record.payload.route.path).getDownloadURL();const blob=await(await fetch(url)).blob();const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`${record.executionId}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);});details.append(route);}
           }
         }catch{more.disabled=false;}});details.append(more);list.append(details);
@@ -2065,10 +2065,9 @@
         ELITE_EXEC.leftSec = left;
         if (left === 0) {
           eliteClearRuntimeTimers();
-          ELITE_EXEC.phase = 'idle';
           window.speechSynthesis?.cancel();
-          eliteRestBeat(0);
-          renderEliteExecutionOverlay();
+          eliteStartActiveSet('automatic-rest-signal');
+          if(ELITE_EXEC.phase==='active')eliteRestBeat(0);
           return;
         }
         eliteRestBeat(left); renderEliteExecutionOverlay();
@@ -3170,11 +3169,11 @@
       }, 1000);
     }
 
-    function eliteStartActiveSet() {
+    function eliteStartActiveSet(startSource='athlete-button') {
       const meta = getEliteMeta();
       if (!meta) return;
       if (eliteHasStrengthRun(meta)) {
-        try { eliteStrengthStore().startSet(ELITE_STRENGTH.run); }
+        try { eliteStrengthStore().startSet(ELITE_STRENGTH.run,{startSource,plannedRestSec:eliteResolveRestSec(meta,ELITE_STRENGTH.run.rows.at(-1)?.setIndex)}); }
         catch (error) { eliteStrengthError(error); return; }
       }
       eliteClearRuntimeTimers();

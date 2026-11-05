@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261105-mp4-pilot-v1",
-  "builtAt": "2026-11-05T08:47:57.570Z",
+  "builtAt": "2026-11-05T08:50:48.435Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -639,6 +639,11 @@
       "file": "assets/images/rugby/rugby-scrum-side-sheet.png",
       "bytes": 1238653,
       "sha256": "4e87a18302c41e49509bfc403f77faf6039f4a6a4b8a2eff586ad23b53f7ed0d"
+    },
+    {
+      "file": "assets/videos/demos/resisted-alternating-knee-drive-test-v1.html",
+      "bytes": 1390,
+      "sha256": "066b2781b9de9fa52f6a2e7e7cfaffea4b9272a2194dda9daaa4929e15c9c837"
     },
     {
       "file": "assets/videos/demos/resisted-alternating-knee-drive-test-v1.mp4",

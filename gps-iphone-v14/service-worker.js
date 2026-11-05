@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_VERSION = "2026-11-05-daily-phone-voice-v3";
+const CACHE_VERSION = "2026-11-05-daily-phone-voice-v4";
 const STATIC_CACHE = `pac-daily-phone-static-${CACHE_VERSION}`;
 const OFFLINE_URL = "/ProAthleteCare-1/gps-iphone-v14/offline.html";
 

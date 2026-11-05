@@ -89,6 +89,7 @@
             actualAdherencePct:null,quality:'app-clock-only'};
         }
       }
+      if(!run.startedAt)run.workStartSource=options.startSource==='automatic-rest-signal'?'automatic-rest-signal':'athlete-button';
       run.phase = 'active'; run.startedAt ||= now(); run.activeSince = now(); save(run);
     }
     function pause(run) {
@@ -108,7 +109,8 @@
       run.rows.push({ key: rowKey, setIndex: run.index, side: run.sideTotal > 1 ? run.side + 1 : null,
         loadKg, reps, targetReps: run.targets[run.index - 1], startedAt: run.startedAt, endedAt: now(),
         workSec: Math.round(workMs / 100) / 10, source: 'manual', durationSource: 'measured',
-        durationQuality: run.recovered ? 'partial' : 'client', loadBasis: 'total-external', estimated1RM: estimate(loadKg, reps) });
+        durationQuality: run.recovered ? 'partial' : run.workStartSource==='automatic-rest-signal'?'inferred-start':'client',
+        workStartSource:run.workStartSource||'athlete-button',loadBasis: 'total-external', estimated1RM: estimate(loadKg, reps) });
       run.rows.at(-1).repsSource = run.timed ? null : input.repsSource === 'confirmed-plan' ? 'confirmed-plan' : 'manual';
       run.activeMs = 0; run.activeSince = null; run.startedAt = null;
       run.pending.reps = null; delete run.pending.repsSource; run.phase = 'rest'; save(run); return true;

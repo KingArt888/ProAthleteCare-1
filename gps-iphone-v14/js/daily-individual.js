@@ -1330,7 +1330,7 @@
     function eliteVideoSrc(videoId, autoplay = false) {
       if (!videoId) return "about:blank";
       const clean = encodeURIComponent(String(videoId));
-      return `https://www.youtube-nocookie.com/embed/${clean}?autoplay=${autoplay ? "1" : "0"}&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=1&start=1`;
+      return `https://www.youtube-nocookie.com/embed/${clean}?autoplay=${autoplay ? "1" : "0"}&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=0&start=1`;
     }
 
     function eliteFocusCue(meta) {
@@ -1619,7 +1619,7 @@
         more.addEventListener('click',async()=>{more.disabled=true;try{
           const rows=await reader.executions(entry.data.sessionId,uid);if(CURRENT_UID!==uid)return;
           for(const record of rows){const p=document.createElement('pre');p.style.cssText='white-space:pre-wrap;font-size:.78rem';const a=record.payload.actual;
-            p.textContent=(a.strengthSets||a.runningIntervals||[]).map(row=>row.setIndex?`#${row.setIndex}${row.side?`/${row.side}`:''}: ${row.loadKg??'—'} kg × ${row.reps??`${row.workSec}s`}${row.rest?`\n  ${eliteUi('Пауза: план','Rest: planned')} ${row.rest.plannedSec??'—'} s · ${eliteUi('за годинником застосунку','app clock')} ${row.rest.elapsedSec} s · ${eliteUi('відлік виконано','timer completed')} ${row.rest.timerCompletionPct??'—'}%\n  ${eliteUi('Фактичний початок роботи не підтверджений датчиком.','Actual work start is not sensor-confirmed.')}`:''}`:`#${row.round}: ${row.workSec}s · ${row.distanceM??'—'} m`).join('\n');details.append(p);
+            p.textContent=(a.strengthSets||a.runningIntervals||[]).map(row=>row.setIndex?`#${row.setIndex}${row.side?`/${row.side}`:''}: ${row.loadKg??'—'} kg × ${row.reps??`${row.workSec}s`} · ${row.workSec}s ${row.workStartSource==='automatic-rest-signal'?eliteUi('від сигналу','since signal'):eliteUi('за кнопками','button timing')}${row.rest?`\n  ${eliteUi('Пауза: план','Rest: planned')} ${row.rest.plannedSec??'—'} s · ${eliteUi('за годинником застосунку','app clock')} ${row.rest.elapsedSec} s · ${eliteUi('відлік виконано','timer completed')} ${row.rest.timerCompletionPct??'—'}%\n  ${eliteUi('Фактичний початок роботи не підтверджений датчиком.','Actual work start is not sensor-confirmed.')}`:''}`:`#${row.round}: ${row.workSec}s · ${row.distanceM??'—'} m`).join('\n');details.append(p);
             if(record.payload.route){const route=document.createElement('button');route.type='button';route.textContent=eliteUi("Завантажити маршрут","Download route");route.addEventListener('click',async()=>{const url=await firebase.storage().ref(record.payload.route.path).getDownloadURL();const blob=await(await fetch(url)).blob();const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`${record.executionId}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);});details.append(route);}
           }
         }catch{more.disabled=false;}});details.append(more);list.append(details);
@@ -2491,8 +2491,8 @@
           else if (ELITE_EXEC.phase === "preset") eliteStartActiveSet();
           else if (ELITE_EXEC.phase === "active") {
             const m = getEliteMeta();
-            if (m?.prescription?.repsUnit !== "sec") {
-              if (eliteHasStrengthRun(m) && ELITE_STRENGTH.run.pending.reps == null) {
+            if (m?.task?.mode==='gym' || m?.prescription?.repsUnit !== "sec") {
+              if (eliteHasStrengthRun(m) && !ELITE_STRENGTH.run.timed && ELITE_STRENGTH.run.pending.reps == null) {
                 const target = ELITE_STRENGTH.run.targets[ELITE_STRENGTH.run.index - 1];
                 if (!(target > 0)) { eliteOpenStrengthEditor(true); return; }
                 ELITE_STRENGTH.run.pending.reps = target;
@@ -2527,8 +2527,9 @@
       if (videoCover) {
         const startFromCover = () => {
           if (!ELITE_EXEC.open) return;
-          if(getEliteMeta()?.task?.mode==='running'){eliteRunningAction();return;}
-          if (ELITE_EXEC.phase === "idle") eliteStartPreset();
+          const meta=getEliteMeta();if(!meta)return;
+          eliteEnsureVideoPlayer(meta.videoId||'',true,true);
+          eliteShowVideoCover(false);
         };
         videoCover.addEventListener("click", startFromCover);
         videoCover.addEventListener("keydown", (event) => {
@@ -2584,6 +2585,7 @@
     }
 
     function eliteEnsureVideoPlayer(videoId, shouldAutoplay = false, silentDemo = false) {
+      document.getElementById('di-elite-video-cover')?.setAttribute('aria-label',eliteUi('Переглянути демонстрацію','View exercise demo'));
       silentDemo = silentDemo || ['gym','running'].includes(getEliteMeta()?.task?.mode);
       const host = document.getElementById("di-elite-video-host");
       if (!host) return;
@@ -2672,7 +2674,7 @@
         videoId: cleanId,
         playerVars: {
           autoplay: shouldAutoplay ? 1 : 0,
-          controls: 0,
+          controls: 1,
           modestbranding: 1,
           rel: 0,
           mute: 1,
@@ -2701,6 +2703,7 @@
             } catch {}
           },
           onError: failed,
+          onAutoplayBlocked: () => eliteShowVideoCover(true),
           onStateChange: (e) => {
             try { e.target.mute?.(); e.target.setVolume?.(0); } catch {}
             if (e.data === 1) {
@@ -2726,6 +2729,7 @@
       ELITE_EXEC.paused = false;
       if (eliteHasStrengthRun(meta) && ELITE_EXEC.phase === "active") {
         try { eliteStrengthStore().startSet(ELITE_STRENGTH.run); } catch (error) { eliteStrengthError(error); return; }
+        renderEliteExecutionOverlay();return;
       }
 
       if (ELITE_EXEC.phase === "preset") {
@@ -3057,7 +3061,7 @@
           mainSub.textContent = `${ti("eliteAutoStartIn")} ${ELITE_EXEC.leftSec}${ti("timerSecShort")}`;
           if (ELITE_EXEC.paused) mainSub.textContent = ti("elitePaused");
         } else if (ELITE_EXEC.phase === "active") {
-          if (meta?.prescription?.repsUnit === "sec") {
+          if (meta?.task?.mode!=='gym' && meta?.prescription?.repsUnit === "sec") {
             mainBtn.textContent = `${ti("timerWork")} ${ELITE_EXEC.leftSec}${ti("timerSecShort")}`;
             mainSub.textContent = "";
             mainBtn.disabled = true;
@@ -3191,6 +3195,12 @@
       eliteClearRuntimeTimers();
       ELITE_EXEC.phase = "active";
       eliteAnnounceSetStart(meta);
+      if(eliteHasStrengthRun(meta)){
+        ELITE_EXEC.leftSec=0;
+        ELITE_EXEC.repTarget=ELITE_STRENGTH.run.timed?0:eliteTargetReps(meta);
+        ELITE_EXEC.repDone=0;
+        renderEliteExecutionOverlay();return;
+      }
       if (eliteIsTimed(meta)) {
         ELITE_EXEC.leftSec = Math.max(meta?.task?.planned?.workSec > 0 ? 1 : 3, eliteSetDurationSec(meta, ELITE_EXEC.setIndex));
         if (meta.task?.mode !== "gym" && ELITE_EXEC.leftSec >= 25) {
@@ -3224,7 +3234,8 @@
         if (!eliteHasStrengthRun(meta)) return;
         if (ELITE_STRENGTH.run.pending.loadKg == null && ELITE_STRENGTH.run.mode === "workout") { ELITE_STRENGTH.run.pending.loadKg = 0; ELITE_EXEC.currentLoadKg = 0; eliteSaveStrength(); }
         if (!ELITE_STRENGTH.run.timed && (ELITE_STRENGTH.run.pending.loadKg == null || ELITE_STRENGTH.run.pending.loadKg < 0)) { eliteOpenStrengthEditor(); eliteStrengthError(Error("INVALID_LOAD")); return; }
-        if(ELITE_STRENGTH.run.index>1){eliteStartActiveSet();return;}
+        eliteEnsureVideoPlayer(meta.videoId||'',true,true);
+        eliteStartActiveSet();return;
       }
       eliteClearRuntimeTimers();
       eliteEnsureVideoPlayer(meta.videoId || "", true);

@@ -55,6 +55,7 @@
     const ELITE_STRENGTH = { store: null, run: null, error: "", checkpoint: null };
     const ELITE_REST_AUDIO = { context: null, nodes: new Set(), seen: new Set(), deadline: 0 };
     const ELITE_RUNNING = { live: null, loading: false, error: "", envelope: null };
+    const RUNNING_AUDIO_GUIDE = window.PACRunningAudioGuide?.create();
     let DAILY_JOURNAL=null,DAILY_JOURNAL_UID=null;
     let coachVoiceCache = null;
     let coachVoiceCacheLang = "";
@@ -842,7 +843,7 @@
         u.lang = langCode;
         const voice = resolveCoachVoice(u.lang);
         if (voice) u.voice = voice;
-        u.rate = Number(profile?.rate || 0.94);
+        u.rate = Number(opts.rate || profile?.rate || 0.94);
         u.pitch = Number(profile?.pitch || 1);
         u.volume = 1;
         if (interrupt) window.speechSynthesis.cancel();
@@ -1376,6 +1377,15 @@
       return String(s);
     }
 
+    function eliteSpeechAmount(n,uk,en){
+      const tail=Math.abs(n)%100,last=tail%10;
+      return `${n} ${diLang()==='uk'?uk[tail>=11&&tail<=14?2:last===1?0:last>=2&&last<=4?1:2]:en[n===1?0:1]}`;
+    }
+    function eliteSpeechDuration(seconds){
+      const m=Math.floor(seconds/60),s=seconds%60;
+      return [m?eliteSpeechAmount(m,['хвилина','хвилини','хвилин'],['minute','minutes']):'',s||!m?eliteSpeechAmount(s,['секунда','секунди','секунд'],['second','seconds']):''].filter(Boolean).join(' ');
+    }
+
     function eliteIsTimed(meta) {
       return String(meta?.prescription?.repsUnit || "") === "sec";
     }
@@ -1459,10 +1469,8 @@
     }
 
     function eliteAnnounceRest(meta) {
-      if (eliteHasStrengthRun(meta)) { window.speechSynthesis?.cancel(); return; }
-      const p = eliteVoicePack();
-      const restSec = eliteResolveRestSec(meta);
-      eliteSpeak(`${p.rest} ${restSec}`, { interrupt: true });
+      const restSec = ELITE_EXEC.phase==='rest'?ELITE_EXEC.leftSec:eliteResolveRestSec(meta);
+      if(restSec>5)eliteSpeak(eliteUi('Відпочинок. ','Rest. ')+eliteSpeechAmount(restSec,['секунда','секунди','секунд'],['second','seconds']), { interrupt: true });
     }
 
     function eliteStartRepCounter(meta) {
@@ -1621,6 +1629,13 @@
       ELITE_RUNNING.setupLive=null;ELITE_RUNNING.loading=true; ELITE_RUNNING.live=null;ELITE_RUNNING.error="";ELITE_RUNNING.gpsFailed=false;ELITE_RUNNING.envelope=null;
       window.PACDailyRunning.prepare({...meta.task,soundEnabled:!ELITE_EXEC.voiceMuted}, live=>{
         if(!ELITE_EXEC.open||getEliteMeta()!==meta)return;
+        for(const cue of RUNNING_AUDIO_GUIDE?.update(live)||[]){
+          if(cue.kind==='rest')eliteSpeak(eliteUi('Відпочинок. ','Rest. ')+eliteSpeechAmount(cue.seconds,['секунда','секунди','секунд'],['second','seconds']),{interrupt:true});
+          if(cue.kind==='kilometre'){
+            const lap=cue.lapSeconds==null?'':eliteUi(' Останній кілометр: ',' Last kilometre: ')+eliteSpeechDuration(cue.lapSeconds)+'.';
+            eliteSpeak(eliteSpeechAmount(cue.kilometres,['кілометр','кілометри','кілометрів'],['kilometre','kilometres'])+eliteUi('. Загальний час: ','. Total time: ')+eliteSpeechDuration(cue.totalSeconds)+'.'+lap,{interrupt:true});
+          }
+        }
         const justFinished=live.state==='finished'&&ELITE_RUNNING.live?.state!=='finished';
         ELITE_RUNNING.live=live;ELITE_RUNNING.loading=false;
         if(live.state==='ready'){ELITE_EXEC.phase='idle';ELITE_EXEC.paused=false;ELITE_EXEC.setIndex=1;meta.task.actual={};meta.task.sessionId=null;meta.task.executionId=null;ELITE_RUNNING.envelope=null;}
@@ -2016,9 +2031,14 @@
     }
 
     function eliteRestBeat(left) {
-      if (left < 0 || left > 4 || ELITE_REST_AUDIO.seen.has(left)) return;
+      if (left < 0 || left > 5 || ELITE_REST_AUDIO.seen.has(left)) return;
       ELITE_REST_AUDIO.seen.add(left);
       if (ELITE_EXEC.voiceMuted) return;
+      if(left>0&&window.speechSynthesis&&typeof SpeechSynthesisUtterance==='function'){
+        eliteSpeak(left===5?eliteUi('5 секунд','5 seconds'):String(left),{interrupt:true,rate:1.2});
+        window.dispatchEvent(new CustomEvent('pac:rest-cue',{detail:{remaining:left,kind:'voice'}}));return;
+      }
+      if(left===0)window.speechSynthesis?.cancel();
       try {
         const ctx = ELITE_REST_AUDIO.context;
         if (!ctx || ctx.state !== "running") return;
@@ -2039,14 +2059,16 @@
 
     function eliteStartStrengthRest() {
       ELITE_REST_AUDIO.deadline = Date.now() + ELITE_EXEC.leftSec * 1000;
+      eliteRestBeat(ELITE_EXEC.leftSec);
       ELITE_EXEC.intervalId = setInterval(() => {
         const left = Math.max(0, Math.ceil((ELITE_REST_AUDIO.deadline - Date.now()) / 1000));
         ELITE_EXEC.leftSec = left;
         if (left === 0) {
           eliteClearRuntimeTimers();
-          // One transition, no extra preparation countdown or queued speech.
-          eliteStartActiveSet();
-          if (ELITE_EXEC.phase === "active") eliteRestBeat(0);
+          ELITE_EXEC.phase = 'idle';
+          window.speechSynthesis?.cancel();
+          eliteRestBeat(0);
+          renderEliteExecutionOverlay();
           return;
         }
         eliteRestBeat(left); renderEliteExecutionOverlay();
@@ -2429,6 +2451,7 @@
           }
           try { localStorage.setItem("pac_di_elite_voice_muted", ELITE_EXEC.voiceMuted ? "1" : "0"); } catch {}
           if(getEliteMeta()?.task?.mode==='running')window.PACDailyRunning.sound(!ELITE_EXEC.voiceMuted,!ELITE_EXEC.voiceMuted);
+          if(!ELITE_EXEC.voiceMuted&&ELITE_EXEC.phase==='idle')eliteSpeak(resolveExerciseNameForSpeech(getEliteMeta()?.exercise||{},diLang()),{interrupt:true});
           renderEliteExecutionOverlay();
         });
       }
@@ -2754,6 +2777,7 @@
       if (ELITE_EXEC.phase === "idle" || ELITE_EXEC.phase === "complete") return;
 
       if (!ELITE_EXEC.paused) {
+        window.speechSynthesis?.cancel();
         if (eliteHasStrengthRun() && ELITE_EXEC.phase === "active") {
           try { eliteStrengthStore().pause(ELITE_STRENGTH.run); } catch (error) { eliteStrengthError(error); }
         }
@@ -3189,6 +3213,7 @@
         if (!eliteHasStrengthRun(meta)) return;
         if (ELITE_STRENGTH.run.pending.loadKg == null && ELITE_STRENGTH.run.mode === "workout") { ELITE_STRENGTH.run.pending.loadKg = 0; ELITE_EXEC.currentLoadKg = 0; eliteSaveStrength(); }
         if (!ELITE_STRENGTH.run.timed && (ELITE_STRENGTH.run.pending.loadKg == null || ELITE_STRENGTH.run.pending.loadKg < 0)) { eliteOpenStrengthEditor(); eliteStrengthError(Error("INVALID_LOAD")); return; }
+        if(ELITE_STRENGTH.run.index>1){eliteStartActiveSet();return;}
       }
       eliteClearRuntimeTimers();
       eliteEnsureVideoPlayer(meta.videoId || "", true);
@@ -3248,6 +3273,7 @@
     }
 
     function closeEliteExecutionMode() {
+      window.speechSynthesis?.cancel();
       if(getEliteMeta()?.task?.mode==='running')window.PACDailyRunning.detach();
       if (ELITE_STRENGTH.run?.status === "in-progress" && ELITE_STRENGTH.run?.userId === CURRENT_UID) {
         try { eliteStrengthStore().pause(ELITE_STRENGTH.run); } catch (error) { eliteStrengthError(error); return; }
@@ -3336,6 +3362,7 @@
         ELITE_RUNNING.live=null;ELITE_RUNNING.loading=true;
         hydrateEliteDrillTargets(meta).finally(()=>{if(ELITE_EXEC.open&&getEliteMeta()===meta)elitePrepareRunning(meta);});
       }else hydrateEliteDrillTargets(meta);
+      eliteSpeak(resolveExerciseNameForSpeech(meta.exercise||{},diLang()),{interrupt:true});
       if (!opts?.fromAuto) revealExerciseCard(exId);
     }
 

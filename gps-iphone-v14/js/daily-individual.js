@@ -488,7 +488,7 @@
         .trim();
     }
     function resolveExerciseNameForSpeech(ex, lang = diLang()) {
-      const base = fixMojibake(resolveExerciseName(ex, lang) || "").trim();
+      const base = fixMojibake(ex?.name_i18n?.[lang] || resolveExerciseName(ex, lang) || "").trim();
       const enBase = fixMojibake(resolveExerciseName(ex, "en") || "").trim();
       const fallback = fixMojibake(ex?.name || "").trim();
       let out = base || enBase || fallback;
@@ -497,11 +497,19 @@
       out = out.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").replace(/\s+/g, " ").trim();
       const key = normalizeExerciseSpeechKey(out);
       const keyEn = normalizeExerciseSpeechKey(enBase || fallback);
-      const byKey = EXERCISE_SPEECH_ALIASES[key]?.[lang] || EXERCISE_SPEECH_ALIASES[key]?.en;
+      const byKey = EXERCISE_SPEECH_ALIASES[key]?.[lang];
       if (byKey) return byKey;
-      const byKeyEn = EXERCISE_SPEECH_ALIASES[keyEn]?.[lang] || EXERCISE_SPEECH_ALIASES[keyEn]?.en;
+      const byKeyEn = EXERCISE_SPEECH_ALIASES[keyEn]?.[lang];
       if (byKeyEn) return byKeyEn;
       return out;
+    }
+    function eliteAnnounceExerciseName(meta) {
+      const ex=meta?.exercise||{},lang=diLang(),name=resolveExerciseNameForSpeech(ex,lang);
+      const translated=Boolean(String(ex.name_i18n?.[lang]||'').trim())
+        || Object.values(EXERCISE_SPEECH_ALIASES).some(values=>values[lang]===name)
+        || Object.values(EXERCISE_NAME_FALLBACKS).some(values=>values[lang]===name);
+      const englishFallback=lang!=='en'&&!translated&&!hasCyrillic(name)&&name===resolveExerciseNameForSpeech(ex,'en');
+      eliteSpeak(name,{interrupt:true,lang:speechLangForDaily(englishFallback?'en':lang)});
     }
     function resolveExerciseDescription(ex, lang = diLang()) {
       const mapped = fixMojibake(pickLocalizedValue(ex?.description_i18n, lang));
@@ -767,8 +775,7 @@
       };
     }
 
-    function speechLangForDaily() {
-      const l = diLang();
+    function speechLangForDaily(l = diLang()) {
       if (l === "uk") return "uk-UA";
       if (l === "ru") return "ru-RU";
       if (l === "de") return "de-DE";
@@ -802,6 +809,7 @@
         const profile = speechProfileForLangCode(target);
         const hints = Array.isArray(profile?.hints) ? profile.hints : [];
         const ranked = voices
+          .filter(v=>String(v?.lang||'').toLowerCase().replace('_','-').split('-')[0]===base)
           .map((v) => {
             const lang = String(v?.lang || "").toLowerCase();
             const name = String(v?.name || "").toLowerCase();
@@ -809,6 +817,7 @@
             if (lang === target) score += 60;
             else if (lang.startsWith(base)) score += 35;
             if (name.includes("neural") || name.includes("natural")) score += 20;
+            if (name.includes("enhanced") || name.includes("premium")) score += 25;
             if (name.includes("google") || name.includes("microsoft")) score += 12;
             if (hints.some(h => name.includes(h))) score += 18;
             if (v?.default) score += 8;
@@ -831,7 +840,7 @@
         if (!msg) return;
 
         const interrupt = opts.interrupt !== false;
-        const langCode = speechLangForDaily();
+        const langCode = opts.lang || speechLangForDaily();
         const profile = speechProfileForLangCode(langCode);
         const now = Date.now();
         const sig = `${langCode}|${msg}`;
@@ -844,7 +853,7 @@
         const voice = resolveCoachVoice(u.lang);
         if (voice) u.voice = voice;
         u.rate = Number(opts.rate || profile?.rate || 0.94);
-        u.pitch = Number(profile?.pitch || 1);
+        u.pitch = 1;
         u.volume = 1;
         if (interrupt) window.speechSynthesis.cancel();
         window.speechSynthesis.speak(u);
@@ -1379,7 +1388,9 @@
 
     function eliteSpeechAmount(n,uk,en){
       const tail=Math.abs(n)%100,last=tail%10;
-      return `${n} ${diLang()==='uk'?uk[tail>=11&&tail<=14?2:last===1?0:last>=2&&last<=4?1:2]:en[n===1?0:1]}`;
+      const units={ru:{minute:['минута','минуты','минут'],second:['секунда','секунды','секунд'],kilometre:['километр','километра','километров']},de:{minute:['Minute','Minuten'],second:['Sekunde','Sekunden'],kilometre:['Kilometer','Kilometer']},es:{minute:['minuto','minutos'],second:['segundo','segundos'],kilometre:['kilómetro','kilómetros']},pt:{minute:['minuto','minutos'],second:['segundo','segundos'],kilometre:['quilómetro','quilómetros']}};
+      const lang=diLang(),forms=lang==='uk'?uk:units[lang]?.[en[0]]||en;
+      return `${n} ${forms[lang==='uk'||lang==='ru'?(tail>=11&&tail<=14?2:last===1?0:last>=2&&last<=4?1:2):n===1?0:1]}`;
     }
     function eliteSpeechDuration(seconds){
       const m=Math.floor(seconds/60),s=seconds%60;
@@ -1470,7 +1481,7 @@
 
     function eliteAnnounceRest(meta) {
       const restSec = ELITE_EXEC.phase==='rest'?ELITE_EXEC.leftSec:eliteResolveRestSec(meta);
-      if(restSec>5)eliteSpeak(eliteUi('Відпочинок. ','Rest. ')+eliteSpeechAmount(restSec,['секунда','секунди','секунд'],['second','seconds']), { interrupt: true });
+      if(restSec>5)eliteSpeak(eliteVoicePack().rest+'. '+eliteSpeechAmount(restSec,['секунда','секунди','секунд'],['second','seconds']), { interrupt: true });
     }
 
     function eliteStartRepCounter(meta) {
@@ -1630,10 +1641,11 @@
       window.PACDailyRunning.prepare({...meta.task,soundEnabled:!ELITE_EXEC.voiceMuted}, live=>{
         if(!ELITE_EXEC.open||getEliteMeta()!==meta)return;
         for(const cue of RUNNING_AUDIO_GUIDE?.update(live)||[]){
-          if(cue.kind==='rest')eliteSpeak(eliteUi('Відпочинок. ','Rest. ')+eliteSpeechAmount(cue.seconds,['секунда','секунди','секунд'],['second','seconds']),{interrupt:true});
+          if(cue.kind==='rest')eliteSpeak(eliteVoicePack().rest+'. '+eliteSpeechAmount(cue.seconds,['секунда','секунди','секунд'],['second','seconds']),{interrupt:true});
           if(cue.kind==='kilometre'){
-            const lap=cue.lapSeconds==null?'':eliteUi(' Останній кілометр: ',' Last kilometre: ')+eliteSpeechDuration(cue.lapSeconds)+'.';
-            eliteSpeak(eliteSpeechAmount(cue.kilometres,['кілометр','кілометри','кілометрів'],['kilometre','kilometres'])+eliteUi('. Загальний час: ','. Total time: ')+eliteSpeechDuration(cue.totalSeconds)+'.'+lap,{interrupt:true});
+            const labels={uk:['Загальний час','Останній кілометр'],en:['Total time','Last kilometre'],ru:['Общее время','Последний километр'],de:['Gesamtzeit','Letzter Kilometer'],es:['Tiempo total','Último kilómetro'],pt:['Tempo total','Último quilómetro']}[diLang()]||['Total time','Last kilometre'];
+            const lap=cue.lapSeconds==null?'':' '+labels[1]+': '+eliteSpeechDuration(cue.lapSeconds)+'.';
+            eliteSpeak(eliteSpeechAmount(cue.kilometres,['кілометр','кілометри','кілометрів'],['kilometre','kilometres'])+'. '+labels[0]+': '+eliteSpeechDuration(cue.totalSeconds)+'.'+lap,{interrupt:true});
           }
         }
         const justFinished=live.state==='finished'&&ELITE_RUNNING.live?.state!=='finished';
@@ -2035,7 +2047,7 @@
       ELITE_REST_AUDIO.seen.add(left);
       if (ELITE_EXEC.voiceMuted) return;
       if(left>0&&window.speechSynthesis&&typeof SpeechSynthesisUtterance==='function'){
-        eliteSpeak(left===5?eliteUi('5 секунд','5 seconds'):String(left),{interrupt:true,rate:1.2});
+        eliteSpeak(left===5?eliteSpeechAmount(5,['секунда','секунди','секунд'],['second','seconds']):String(left),{interrupt:true,rate:1.2});
         window.dispatchEvent(new CustomEvent('pac:rest-cue',{detail:{remaining:left,kind:'voice'}}));return;
       }
       if(left===0)window.speechSynthesis?.cancel();
@@ -2450,7 +2462,7 @@
           }
           try { localStorage.setItem("pac_di_elite_voice_muted", ELITE_EXEC.voiceMuted ? "1" : "0"); } catch {}
           if(getEliteMeta()?.task?.mode==='running')window.PACDailyRunning.sound(!ELITE_EXEC.voiceMuted,!ELITE_EXEC.voiceMuted);
-          if(!ELITE_EXEC.voiceMuted&&ELITE_EXEC.phase==='idle')eliteSpeak(resolveExerciseNameForSpeech(getEliteMeta()?.exercise||{},diLang()),{interrupt:true});
+          if(!ELITE_EXEC.voiceMuted&&ELITE_EXEC.phase==='idle')eliteAnnounceExerciseName(getEliteMeta());
           renderEliteExecutionOverlay();
         });
       }
@@ -3361,7 +3373,7 @@
         ELITE_RUNNING.live=null;ELITE_RUNNING.loading=true;
         hydrateEliteDrillTargets(meta).finally(()=>{if(ELITE_EXEC.open&&getEliteMeta()===meta)elitePrepareRunning(meta);});
       }else hydrateEliteDrillTargets(meta);
-      eliteSpeak(resolveExerciseNameForSpeech(meta.exercise||{},diLang()),{interrupt:true});
+      eliteAnnounceExerciseName(meta);
       if (!opts?.fromAuto) revealExerciseCard(exId);
     }
 

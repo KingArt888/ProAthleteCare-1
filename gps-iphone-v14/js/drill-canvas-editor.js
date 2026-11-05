@@ -876,7 +876,7 @@
     };
   }
 
-  let verticalFieldZoneView = "middle";
+  let verticalFieldZoneView = isMobileToolsViewport() ? "full" : "middle";
 
   let splitOverviewFrame = 0;
   function syncSplitFieldOverview(active) {
@@ -1073,7 +1073,7 @@
   function setFieldOrientation(orientation) {
     const previousOrientation = state.fieldOrientation;
     state.fieldOrientation = normalizeFieldOrientation(orientation);
-    if (state.fieldOrientation === "vertical" && previousOrientation !== "vertical") verticalFieldZoneView = "middle";
+    if (state.fieldOrientation === "vertical" && previousOrientation !== "vertical") verticalFieldZoneView = isMobileToolsViewport()?"full":"middle";
     applyFieldViewTransform({ autosave: true });
     setStatus(`${state.fieldOrientation === "vertical" ? "Vertical" : "Horizontal"} attack view enabled. Drill coordinates and timing were preserved.`);
   }
@@ -1147,7 +1147,10 @@
     syncFieldInterfaceScale();
     const view = viewCanvasSize();
     const viewportWidth = Math.max(1, Number(host.clientWidth || view.width));
-    const viewportScale = viewportWidth / view.width;
+    const fitMobileField=isMobileToolsViewport()&&state.fieldOrientation==='vertical'&&verticalFieldZoneView==='full';
+    const reservedHeight=(document.querySelector('.drill-topbar')?.offsetHeight||64)+(document.querySelector('.drill-header')?.offsetHeight||58)+66;
+    const availableHeight=Math.max(150,window.innerHeight-reservedHeight);
+    const viewportScale = fitMobileField?Math.min(viewportWidth/view.width,availableHeight/view.height):viewportWidth/view.width;
     const viewportHeight = Math.round(view.height * viewportScale);
     host.style.height = `${viewportHeight}px`;
     host.dataset.viewportScale = String(viewportScale);
@@ -1155,6 +1158,7 @@
     content.style.height = `${view.height}px`;
     content.style.transformOrigin = "0 0";
     content.style.transform = `scale(${viewportScale})`;
+    content.style.marginLeft=fitMobileField?`${Math.max(0,(viewportWidth-view.width*viewportScale)/2)}px`:'';
   }
 
   function syncFieldInterfaceScale() {
@@ -3725,7 +3729,7 @@
     $("konva-stage")?.classList.add("is-equipment-placement");
     ensureEquipmentGhost(kind);
     updateEquipmentGhostFromPointer();
-    setModeHint(`${equipmentLabel(kind)} ready. Move over the field, click to place, drag from preview, or press ESC to cancel.`);
+    setModeHint(isMobileToolsViewport()?`${equipmentLabel(kind)} ready. Tap the field to place.`:`${equipmentLabel(kind)} ready. Move over the field, click to place, drag from preview, or press ESC to cancel.`);
   }
 
   function ensureEquipmentGhost(kind) {
@@ -8910,6 +8914,7 @@
     }
     if (event.target.closest("#equipment-focus-add")) {
       commitEquipmentSelection(state.activeTool || "cone", { render: false, arm: true });
+      if(isMobileToolsViewport())setFieldToolPanel('');
     }
   }
 
@@ -23818,7 +23823,7 @@
   }
 
   function isMobileToolsViewport() {
-    return Boolean(window.matchMedia?.("(max-width: 760px)")?.matches);
+    return Boolean(window.matchMedia?.("(max-width:760px), (hover:none) and (pointer:coarse) and (max-width:1100px)")?.matches);
   }
 
   function setMobileToolsOpen(open, options = {}) {
@@ -24653,6 +24658,7 @@
     $("add-selected-equipment")?.addEventListener("click", () => {
       const kind = $("equipment-select")?.value || "cone";
       commitEquipmentSelection(kind, { render: false, arm: true });
+      if(isMobileToolsViewport())setFieldToolPanel('');
     });
     $("equipment-select")?.addEventListener("change", () => {
       const kind = $("equipment-select")?.value || "cone";

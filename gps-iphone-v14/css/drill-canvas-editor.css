@@ -6674,3 +6674,23 @@ body.is-split-field-overview .konva-stage { position:absolute; width:100% !impor
 .player-kit-swatches { display:flex; gap:10px; padding:3px 1px; }
 .player-kit-swatches button { width:27px; height:27px; padding:0; border-radius:50%; background:var(--kit-colour); border:2px solid #666; cursor:pointer; }
 .player-kit-swatches button[aria-pressed="true"] { outline:2px solid #ffcd28; outline-offset:3px; }
+
+/* Touch editor: fit the full vertical pitch and keep inventory reachable. */
+@media(max-width:760px),(hover:none) and (pointer:coarse) and (max-width:1100px){
+  body.drill-editor-body .drill-shell,body.drill-editor-body .drill-editor{box-sizing:border-box;width:100%;min-width:0;max-width:100%}
+  body.drill-editor-body .drill-editor{padding:8px}
+  body.drill-editor-body .canvas-zone{min-width:0;max-width:100%}
+  body.drill-editor-body .field-workspace-viewport{box-sizing:border-box;max-width:100%}
+  body.drill-editor-body .konva-stage{box-sizing:border-box;min-height:0}
+  body.drill-editor-body.is-vertical-field.is-field-overview .field-workspace-viewport{height:auto;min-height:0;overflow:visible}
+  body.drill-editor-body.is-vertical-field.is-field-overview .konva-stage{width:100%;max-width:100%;margin:0}
+  body.drill-editor-body.has-field-tools .field-tools-panel{position:fixed!important;inset:auto 8px 8px!important;width:calc(100vw - 16px)!important;max-width:none;max-height:65dvh;overflow:auto;transform:none!important;z-index:10000;box-sizing:border-box}
+  body.drill-editor-body .field-tools-panel button{min-height:40px}
+  body.drill-editor-body .field-tools-panel .equipment-focus-add{position:sticky;bottom:0;width:100%;z-index:2}
+}
+@media(hover:none) and (pointer:coarse) and (min-width:901px) and (max-width:1100px){
+  body.drill-editor-body .drill-shell{flex-direction:column}
+  body.drill-editor-body #main-sidebar{position:fixed!important;left:0;top:64px;width:250px!important;min-width:0;max-width:85vw;height:calc(100dvh - 64px);transform:translateX(-105%)!important;z-index:1100}
+  body.drill-editor-body #main-sidebar.active{transform:translateX(0)!important}
+  body.drill-editor-body .menu-toggle{display:flex!important}
+}

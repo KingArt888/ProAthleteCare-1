@@ -2377,7 +2377,7 @@
         `;
       document.head.appendChild(style);
       const compactStyle = document.createElement("link"); compactStyle.rel = "stylesheet";
-      compactStyle.href = "../css/daily-execution.css?v=20261104-phone-test-v1"; document.head.append(compactStyle);
+      compactStyle.href = "../css/daily-execution.css?v=20261105-library-layout-v1"; document.head.append(compactStyle);
 
       root = document.createElement("div");
       root.id = "di-elite-overlay";

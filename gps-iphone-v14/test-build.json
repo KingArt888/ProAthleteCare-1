@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261105-mp4-pilot-v2",
-  "builtAt": "2026-11-05T09:10:41.384Z",
+  "builtAt": "2026-11-05T09:11:31.788Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -157,8 +157,8 @@
     },
     {
       "file": "js/daily-individual.js",
-      "bytes": 298221,
-      "sha256": "c1f894a6eb2c714ae0abc59c34b87075bb7a05a00920838647e02f5d1728faf6"
+      "bytes": 298225,
+      "sha256": "4f9c06aef3107efc9f47dc2101749bb5ff79d6f9d1f72006a1261ae644147cee"
     },
     {
       "file": "js/daily-running.js",

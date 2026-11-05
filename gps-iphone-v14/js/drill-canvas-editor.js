@@ -1148,7 +1148,9 @@
     const view = viewCanvasSize();
     const viewportWidth = Math.max(1, Number(host.clientWidth || view.width));
     const fitMobileField=isMobileToolsViewport()&&state.fieldOrientation==='vertical'&&verticalFieldZoneView==='full';
-    const reservedHeight=(document.querySelector('.drill-topbar')?.offsetHeight||64)+(document.querySelector('.drill-header')?.offsetHeight||58)+66;
+    const reservedHeight=(document.querySelector('.drill-topbar')?.offsetHeight||64)+(document.querySelector('.drill-header')?.offsetHeight||0)+66
+      +(isMobileToolsViewport()?document.querySelector('.field-viewport-toolbar')?.offsetHeight||0:0)
+      +(isMobileToolsViewport()?$('field-tools-dock')?.offsetHeight||0:0);
     const availableHeight=Math.max(150,window.innerHeight-reservedHeight);
     const viewportScale = fitMobileField?Math.min(viewportWidth/view.width,availableHeight/view.height):viewportWidth/view.width;
     const viewportHeight = Math.round(view.height * viewportScale);
@@ -1198,6 +1200,7 @@
 
   function resizeStage() {
     if (!state.stage) return;
+    syncMobileFieldLayout();
     syncStageViewport();
     state.transformer?.forceUpdate?.();
     state.layers.ui?.batchDraw?.();
@@ -24575,8 +24578,27 @@
     });
   }
 
+  let mobileFieldLayout=null;
+  function syncMobileFieldLayout(){
+    const toolbar=document.querySelector('.field-viewport-toolbar'),footer=document.querySelector('.drill-bottom-save'),zone=$('vertical-field-zone-nav'),fieldPanel=document.querySelector('[data-field-tool-panel="field"]');
+    if(!toolbar||!footer||!zone||!fieldPanel)return;
+    if(!mobileFieldLayout){
+      const footerHome=document.createComment('save actions home'),zoneHome=document.createComment('field zones home');footer.before(footerHome);zone.before(zoneHome);
+      const playerMenu=$('player-add-menu'),playerHome=document.createComment('player menu home');playerMenu.before(playerHome);
+      const closePlayers=document.createElement('button');closePlayers.type='button';closePlayers.className='mobile-player-menu-close';closePlayers.textContent='×';closePlayers.setAttribute('aria-label','Close player menu');closePlayers.onclick=()=>playerMenu.open=false;playerMenu.append(closePlayers);
+      const dialog=document.createElement('dialog');dialog.className='drill-mobile-file-dialog';dialog.id='mobile-field-files';dialog.innerHTML='<header><strong>Save / files</strong><button type="button" aria-label="Close save menu">×</button></header>';
+      dialog.querySelector('strong').id='mobile-field-files-title';dialog.setAttribute('aria-labelledby','mobile-field-files-title');
+      document.body.append(dialog);dialog.querySelector('button').onclick=()=>dialog.close();
+      const trigger=document.createElement('button');trigger.type='button';trigger.id='mobile-field-files-toggle';trigger.className='canvas-undo-btn';trigger.textContent='Files';trigger.setAttribute('aria-label','Save, draft, import and export');trigger.setAttribute('aria-haspopup','dialog');trigger.onclick=()=>dialog.showModal();toolbar.append(trigger);
+      dialog.addEventListener('click',event=>{if(event.target.closest('.drill-bottom-save button'))dialog.close();else if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
+      mobileFieldLayout={dialog,trigger,footerHome,zoneHome,playerMenu,playerHome,active:null};
+    }
+    const ui=mobileFieldLayout,mobile=isMobileToolsViewport();if(ui.active===mobile)return;ui.active=mobile;ui.trigger.hidden=!mobile;
+    if(mobile){ui.dialog.append(footer);fieldPanel.prepend(zone);document.body.append(ui.playerMenu);}else{ui.dialog.close();ui.footerHome.after(footer);ui.zoneHome.after(zone);ui.playerHome.after(ui.playerMenu);}
+  }
   function wireUI() {
     initFieldToolDock();
+    syncMobileFieldLayout();
     ensureFootballZonePanel();
     buildEquipmentInventoryUI();
     setEquipmentPanelOpen(false);
@@ -24651,7 +24673,7 @@
       menu.open = open;
       if (open) {
         setCameraViewMenuOpen(false);
-        $("player-add-count")?.focus?.({ preventScroll: true });
+        if(!isMobileToolsViewport())$("player-add-count")?.focus?.({ preventScroll: true });
       }
     });
     $("player-add-formation")?.addEventListener("change", syncSportProfileControls);

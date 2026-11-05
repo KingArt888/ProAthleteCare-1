@@ -92,3 +92,23 @@
 #di-elite-overlay #di-running-brief strong small{font-size:.65rem;color:#cabb85;font-weight:500}
 #di-elite-overlay .di-running-recovery{font-size:.78rem;line-height:1.4;margin:10px 0}
 #di-elite-overlay .di-running-recovery button{border:1px solid #7f6a28;border-radius:6px;padding:5px 10px;background:#201c0d;color:#f5d66b}
+
+/* One opt-in library pilot: large demo with the task immediately alongside/below. */
+#di-elite-overlay.is-library-demo .di-elite-shell{padding:0}
+#di-elite-overlay.is-library-demo .di-elite-panel{width:100%;height:100dvh;border-radius:0}
+#di-elite-overlay.is-library-demo .di-elite-video{aspect-ratio:1068/720;height:auto;max-height:none;flex:none}
+#di-elite-overlay.is-library-demo .di-elite-body{justify-content:flex-start;flex:none;height:auto;gap:8px;padding:10px}
+#di-elite-overlay.is-library-demo .di-elite-current{padding:9px;border:1px solid #51441d;border-radius:10px;background:#161409;gap:6px}
+#di-elite-overlay.is-library-demo .di-elite-current h3{margin:0}
+#di-elite-overlay.is-library-demo .di-elite-info-btn{border:1px solid #b18e20;border-radius:8px;background:#302708;color:#ffda65;padding:4px 9px}
+#di-elite-overlay.is-library-demo .di-elite-main-sub:empty{display:none}
+@media(min-width:850px),(orientation:landscape){
+  #di-elite-overlay.is-library-demo .di-elite-panel{width:min(1800px,98vw);height:96dvh;grid-template-columns:minmax(0,1.6fr) minmax(290px,1fr);border-radius:16px}
+  #di-elite-overlay.is-library-demo .di-elite-video{height:100%;min-height:0;aspect-ratio:auto}
+  #di-elite-overlay.is-library-demo .di-elite-body{height:100%;padding:12px;gap:10px}
+}
+@media(max-height:480px) and (orientation:landscape){
+  #di-elite-overlay.is-library-demo .di-elite-body{padding:6px;gap:5px}
+  #di-elite-overlay.is-library-demo .di-elite-current{padding:5px;gap:4px}
+  #di-elite-overlay.is-library-demo .di-elite-info-btn{min-height:24px;font-size:.65rem;padding:2px 6px}
+}

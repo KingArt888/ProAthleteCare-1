@@ -2204,6 +2204,8 @@
 
     function eliteRenderTaskLayout(meta) {
       const running = meta.task?.mode === "running";
+      const libraryDemo=!running&&meta.exercise?.demoAutoplay===true;
+      document.getElementById('di-elite-overlay').classList.toggle('is-library-demo',libraryDemo);
       document.getElementById('di-running-replay').hidden=!running;
       const p = meta.task?.planned || {};const shownDistance=p.distancePerSeriesM??p.distanceM;
       const clock = v => v == null ? "—" : formatDurationClock(v);
@@ -2241,7 +2243,7 @@
         result: eliteUi("Стан виконання", "Execution status"), history: eliteUi("Минулий раз і найкращий результат", "Previous and best result"), table: eliteUi("План підходів", "Set plan") };
       for (const [name, label] of Object.entries(labels)) {
         const heading = document.getElementById(`di-elite-${name}-heading`);
-        if (name === "current") heading.firstChild.textContent = label; else heading.textContent = label;
+        if (name === "current") heading.firstChild.textContent = libraryDemo?eliteUi('ТВОЄ ЗАВДАННЯ','YOUR TASK'):label; else heading.textContent = label;
       }
       document.querySelector("#di-elite-overlay .di-elite-history").hidden = running;
       document.querySelector("#di-elite-overlay .di-elite-plan-details").hidden = running;

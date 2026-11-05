@@ -115,3 +115,8 @@
 }
 
 }
+
+/* The opted-in loop is a demonstration, with no native player chrome. */
+#di-elite-overlay video[data-demo-loop="true"]{pointer-events:none}
+#di-elite-overlay video[data-demo-loop="true"]::-webkit-media-controls,
+#di-elite-overlay video[data-demo-loop="true"]::-webkit-media-controls-enclosure{display:none!important}

@@ -2377,7 +2377,7 @@
         `;
       document.head.appendChild(style);
       const compactStyle = document.createElement("link"); compactStyle.rel = "stylesheet";
-      compactStyle.href = "../css/daily-execution.css?v=20261105-mobile-preview-v1"; document.head.append(compactStyle);
+      compactStyle.href = "../css/daily-execution.css?v=20261105-clean-loop-v1"; document.head.append(compactStyle);
 
       root = document.createElement("div");
       root.id = "di-elite-overlay";
@@ -2598,7 +2598,7 @@
       const key = drillUrl || directUrl || cleanId || "none";
       if (ELITE_MEDIA.key === key && host.childElementCount) {
         if (shouldAutoplay) {
-          host.querySelector("video")?.play().catch(() => {});
+          host.querySelector("video")?.play().catch(() => {if(host.querySelector('video')?.dataset.demoLoop==='true')eliteShowVideoCover(true);});
           if (cleanId && !directUrl && !drillUrl) {
             eliteShowVideoCover(false);
             if (ELITE_YT_PLAYER) { try { ELITE_YT_PLAYER.playVideo?.(); } catch {} }
@@ -2634,11 +2634,12 @@
         const video = document.createElement("video");
         video.src = directUrl; video.controls = !autoPreview; video.playsInline = true; video.muted = true;
         video.loop = true; video.preload = autoPreview?'auto':'metadata';
+        if(autoPreview){video.dataset.demoLoop='true';video.setAttribute('webkit-playsinline','');video.disablePictureInPicture=true;video.disableRemotePlayback=true;video.setAttribute('controlsList','nodownload nofullscreen noremoteplayback');video.addEventListener('playing',()=>{if(token===ELITE_MEDIA.token)eliteShowVideoCover(false);});}
         if(isDailyMobileViewport()&&autoPreview)video.poster=directUrl.replace(/\.mp4(?=\?|$)/i,'.jpg');
         video.setAttribute("aria-label", eliteUi("Демонстрація вправи", "Exercise demo"));
         video.addEventListener("loadedmetadata", loaded); video.addEventListener("error", failed);
         host.append(video);
-        if (shouldAutoplay||autoPreview) video.play().catch(() => { if (token === ELITE_MEDIA.token && !video.error) {video.controls=true;eliteMediaStatus(eliteUi("Натисни ▶ на відео, щоб переглянути демонстрацію.", "Press play on the video to view the demo."));} });
+        if (shouldAutoplay||autoPreview) video.play().catch(() => { if (token === ELITE_MEDIA.token && !video.error) {if(autoPreview)eliteShowVideoCover(true);else video.controls=true;eliteMediaStatus(eliteUi("Натисни ▶ на відео, щоб переглянути демонстрацію.", "Press play on the video to view the demo."));} });
         return;
       }
       if (isDrillVideoKey(videoId)) {

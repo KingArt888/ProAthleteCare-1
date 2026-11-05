@@ -695,3 +695,13 @@ header {
   color: #8a8a8a;
   font-size: 12px;
 }
+
+/* Mobile card posters; desktop cards retain their existing treatment. */
+.di-mobile-demo-poster{display:none}
+@media(max-width:849px),(hover:none) and (pointer:coarse) and (max-height:600px){
+  .ex-card .di-mobile-demo-poster{display:block}
+  .ex-card .di-mobile-demo-poster+.di-demo-placeholder{display:none}
+  .ex-card .demo-poster-unavailable .di-mobile-demo-poster{display:none}
+  .ex-card .demo-poster-unavailable .di-demo-placeholder{display:inline}
+  .ex-card .di-drill-preview-badge{display:none}
+}

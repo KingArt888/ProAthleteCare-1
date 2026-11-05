@@ -2204,7 +2204,7 @@
 
     function eliteRenderTaskLayout(meta) {
       const running = meta.task?.mode === "running";
-      const libraryDemo=!running&&meta.exercise?.demoAutoplay===true;
+      const libraryDemo=!running&&meta.exercise?.demoAutoplay===true&&isDailyMobileViewport();
       document.getElementById('di-elite-overlay').classList.toggle('is-library-demo',libraryDemo);
       document.getElementById('di-running-replay').hidden=!running;
       const p = meta.task?.planned || {};const shownDistance=p.distancePerSeriesM??p.distanceM;
@@ -2377,7 +2377,7 @@
         `;
       document.head.appendChild(style);
       const compactStyle = document.createElement("link"); compactStyle.rel = "stylesheet";
-      compactStyle.href = "../css/daily-execution.css?v=20261105-library-layout-v1"; document.head.append(compactStyle);
+      compactStyle.href = "../css/daily-execution.css?v=20261105-mobile-preview-v1"; document.head.append(compactStyle);
 
       root = document.createElement("div");
       root.id = "di-elite-overlay";
@@ -2634,6 +2634,7 @@
         const video = document.createElement("video");
         video.src = directUrl; video.controls = !autoPreview; video.playsInline = true; video.muted = true;
         video.loop = true; video.preload = autoPreview?'auto':'metadata';
+        if(isDailyMobileViewport()&&autoPreview)video.poster=directUrl.replace(/\.mp4(?=\?|$)/i,'.jpg');
         video.setAttribute("aria-label", eliteUi("Демонстрація вправи", "Exercise demo"));
         video.addEventListener("loadedmetadata", loaded); video.addEventListener("error", failed);
         host.append(video);
@@ -4031,7 +4032,7 @@ try { await saveDailyProgress(); } catch (_) {}
                                             <div style="position:absolute; inset:0; z-index:5; pointer-events:none; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%);"></div>
                                             ${isDrillCanvas ? drillPosterHtml(exId, drillCanvasId) : `
                                               <div id="poster-${exId}" onclick="openEliteExecutionMode('${exId}')" style="position:absolute; inset:0; background:#000; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:12;">
-                                                  ${!eliteDirectVideoUrl(ex) && normalizeYouTubeId(cleanId) ? `<img loading="lazy" alt="" src="https://img.youtube.com/vi/${escapeHtml(normalizeYouTubeId(cleanId))}/mqdefault.jpg" style="width:100%; height:100%; object-fit:cover; opacity:0.5;">` : `<span style="color:#aaa;font-size:.75rem">${eliteUi("Демонстрація", "Demo")}</span>`}
+                                                  ${eliteDirectVideoUrl(ex)&&ex.demoAutoplay===true?`<img class="di-mobile-demo-poster" loading="lazy" alt="${safeExName}" src="${escapeHtml(eliteDirectVideoUrl(ex).replace(/\.mp4(?=\?|$)/i,'.jpg'))}" style="width:100%;height:100%;object-fit:contain" onerror="this.parentElement.classList.add('demo-poster-unavailable')"><span class="di-demo-placeholder" style="color:#aaa;font-size:.75rem">${eliteUi('Демонстрація','Demo')}</span>`:!eliteDirectVideoUrl(ex) && normalizeYouTubeId(cleanId) ? `<img loading="lazy" alt="" src="https://img.youtube.com/vi/${escapeHtml(normalizeYouTubeId(cleanId))}/mqdefault.jpg" style="width:100%; height:100%; object-fit:cover; opacity:0.5;">` : `<span style="color:#aaa;font-size:.75rem">${eliteUi("Демонстрація", "Demo")}</span>`}
                                                   <div style="position:absolute; width:35px; height:35px; background:#d4af37; border-radius:50%; display:flex; align-items:center; justify-content:center;">
                                                       <div style="width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid black; margin-left:3px;"></div>
                                                   </div>
@@ -4295,8 +4296,11 @@ function drillIdFromExercise(ex = {}) {
   return String(ex.drillId || "").trim();
 }
 
-function drillPlayerUrl(drillId, autoplay = false) {
-  return `drill-player.html?id=${encodeURIComponent(drillId || "")}&embed=1&preview=1&v=20260630-daily-static-preview${autoplay ? "&autoplay=1" : ""}`;
+function isDailyMobileViewport(){
+  return window.matchMedia('(max-width:849px), (hover:none) and (pointer:coarse) and (max-height:600px)').matches;
+}
+function drillPlayerUrl(drillId, autoplay = false, mobileCard = false) {
+  return `drill-player.html?id=${encodeURIComponent(drillId || "")}&embed=1&preview=1&v=20261105-mobile-preview${autoplay ? "&autoplay=1" : ""}${mobileCard?'&surface=mobile-card':''}`;
 }
 
 function isDrillVideoKey(value) {
@@ -4305,9 +4309,9 @@ function isDrillVideoKey(value) {
 
 function drillPosterHtml(exId, drillId) {
   return `
-    <iframe src="${drillPlayerUrl(drillId)}" title="Drill preview" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; border:0; opacity:1; pointer-events:none; z-index:2; background:#000;"></iframe>
+    <iframe src="${drillPlayerUrl(drillId,false,isDailyMobileViewport())}" title="Drill preview" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; border:0; opacity:1; pointer-events:none; z-index:2; background:#000;"></iframe>
     <div id="poster-${exId}" onclick="openEliteExecutionMode('${exId}')" style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42)); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:12;">
-      <div style="position:absolute; left:8px; top:7px; color:#d4af37; background:rgba(0,0,0,.62); border:1px solid rgba(212,175,55,.45); border-radius:999px; padding:3px 7px; font-size:.48rem; font-weight:950; letter-spacing:.7px; text-transform:uppercase;">Drill preview</div>
+      <div class="di-drill-preview-badge" style="position:absolute; left:8px; top:7px; color:#d4af37; background:rgba(0,0,0,.62); border:1px solid rgba(212,175,55,.45); border-radius:999px; padding:3px 7px; font-size:.48rem; font-weight:950; letter-spacing:.7px; text-transform:uppercase;">Drill preview</div>
       <div style="width:36px; height:36px; border-radius:50%; background:#d4af37; display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px rgba(212,175,55,.42);">
         <div style="width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-left:11px solid #000; margin-left:3px;"></div>
       </div>

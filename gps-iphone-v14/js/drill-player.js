@@ -9,6 +9,7 @@
   const externalClock = qs.get('clock') === 'daily' && qs.get('embed') === '1';
   let hydrated=false, externalFrame=null;
   const embed = qs.get("embed") === "1";
+  if(qs.get('surface')==='mobile-card')document.documentElement.classList.add('drill-mobile-card');
   const compact = false;
   const FIELD_TEMPLATE_KEY = "pac_drill_field_template";
   const DRAFT_KEY = "pac_drill_editor_draft";

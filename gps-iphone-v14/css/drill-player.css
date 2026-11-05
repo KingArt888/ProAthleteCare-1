@@ -167,3 +167,6 @@
 
 .player-controls .player-edit { color:#ffc72c; border:1px solid #ffc72c; border-radius:8px; padding:10px 16px; text-decoration:none; font-weight:700; }
 .player-controls select { background:#080808; color:#ffc72c; border:1px solid #ffc72c; border-radius:8px; padding:10px; }
+
+/* A mobile Daily card is a preview, not the interactive exercise screen. */
+html.drill-mobile-card .player-focus-toggle{display:none}

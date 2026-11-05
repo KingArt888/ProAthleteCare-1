@@ -6743,3 +6743,6 @@ body.drill-editor-body .drill-mobile-file-dialog .drill-bottom-save{position:sta
   body.drill-editor-body>.field-player-add-popover>summary{display:none}
   body.drill-editor-body>.field-player-add-popover .mobile-player-menu-close{display:block;position:absolute;right:8px;top:5px;width:36px;height:36px;border:1px solid #6a5621;border-radius:9px;background:#161616;color:#ffd147;font-size:24px}
 }
+@media(max-width:760px),(hover:none) and (pointer:coarse) and (max-width:1100px){
+  body.drill-editor-body #field-workspace-viewport{height:auto;min-height:0!important}
+}

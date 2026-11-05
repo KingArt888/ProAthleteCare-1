@@ -1147,7 +1147,7 @@
     syncFieldInterfaceScale();
     const view = viewCanvasSize();
     const viewportWidth = Math.max(1, Number(host.clientWidth || view.width));
-    const fitMobileField=isMobileToolsViewport()&&state.fieldOrientation==='vertical'&&verticalFieldZoneView==='full';
+    const fitMobileField=isMobileToolsViewport()&&(state.fieldOrientation!=='vertical'||verticalFieldZoneView==='full');
     const reservedHeight=(document.querySelector('.drill-topbar')?.offsetHeight||64)+(document.querySelector('.drill-header')?.offsetHeight||0)+66
       +(isMobileToolsViewport()?document.querySelector('.field-viewport-toolbar')?.offsetHeight||0:0)
       +(isMobileToolsViewport()?$('field-tools-dock')?.offsetHeight||0:0);

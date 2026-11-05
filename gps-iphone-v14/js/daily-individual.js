@@ -2628,13 +2628,14 @@
         if (token === ELITE_MEDIA.token) eliteMediaStatus(eliteUi("Демонстрація завантажується довше звичайного. Можна продовжити за завданням або повторити завантаження.", "The demo is taking longer to load. You can follow the task or retry."), true);
       }, 10000);
       if (directUrl && !drillUrl) {
+        const autoPreview=getEliteMeta()?.exercise?.demoAutoplay===true;
         const video = document.createElement("video");
-        video.src = directUrl; video.controls = true; video.playsInline = true; video.muted = true;
-        video.loop = true; video.preload = "metadata";
+        video.src = directUrl; video.controls = !autoPreview; video.playsInline = true; video.muted = true;
+        video.loop = true; video.preload = autoPreview?'auto':'metadata';
         video.setAttribute("aria-label", eliteUi("Демонстрація вправи", "Exercise demo"));
         video.addEventListener("loadedmetadata", loaded); video.addEventListener("error", failed);
         host.append(video);
-        if (shouldAutoplay) video.play().catch(() => { if (token === ELITE_MEDIA.token && !video.error) eliteMediaStatus(eliteUi("Натисни ▶ на відео, щоб переглянути демонстрацію.", "Press play on the video to view the demo.")); });
+        if (shouldAutoplay||autoPreview) video.play().catch(() => { if (token === ELITE_MEDIA.token && !video.error) {video.controls=true;eliteMediaStatus(eliteUi("Натисни ▶ на відео, щоб переглянути демонстрацію.", "Press play on the video to view the demo."));} });
         return;
       }
       if (isDrillVideoKey(videoId)) {

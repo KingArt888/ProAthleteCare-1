@@ -3385,6 +3385,7 @@ function compactWeeklyExercise(ex) {
     "videoUrl",
     "videoSrc",
     "demoVideoUrl",
+    "demoAutoplay",
     "drillId",
     "type",
     "coachGuided",

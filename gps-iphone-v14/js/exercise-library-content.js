@@ -251,8 +251,10 @@
     const r=byKey.get('library:'+id);if(!r)return;const cat=lib?.[r.stage]?.[r.category];if(!cat)return;
     if(!cat.exercises.some(e=>e.videoKey===r.key))cat.exercises.push(resolve({name:r.name_i18n.en,videoKey:r.key,tags:[r.stage==='Post-Training'?'recovery':r.stage==='Main Training'?'strength':'activation']}));
   });
-  Object.values(lib||{}).forEach(cats=>Object.values(cats).forEach(c=>{
-    const seen=new Set();c.exercises=(c.exercises||[]).filter(e=>{const id=normalize(e.videoKey)||normalize(e.name);if(seen.has(id))return false;seen.add(id);return true;});
+  const archivedExercises=[];
+  function isAvailable(ex){const record=lookup(ex);return !record||Boolean(record.media);}
+  Object.entries(lib||{}).forEach(([stage,cats])=>Object.entries(cats).forEach(([category,c])=>{
+    const seen=new Set();c.exercises=(c.exercises||[]).filter(e=>{const id=normalize(e.videoKey)||normalize(e.name);if(seen.has(id))return false;seen.add(id);if(!isAvailable(e)){archivedExercises.push({...e,stage,category});return false;}return true;});
   }));
-  window.PACExerciseContent=Object.freeze({version,resolve,lookup,records,labelMuscles,executionSource});
+  window.PACExerciseContent=Object.freeze({version,resolve,lookup,records,labelMuscles,executionSource,isAvailable,archivedExercises});
 })();

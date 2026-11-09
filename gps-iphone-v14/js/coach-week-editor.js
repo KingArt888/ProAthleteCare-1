@@ -1156,7 +1156,7 @@ function renderExercisesByStatus(dayIndex, status) {
     ? (rawPlan[0] || { exercises: [] })   // беремо 1-й варіант як базовий
     : (rawPlan || { exercises: [] });
 
-  const exercises = Array.isArray(planObj.exercises) ? planObj.exercises : [];
+  const exercises = Array.isArray(planObj.exercises) ? planObj.exercises.filter(ex=>window.PACExerciseContent?.isAvailable(ex)!==false) : [];
 
   if (status === 'REST') {
     container.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">${_weekT('rest')}</div>`;

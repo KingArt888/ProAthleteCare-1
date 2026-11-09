@@ -2626,7 +2626,7 @@ function isExerciseInLibrary(name) {
 
 function sanitizePlanToLibrary(plan, signals, dayStatus) {
   const out = deepClone(plan || { exercises: [] });
-  out.exercises = Array.isArray(out.exercises) ? out.exercises : [];
+  out.exercises = Array.isArray(out.exercises) ? out.exercises.filter(ex=>window.PACExerciseContent?.isAvailable(ex)!==false) : [];
 
   // used set щоб не було дублів
   const used = new Set(
@@ -3370,6 +3370,7 @@ function compactWeeklySpeedTarget(target) {
 
 function compactWeeklyExercise(ex) {
   if (!ex || typeof ex !== "object") return null;
+  if(window.PACExerciseContent?.isAvailable(ex)===false)return null;
   const out = {};
   [
     "name",
@@ -3957,7 +3958,7 @@ const existed = Boolean(getPlanVariant(data, finalStatus, occ));
 
 
 
-  const exs = Array.isArray(finalPlan.exercises) ? finalPlan.exercises : [];
+  const exs = Array.isArray(finalPlan.exercises) ? finalPlan.exercises.filter(ex=>window.PACExerciseContent?.isAvailable(ex)!==false) : [];
 
   let html = `
     <div style="font-size:11px; opacity:.7; margin-bottom:6px;">
@@ -4206,7 +4207,7 @@ window.removeExerciseFromStatus = function(dayIndex, status, stage, stageIndex) 
 
   const stageItems = exs
     .map((e, idx) => ({ e, idx }))
-    .filter(x => (x.e.stage || "Main Training") === stage);
+    .filter(x => (x.e.stage || "Main Training") === stage && window.PACExerciseContent?.isAvailable(x.e)!==false);
 
   const target = stageItems[stageIndex];
   if (!target) return;
@@ -6157,7 +6158,7 @@ function renderPlanByStagesHTML(plan, opts = {}) {
   return stages.map(stage => {
     const items = exs
       .map((e, i) => ({ e, i }))
-      .filter(x => x.e?.stage === stage);
+      .filter(x => x.e?.stage === stage && window.PACExerciseContent?.isAvailable(x.e)!==false);
 
     if (!items.length) return "";
 

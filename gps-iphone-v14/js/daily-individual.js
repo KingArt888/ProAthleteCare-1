@@ -3937,7 +3937,7 @@ CURRENT_VARIANT_INDEX = occ;
 if (!currentPlan) { currentPlan = getPlanVariant(planData, "TRAIN", 0); CURRENT_VARIANT_KEY = "TRAIN"; CURRENT_VARIANT_INDEX = 0; }
 if (!currentPlan) { currentPlan = getPlanVariant(planData, "MD", 0); CURRENT_VARIANT_KEY = "MD"; CURRENT_VARIANT_INDEX = 0; }
 if (!currentPlan) currentPlan = { exercises: [] };
-window.__dailyCurrentExercises = Array.isArray(currentPlan.exercises) ? currentPlan.exercises.slice() : [];
+window.__dailyCurrentExercises = Array.isArray(currentPlan.exercises) ? currentPlan.exercises.filter(ex=>window.PACExerciseContent?.isAvailable(ex)!==false) : [];
 
 DONE_EXERCISES_MAP = await loadDailyProgress(effectiveUserId, weekId, todayIdx);
 renderExercises(Array.isArray(currentPlan.exercises) ? currentPlan.exercises : [], listContainer);
@@ -3952,7 +3952,7 @@ try { await saveDailyProgress(); } catch (_) {}
     function renderExercises(exercises, container) {
         if (!container) return;
         // Refresh built-in content for saved plans without changing their identity or prescription.
-        exercises = exercises.map(ex => window.PACExerciseContent?.resolve(ex) || ex);
+        exercises = exercises.filter(ex=>window.PACExerciseContent?.isAvailable(ex)!==false).map(ex => window.PACExerciseContent?.resolve(ex) || ex);
         window.PACExerciseTask.ensureItems(exercises);
         stopAllExerciseCoachTimers(true);
         if (ELITE_EXEC.open) closeEliteExecutionMode();

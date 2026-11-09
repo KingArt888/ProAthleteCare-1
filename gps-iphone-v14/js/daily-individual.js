@@ -2009,7 +2009,7 @@
         document.getElementById("di-elite-target").textContent = `${run.targets[run.index - 1] || 3} ${eliteUi("повт.", "reps")}`;
       }
       if (ELITE_EXEC.phase === "complete" && test) document.getElementById("di-elite-main-btn").textContent = eliteUi("ПЕРЕЙТИ ДО ТРЕНУВАННЯ", "CONTINUE TO WORKOUT");
-      if (ELITE_EXEC.phase === "active" && !run.timed) document.getElementById("di-elite-main-sub").textContent = `${eliteUi("За програмою", "Planned")}: ${run.targets[run.index - 1] ?? "—"} ${eliteUi("повт.", "reps")}. ${eliteUi("Інша кількість — натисни на вагу.", "Different reps? Tap the load.")}`;
+      if (ELITE_EXEC.phase === "active" && !ELITE_EXEC.paused && !run.timed) document.getElementById("di-elite-main-sub").textContent = `${eliteUi("За програмою", "Planned")}: ${run.targets[run.index - 1] ?? "—"} ${eliteUi("повт.", "reps")}. ${eliteUi("Інша кількість — натисни на вагу.", "Different reps? Tap the load.")}`;
       if (ELITE_EXEC.phase === "idle" && run.startedAt) document.getElementById("di-elite-main-btn").textContent = eliteUi("ПРОДОВЖИТИ ПІДХІД", "RESUME SET");
       if (test && document.querySelector("#di-elite-load-mid .s")) document.querySelector("#di-elite-load-mid .s").textContent = `× ${run.targets[run.index - 1]} ${eliteUi("повт.", "reps")}`;
     }
@@ -2238,7 +2238,7 @@
       document.getElementById('di-running-replay').hidden=!running;
       const p = meta.task?.planned || {};const shownDistance=p.distancePerSeriesM??p.distanceM;
       const clock = v => v == null ? "—" : formatDurationClock(v);
-      document.querySelector('.di-elite-info-btn').textContent=running?eliteUi('GPS · Налаштування','GPS · Setup'):eliteUi('Деталі','Details');
+      document.querySelector('.di-elite-info-btn').textContent=running?eliteUi('GPS · Налаштування','GPS · Setup'):ELITE_EXEC.phase==='complete'?eliteUi('Результат','Result'):eliteUi('Деталі','Details');
       document.querySelector('#di-elite-info .di-elite-mini-grid').hidden=running;
       const info=document.getElementById('di-elite-info'),summary=document.getElementById('di-running-result'),result=document.getElementById('di-elite-result-text').closest('.di-elite-result');
       if(running&&result.parentElement!==summary)summary.append(result);else if(!running&&result.parentElement!==info)info.append(result);
@@ -2518,6 +2518,7 @@
       if (mainBtn) {
         mainBtn.addEventListener("click", () => {
           if(getEliteMeta()?.task?.mode==='running'){eliteRunningAction();return;}
+          if(ELITE_EXEC.paused){eliteTogglePause();return;}
           elitePrepareRestAudio();
           if (ELITE_EXEC.phase === "idle") eliteStartPreset();
           else if (ELITE_EXEC.phase === "preset") eliteStartActiveSet();
@@ -3057,19 +3058,21 @@
         }
       }
       if (!isTargetDrill && loadMidEl) {
-        if (ELITE_EXEC.currentLoadKg != null) {
+        if (ELITE_EXEC.currentLoadKg != null && ELITE_EXEC.currentLoadKg > 0) {
           loadMidEl.classList.remove("body");
           loadMidEl.innerHTML = `<div class="v">${escapeHtml(ELITE_EXEC.currentLoadKg)} kg</div><div class="s">× ${escapeHtml(targetTextCompact)}</div>`;
         } else {
           const noLoadShort = String(ti("eliteBodyweight") || "").split("/")[0].trim() || ti("eliteBodyweight");
           loadMidEl.classList.add("body");
-          loadMidEl.innerHTML = `<div class="v">${noLoadShort}</div><div class="s">× ${targetTextCompact}</div>`;
+          loadMidEl.innerHTML = `<div class="v">${escapeHtml(noLoadShort)}</div><div class="s">${eliteUi('Натисни, щоб додати вагу','Tap to add load')}</div>`;
         }
       }
       const canAdjustLoad = !isTargetDrill && (rec.hasLoad || eliteHasStrengthRun(meta)) && (!eliteHasStrengthRun(meta) || ELITE_STRENGTH.run.status === "in-progress");
       if (adjustWrap) adjustWrap.style.display = canAdjustLoad ? "grid" : "none";
       adjustBtns.forEach((btn) => {
-        btn.disabled = !canAdjustLoad;
+        const delta=Number(btn.dataset.delta||0);
+        btn.disabled = !canAdjustLoad || delta<0&&!(ELITE_EXEC.currentLoadKg>0);
+        btn.setAttribute('aria-label',delta<0?eliteUi('Зменшити вагу на 5 кг','Decrease load by 5 kg'):eliteUi('Додати 5 кг','Add 5 kg'));
         btn.style.opacity = canAdjustLoad ? "1" : ".4";
         btn.style.cursor = canAdjustLoad ? "pointer" : "not-allowed";
       });
@@ -3130,7 +3133,7 @@
           mainBtn.disabled = true;
           if (ELITE_EXEC.paused) mainSub.textContent = ti("elitePaused");
         } else if (ELITE_EXEC.phase === "complete") {
-          mainBtn.textContent = ti("eliteNextExercise");
+          mainBtn.textContent = findNextUndoneExerciseId(ELITE_EXEC.exId)?ti("eliteNextExercise"):eliteUi('ПІДСУМОК ТРЕНУВАННЯ','WORKOUT FEEDBACK');
           mainSub.textContent = ti("eliteDone");
           if (pauseBtn) pauseBtn.style.display = "none";
         } else {
@@ -3138,6 +3141,7 @@
           mainSub.textContent = "";
           if (pauseBtn) pauseBtn.style.display = "none";
         }
+        if(ELITE_EXEC.paused){mainBtn.disabled=false;mainBtn.textContent=eliteUi('ПРОДОВЖИТИ','RESUME');mainSub.textContent=eliteUi('Таймер зупинено. Продовжуй, коли будеш готовий.','Timer paused. Resume when ready.');}
       }
       eliteRenderStrength(meta);
       document.getElementById('di-running-setup').hidden=meta.task?.mode!=='running';

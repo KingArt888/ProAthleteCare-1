@@ -115,8 +115,12 @@
       queue[key]={kind:'execution',record:value,gpsLocalSessionId};store(uid,queue);onStatus({state:'pending',pending:Object.keys(queue).length});
       return flush();
     }
-    function feedback(command){const uid=owner();R.prepareFeedback({...command,actorId:uid,now:new Date().toISOString()},null);
-      const queue=read(uid);queue[`feedback:${command.mutationId}`]={kind:'feedback',command:copy(command)};store(uid,queue);return flush();}
+    async function feedback(command){const uid=owner();R.prepareFeedback({...command,actorId:uid,now:new Date().toISOString()},null);
+      const key=`feedback:${command.mutationId}`,queue=read(uid);queue[key]={kind:'feedback',command:copy(command)};store(uid,queue);
+      try{await flush();}catch(error){ensure(uid);if(read(uid)[key])throw error;}
+      ensure(uid);const pending=Object.keys(read(uid)).length;
+      if(typeof root.dispatchEvent==='function'&&typeof root.CustomEvent==='function')root.dispatchEvent(new root.CustomEvent('pac:journal-synced'));
+      return{saved:true,pending};}
     async function list(uid=owner()){
       const snapshot=await db.collection('load_season_reports').where('userId','==',uid).get();
       const records=snapshot.docs.map(doc=>({id:doc.id,data:doc.data()}));return{...project(records),records};

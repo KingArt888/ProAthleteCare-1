@@ -1302,6 +1302,8 @@
     function eliteRecommendedLoad(meta, setIndex, totalSets) {
       const base = baseExerciseLoadKg(meta);
       if (base == null) return { hasLoad: false, load: null, min: null, max: null, step: 2.5 };
+      const prescribed=toNumSafe(meta?.exercise?.loadKg??meta?.exercise?.weightKg??meta?.exercise?.weight??meta?.exercise?.kg??meta?.exercise?.load);
+      if(prescribed!=null&&prescribed>=0)return{hasLoad:true,load:prescribed,min:prescribed,max:prescribed,step:prescribed>=60?2.5:1};
 
       const role = eliteRoleForSet(setIndex, totalSets);
       let mod = 1;

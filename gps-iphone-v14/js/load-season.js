@@ -286,6 +286,7 @@
       if (el) el.innerHTML = html;
     }
     function applyLoadStaticTranslations() {
+      setText('load-distance-hint',pacLoadLang()==='uk'?'Необов’язково. Залиш порожнім, щоб зберегти записану GPS-дистанцію.':'Optional. Leave empty to keep the recorded GPS distance.');
       document.title = ti("title");
       setText("load-tagline", ti("tagline"));
       setText("load-page-title", ti("pageTitle"));
@@ -350,7 +351,7 @@ document.addEventListener("athletecore:ready", (e) => {
     document.addEventListener('DOMContentLoaded', () => {
         applyLoadStaticTranslations();
         const dateInput = document.getElementById('load-date');
-        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        if (dateInput) dateInput.value = localLoadDate();
 
         window.auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -382,6 +383,7 @@ document.addEventListener("athletecore:ready", (e) => {
                     if (submitBtn) submitBtn.style.display = '';
                 }
                 await syncLoadFromFirebase(currentUserId);
+                if(!isDelegatedView)retryPendingJournal();
                 if (typeof window.refreshAthleteCore === "function") {
   await window.refreshAthleteCore();
 }
@@ -396,7 +398,31 @@ document.addEventListener("athletecore:ready", (e) => {
         if (form) form.addEventListener('submit', handleFormSubmit);
     });
 
-    const journalClient = () => window.PACSessionJournal.createClient({db,auth:window.auth,storage:firebase.storage(),localStorage});
+    let activeJournalClient=null;
+    const journalClient = () => activeJournalClient ||= window.PACSessionJournal.createClient({db,auth:window.auth,storage:firebase.storage(),localStorage});
+    function localLoadDate(date=new Date()){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
+    async function retryPendingJournal(){
+      if(isDelegatedView||!currentUserId||!window.PACSessionJournal||window.auth.currentUser?.uid!==currentUserId)return;
+      const client=journalClient();if(!client.pending())return;
+      try{await client.flush();window.dispatchEvent(new CustomEvent('pac:journal-synced'));}catch{/* Retain the outbox; summary records may already have reached the cloud. */}
+      await syncLoadFromFirebase(currentUserId);
+    }
+    window.addEventListener('online',retryPendingJournal);
+    function chooseLoadSessionTarget(records,date,previous,preserve){
+      const candidates=records.filter(e=>e.data.date===date&&e.data.schemaVersion===2&&e.data.status!=='deleted'&&!e.data.supersededBy);
+      if(preserve&&(['new',...candidates.map(e=>e.data.sessionId)]).includes(previous))return previous;
+      const daily=candidates.filter(e=>e.data.sessionId===`daily-${date}`);return daily.length===1?daily[0].data.sessionId:'new';
+    }
+    function renderExecutionActual(host,execution){
+      const uk=pacLoadLang()==='uk',payload=execution.payload||{},actual=payload.actual||{},running=payload.kind==='running';
+      const heading=document.createElement('h4');heading.textContent=execution.summary?.name||payload.task?.exerciseName||'';host.append(heading);
+      const table=document.createElement('table');table.style.cssText='width:100%;border-collapse:collapse;font-size:.8rem';
+      const headers=running?(uk?['Серія','Робота, с','GPS, м']:['Series','Work, s','GPS, m']):(uk?['Підхід','Вага, кг','Повтори','Робота, с','Пауза: таймер / план, с']:['Set','Load, kg','Reps','Work, s','Rest: clock / plan, s']);
+      const head=document.createElement('thead'),tr=document.createElement('tr');for(const text of headers){const th=document.createElement('th');th.scope='col';th.textContent=text;th.style.cssText='text-align:left;padding:6px;border-bottom:1px solid #665529';tr.append(th);}head.append(tr);table.append(head);
+      const body=document.createElement('tbody'),fmt=v=>v==null?'—':String(v);
+      for(const row of (running?actual.runningIntervals:actual.strengthSets)||[]){const line=document.createElement('tr'),values=running?[row.round,row.workSec,row.distanceM]:[`${row.setIndex}${row.side?' · '+row.side:''}`,row.loadKg,row.reps,row.workSec,row.rest?`${fmt(row.rest.elapsedSec)} / ${fmt(row.rest.plannedSec)}`:'—'];for(const value of values){const td=document.createElement('td');td.textContent=fmt(value);td.style.padding='6px';line.append(td);}body.append(line);}table.append(body);
+      const wrap=document.createElement('div');wrap.style.overflowX='auto';wrap.append(table);host.append(wrap);
+    }
     function renderSessionJournal(projection) {
       let host=document.getElementById('load-session-journal');
       if(!host){host=document.createElement('section');host.id='load-session-journal';host.style.cssText='padding:16px;color:#ddd';(document.getElementById('load-form')?.parentElement||document.body).append(host);}
@@ -410,12 +436,14 @@ document.addEventListener("athletecore:ready", (e) => {
       for(const entry of journalDocuments.slice().sort((a,b)=>b.data.date.localeCompare(a.data.date)).slice(0,60)){
         const detail=document.createElement('details'),summary=document.createElement('summary');summary.textContent=`${entry.data.date} · ${entry.data.sessionId||'legacy'}`;detail.append(summary);
         for(const row of Object.values(entry.data.executionIndex||{})){const p=document.createElement('p');p.textContent=`${row.name}: ${row.recordedCount}/${row.plannedCount??'—'} · reps ${row.repsPct??'—'}% · time ${row.timePct??'—'}% · distance ${row.distancePct??'—'}%`;detail.append(p);}
-        if(entry.data.schemaVersion===2){const button=document.createElement('button');button.textContent='Actual sets / intervals';button.onclick=async()=>{button.disabled=true;try{for(const execution of await journalClient().executions(entry.data.sessionId,currentUserId)){const pre=document.createElement('pre');pre.style.whiteSpace='pre-wrap';pre.textContent=JSON.stringify(execution.payload.actual,null,2);detail.append(pre);
+        if(entry.data.schemaVersion===2){const button=document.createElement('button');button.textContent=uk?'Фактичні підходи / серії':'Actual sets / intervals';button.onclick=async()=>{button.disabled=true;try{for(const execution of await journalClient().executions(entry.data.sessionId,currentUserId)){renderExecutionActual(detail,execution);
           if(execution.payload.route){const link=document.createElement('button');link.textContent='GPS route JSON';link.onclick=async()=>{try{const url=await firebase.storage().ref(execution.payload.route.path).getDownloadURL();window.open(url,'_blank','noopener');}catch(e){alert(e.message);}};detail.append(link);}
         }}catch(e){button.disabled=false;alert(e.message);}};detail.append(button);}host.append(detail);
       }
-      const form=document.getElementById('load-form');if(form&&!isDelegatedView){let select=form.querySelector('[name="sessionTarget"]');if(!select){select=document.createElement('select');select.name='sessionTarget';select.style.cssText='width:100%;margin:10px 0;padding:10px';form.prepend(select);form.elements.date.addEventListener('change',()=>renderSessionJournal(projection));}
-        const previous=select.value;select.replaceChildren();for(const [value,label] of [['new',uk?'Нове окреме тренування':'New separate session'],...journalDocuments.filter(e=>e.data.date===form.elements.date.value&&e.data.schemaVersion===2).map(e=>[e.data.sessionId,`${uk?'Доповнити':'Update'} ${e.data.sessionId}`])]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);}if([...select.options].some(o=>o.value===previous))select.value=previous;
+      const form=document.getElementById('load-form');if(form&&!isDelegatedView){let select=form.querySelector('[name="sessionTarget"]');if(!select){select=document.createElement('select');select.name='sessionTarget';select.id='load-session-target';select.style.cssText='width:100%;margin:10px 0;padding:10px';const label=document.createElement('label');label.htmlFor=select.id;label.textContent=uk?'До якого заняття додати навантаження?':'Which session should receive this load?';form.prepend(label,select);select.addEventListener('change',()=>{select.dataset.userChoice='true';});form.elements.date.addEventListener('change',()=>renderSessionJournal(window.PACSessionJournal.project(journalDocuments)));}
+        const date=form.elements.date.value,previous=select.value,preserve=select.dataset.selectionDate===date&&select.dataset.userChoice==='true';
+        const target=chooseLoadSessionTarget(journalDocuments,date,previous,preserve);select.replaceChildren();for(const [value,label] of [['new',uk?'Нове окреме тренування':'New separate session'],...journalDocuments.filter(e=>e.data.date===date&&e.data.schemaVersion===2&&e.data.status!=='deleted'&&!e.data.supersededBy).map(e=>[e.data.sessionId,e.data.sessionId===`daily-${date}`?(uk?'Доповнити заняття Daily / GPS':'Update Daily / GPS session'):`${uk?'Доповнити заняття':'Update session'} · ${e.data.date}`])]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);}select.value=target;if(select.dataset.selectionDate!==date)select.dataset.userChoice='';select.dataset.selectionDate=date;
+        const pending=journalClient().pending();if(pending){const retry=document.createElement('button');retry.type='button';retry.textContent=uk?`Повторити синхронізацію (${pending})`:`Retry sync (${pending})`;retry.onclick=()=>retryPendingJournal();host.prepend(retry);}
       }
     }
     async function syncLoadFromFirebase(uid) {
@@ -427,6 +455,7 @@ document.addEventListener("athletecore:ready", (e) => {
             const snapshot = await db.collection(COLLECTION_NAME)
                 .where("userId", "==", uid)
                 .get();
+            if(currentUserId&&uid!==currentUserId)return;
             
             dailyLoadData = [];
             const loadedDocuments = [];
@@ -441,6 +470,7 @@ document.addEventListener("athletecore:ready", (e) => {
             
             if (dailyLoadData.length === 0) {
                 renderCharts(0, 0);
+                updateACWRGauge(0);
                 window.__pacLoadMetrics={acute:0,chronic:0,acwr:0};
                 renderKmWidget();
                 rememberLoadSeasonShadow(loadedDocuments, { acute: 0, chronic: 0, acwr: 0 });
@@ -460,6 +490,7 @@ const acwrForUI    = Number.isFinite(coreLoad?.acwr)    ? coreLoad.acwr    : met
 // або залишити як є до приходу core
 
 renderCharts(acuteForUI, chronicForUI);
+updateACWRGauge(acwrForUI);
 renderKmWidget();
 rememberLoadSeasonShadow(loadedDocuments, metrics);
 
@@ -583,7 +614,7 @@ function updateACWRGauge(value) {
 window.updateACWRGauge = updateACWRGauge;
 
 function todayISO() {
-  return new Date().toISOString().slice(0, 10);
+  return localLoadDate();
 }
 
 function hideTodayLoadBlock() {
@@ -914,7 +945,9 @@ window.pacDeleteMyLoadSeasonData = async function pacDeleteMyLoadSeasonData() {
 }
 
             form.reset();
-            document.getElementById('load-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('load-date').value = localLoadDate();
+            if(form.elements.sessionTarget)form.elements.sessionTarget.dataset.userChoice='';
+            renderSessionJournal(window.PACSessionJournal.project(journalDocuments));
         } catch (err) {
             alert(ti("saveErr"));
         }

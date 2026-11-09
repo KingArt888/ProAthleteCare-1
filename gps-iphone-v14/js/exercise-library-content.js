@@ -242,8 +242,8 @@
       primaryMuscles:[...r.primaryMuscles],secondaryMuscles:[...r.secondaryMuscles],primaryZones:[...r.primaryZones],secondaryZones:[...r.secondaryZones],
       movementPattern:r.movementPattern,equipment:[...r.equipment],impact:r.impact,
       tags:[...new Set([...(ex.tags||[]),...r.primaryMuscles,r.movementPattern])],
-      videoUrl:media,videoSrc:'',demoVideoUrl:'',demoAutoplay:!!media,demoUnavailable:!media,
-      mediaStatus:media?'local':'missing-local',videoPoster:media.replace(/\.mp4$/,'.jpg')};
+      videoUrl:media?media+'?v=quality-20261109':'',videoSrc:'',demoVideoUrl:'',demoAutoplay:!!media,demoUnavailable:!media,
+      mediaStatus:media?'local':'missing-local',videoPoster:media?media.replace(/\.mp4$/,'.jpg')+'?v=quality-20261109':''};
     executionSources.set(result,executionSource(ex));return result;
   }
   all.forEach(({e})=>Object.assign(e,resolve(e)));

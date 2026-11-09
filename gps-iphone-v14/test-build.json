@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261109-daily-load-audit-v1",
-  "builtAt": "2026-11-09T18:50:49.217Z",
+  "build": "daily-phone-20261109-quality-library-v2",
+  "builtAt": "2026-11-09T18:59:20.750Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -12,63 +12,63 @@
     },
     {
       "file": "pages/auth-action.html",
-      "bytes": 4299,
-      "sha256": "421daa6787732b0668f675947e64c689dbc2f355fd9d6aefccdbae78fb5c60d7"
+      "bytes": 4295,
+      "sha256": "397256cdaf2dbe8b01f0e4c82a56edfcd19742a1e1be43ba53db8f8dd63bb2cc"
     },
     {
       "file": "pages/coach-dashboard.html",
-      "bytes": 7747,
-      "sha256": "4777bb755311f49e682b69b958904f783fe779d83e6e2c62d0d089220f2b56ef"
+      "bytes": 7737,
+      "sha256": "fc207e33e194acacf1742118fbf0e2681ca515bcf85078ae9facd3f72caac533"
     },
     {
       "file": "pages/coach-date-plan.html",
-      "bytes": 4303,
-      "sha256": "f60b61e26a2249752894cbbac2d4db214e09f7c0ea2d78a4e4e453b8f3ea534c"
+      "bytes": 4296,
+      "sha256": "0f673527a3801bca1895ad4caca52be8600ce51db5d14299f1c702d0b259b4b7"
     },
     {
       "file": "pages/coach-week-editor.html",
-      "bytes": 15105,
-      "sha256": "0b6ec4986dca2c22c2523aa7b33327e070a102ec8df095f11d8baa72092c108e"
+      "bytes": 15092,
+      "sha256": "8ddaa9b5d6cf388cdd9f1c6f25773607f532b68009b2055f62c6114dd6b52ea5"
     },
     {
       "file": "pages/daily-individual.html",
-      "bytes": 6166,
-      "sha256": "271c3471520b8565cb55c985ddbdeb1647d38162af4d3f3cdba4c43bd02c958a"
+      "bytes": 6146,
+      "sha256": "f812f23c17503fa5ce5af385bfa82ed99e67c361a9b26af38199f3a49b3555e1"
     },
     {
       "file": "pages/dashboard.html",
-      "bytes": 5350,
-      "sha256": "4bc25a15bbfdafeac80b5bf2ed2338137aca5e1f95b98a5e865a5175973f0fe4"
+      "bytes": 5340,
+      "sha256": "c9d3759345777413eee95c2960aef110fc6b837b940f144aed22baa556c82a6b"
     },
     {
       "file": "pages/dashboard_user.html",
-      "bytes": 11781,
-      "sha256": "e65b4f0779f893616a40262d4225cc5603469921d3af64a9264db0971ff8a648"
+      "bytes": 11769,
+      "sha256": "618b34f244daa81f8b74a9ca0d14fdf200cf7961b310cb2cff2f29a30c76c234"
     },
     {
       "file": "pages/drill-canvas-editor.html",
-      "bytes": 44583,
-      "sha256": "550ba55387a6d7c9f4bc50b5f61e72aaaf3e94fb3ddde5557b4feee7a8413e9d"
+      "bytes": 44570,
+      "sha256": "5e66a2352c6a29f2a88c0cc4a5214babdca10037ce400fdf11a9d390f58d3133"
     },
     {
       "file": "pages/drill-player.html",
-      "bytes": 3012,
-      "sha256": "5c94a88d6b774dc78912ca2820ca27f45bd7d58c4c945ee7beb63c2aca136f0b"
+      "bytes": 3003,
+      "sha256": "5431b3fd223ca6461ab88c3f435e63020bf7cc6f8ff1ac98d520c8a37a03eaf6"
     },
     {
       "file": "pages/drill-storage-recovery.html",
-      "bytes": 849,
-      "sha256": "e947d4e28a5e7b7714046257b2b84edcde411cbfd2f4ac4f65fba679c753c2b2"
+      "bytes": 847,
+      "sha256": "d3dea6fb34827ac9fea1b504b6156f34d88c5a3ec6996c6c1ecdaf516ed7a4b2"
     },
     {
       "file": "pages/exercise-library-preview.html",
-      "bytes": 3700,
-      "sha256": "164e20b0f6d3bbadd84d65ee439f9c9270f6bb9a34c675cb23618bad0584bdb1"
+      "bytes": 3697,
+      "sha256": "adfd866b2e07c3ee1a141027b812fc903cdd45eaa8c5312fcc8d1cd26472c92b"
     },
     {
       "file": "pages/injury.html",
-      "bytes": 19398,
-      "sha256": "10fe299d777e862b8548fcdea7076e7426817fd8ce39af8668409a7c3278f805"
+      "bytes": 19389,
+      "sha256": "4b84b4ef9538ae3bbadfe47b3da0222b2e880269795e351e0047c34889cc010a"
     },
     {
       "file": "pages/library-microcycle-checklist.html",
@@ -77,8 +77,8 @@
     },
     {
       "file": "pages/load-season.html",
-      "bytes": 15977,
-      "sha256": "617ca8fc6884f36f5f5b55aaaedf06aab866d6977016e919aa337566eb44d013"
+      "bytes": 15963,
+      "sha256": "6f3d8869112b86c2ff0c7b2c38e7bd5dacfe83542ae2adcbba37e8f1998b8944"
     },
     {
       "file": "pages/power-hub.html",
@@ -87,8 +87,8 @@
     },
     {
       "file": "pages/power.html",
-      "bytes": 9213,
-      "sha256": "458306c193d4c9f9b133aa50c461675b2f08b4d74e87a7f6da27fa400c755106"
+      "bytes": 9202,
+      "sha256": "64502178340758783d85f43e61a14141c9ffbff897f22ba3b8f002a43f4bef41"
     },
     {
       "file": "pages/profile.html",
@@ -97,23 +97,23 @@
     },
     {
       "file": "pages/regist.html",
-      "bytes": 8082,
-      "sha256": "8d7f4c78a16cbf5b5db53c0f8744c7d0f827b1dfb5abf31377d296392cb93174"
+      "bytes": 8076,
+      "sha256": "0827b18463063cc6ddd4df525e0ff9a3c96d2a77ac1ec55f557b86e755f85838"
     },
     {
       "file": "pages/weekly-individual.html",
-      "bytes": 12501,
-      "sha256": "476b466cce0ac7d6756a96c141e58f58bad2b19e8e3a8b1aad88228219d095cf"
+      "bytes": 12483,
+      "sha256": "e5a90a42acbbc6fb973788e67dfa1c96c21134a2aeff02e67c604f12a5c27ee0"
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 15818,
-      "sha256": "041d53ec3114e0444ec2145ff6578295b16e3ec9216567b453a9019f5cfe09e7"
+      "bytes": 15807,
+      "sha256": "83f76d23ce9a97413d5490c6a9aaac73fb872ca2d8bc655db8436e72c03c2b08"
     },
     {
       "file": "pages/wellness.html",
-      "bytes": 27071,
-      "sha256": "57f5bbe5cb7c6ec6eb0f50c90bad89e525c3dca72ffa1ad338be81a4bbd6209c"
+      "bytes": 27062,
+      "sha256": "5ba06a16c6392adee894fa99de1496dfb81cddd827f6b3dd1098b2d62172263a"
     },
     {
       "file": "js/admin.js",
@@ -242,8 +242,8 @@
     },
     {
       "file": "js/exercise-library-content.js",
-      "bytes": 58392,
-      "sha256": "e57899d2fc2cf61f13f4710f6bc916e9e1b0d660450a793f6c5f395898e31cd1"
+      "bytes": 58454,
+      "sha256": "919594eedb45c6c41136940cb3fe61b6456584b2b61778255aaf82249cb0d6b2"
     },
     {
       "file": "js/exercise-library-preview.js",
@@ -682,493 +682,493 @@
     },
     {
       "file": "assets/videos/library/arm-drive-drill.jpg",
-      "bytes": 55099,
-      "sha256": "6db1cacf6f7396f07f2894365268330eb1ce268b5a0019a78862295505a40bcc"
+      "bytes": 71497,
+      "sha256": "7bb83868ac9416945e672d3252c7b1aed1c6bf9b410e2ee76d2cb7d3ba513921"
     },
     {
       "file": "assets/videos/library/arm-drive-drill.mp4",
-      "bytes": 818278,
-      "sha256": "7402d14dad0d06dad9e9292d4d80c0bc22fe958a604c04d462e1d670543e7f99"
+      "bytes": 2401057,
+      "sha256": "f0c86c32823ebb7ccc6fe2b4e6d06e00ac3c3e8352edd6dddcc562d8c4023a27"
     },
     {
       "file": "assets/videos/library/barbell-bent-over-row.jpg",
-      "bytes": 61759,
-      "sha256": "dc864dd0424d10c08a8a6b12216b9e2af0c9908b9dd995b59b26590d8abc74ca"
+      "bytes": 81363,
+      "sha256": "5f2edd9c668ca7692683b87c56df291153d049b585db268bd2d45e00074fcbba"
     },
     {
       "file": "assets/videos/library/barbell-bent-over-row.mp4",
-      "bytes": 1024075,
-      "sha256": "c3739e7c0ae9dda6f2946ff15985c566aea32c0725270b41c0c794b0c08fde4a"
+      "bytes": 2834836,
+      "sha256": "b2014bb4e00e2f5055c4a9768b4b035bb9fdba696e2c794a1def53b79b0595db"
     },
     {
       "file": "assets/videos/library/barbell-front-squat.jpg",
-      "bytes": 53808,
-      "sha256": "f3bbd78fa3afd674ed553e0d6d25e190b7fbf5ca972aa3f90be9b3512e9f37e4"
+      "bytes": 69684,
+      "sha256": "b910f54c8ab89587b55eeb11a2e9e195af4239ca7ca8494f0433a2dbfc86cec5"
     },
     {
       "file": "assets/videos/library/barbell-front-squat.mp4",
-      "bytes": 875628,
-      "sha256": "e8194229bbfd4c66035a017eb113778380b08583cba550075ace71f10cd0d753"
+      "bytes": 2474361,
+      "sha256": "5752b86414b3ba46cc5667e71c165fd87c783baa53c4b6127cb9bf6c1d17ab24"
     },
     {
       "file": "assets/videos/library/barbell-romanian-deadlift-strength.jpg",
-      "bytes": 63395,
-      "sha256": "14741ec523d98a41826ffe74e17500d19abe5b966c6c397759fc983b1a1513a6"
+      "bytes": 81865,
+      "sha256": "2f5c57017ba202429e0ec54c8826a81c7fa1d1fe63ba4476dd4e0e71b7f1567d"
     },
     {
       "file": "assets/videos/library/barbell-romanian-deadlift-strength.mp4",
-      "bytes": 1156172,
-      "sha256": "8ffcf74ac176fab61f504bd712c3c67fb6357e570325aecc3abab0cc58230409"
+      "bytes": 2544386,
+      "sha256": "276ac3b7f36b01ad3743f662b27882f8e7ed5d7f2944cdf11ae162decc761bce"
     },
     {
       "file": "assets/videos/library/bench-side-plank.jpg",
-      "bytes": 61665,
-      "sha256": "99c932b0f2d768f708c4d76e3810e6b22175d75fcedf348bdc4113d6a8f88d6d"
+      "bytes": 81989,
+      "sha256": "6a4b2b4af2c52d8aa264227e2ffd3e5d772f28c4f6f0df3c09390ca37a29f7e1"
     },
     {
       "file": "assets/videos/library/bench-side-plank.mp4",
-      "bytes": 903744,
-      "sha256": "a3d6beafa7ba43b482b993886c4294454982b5f3b7d436ca89b5fcb08f8e3342"
+      "bytes": 2518566,
+      "sha256": "89238a012faeffce6fb82d314e62d566b6e09431a4a20a3b51a4b17782750351"
     },
     {
       "file": "assets/videos/library/dead-bug-core-control.jpg",
-      "bytes": 59720,
-      "sha256": "0aa0cf2040eb2c1d038d38433a49f5db90b49c04b12468fabe28627e305d32ba"
+      "bytes": 79574,
+      "sha256": "12c9c6f86993ae858c7a6b07c5e0ba116e5988bfad67728ff86770070e581ca5"
     },
     {
       "file": "assets/videos/library/dead-bug-core-control.mp4",
-      "bytes": 828458,
-      "sha256": "f79cb3e919bf295d878006246d1c852b35c5e103f0a90ad5cb197aaece87c05c"
+      "bytes": 2268840,
+      "sha256": "01ea2856dac9504f8069339536f84fd478794f1f25f1f469412dacdbbe72e44c"
     },
     {
       "file": "assets/videos/library/dual-ball-reaction-drill.jpg",
-      "bytes": 62506,
-      "sha256": "6b1dc29e267fc26318d9d0ab4cf5e03ea07b2b0d7078b975fca21927f0c09ca4"
+      "bytes": 84190,
+      "sha256": "f0d38e332f8d8fc4da76f9bf51d4f579af209fdded6de8036917e1275ca82b25"
     },
     {
       "file": "assets/videos/library/dual-ball-reaction-drill.mp4",
-      "bytes": 874444,
-      "sha256": "f14caf09c4ab98b360a2c98884084739d1a916679c30b379180eee499be306d5"
+      "bytes": 2410640,
+      "sha256": "4c042c3b21b722a5f57b043c3594cacccf57ab8e404944430a5e592690eea244"
     },
     {
       "file": "assets/videos/library/dumbbell-bench-press.jpg",
-      "bytes": 58929,
-      "sha256": "04992051c80196105f4da333a3da3e40a85e590b95d1f2ac294d1fb309dbef0c"
+      "bytes": 79762,
+      "sha256": "965d81aa23eca772a3e080f9edc6a5fed59d7a4ca38aba2b877874a29ad46193"
     },
     {
       "file": "assets/videos/library/dumbbell-bench-press.mp4",
-      "bytes": 818529,
-      "sha256": "e053ec53a4721a6ae4a29226950fa815e3b9a11bd4725142e642fd39f0251ec4"
+      "bytes": 2290137,
+      "sha256": "78cd889ea2c4544314c307c57b3c171e6f32257a99e6060f252bb755d2e2904e"
     },
     {
       "file": "assets/videos/library/dumbbell-forward-lunge-in-place.jpg",
-      "bytes": 58127,
-      "sha256": "c109d4a52810db4f1d739274dfce15909ab79c0f51a6dfb055948b27c036665e"
+      "bytes": 76288,
+      "sha256": "4a4af6baf49985b730ac9dc34fdc2d531e4dda6db54b4801022158d90446112e"
     },
     {
       "file": "assets/videos/library/dumbbell-forward-lunge-in-place.mp4",
-      "bytes": 807702,
-      "sha256": "306d4d011b87bbd0d425d1da2fb76d8b27a787fe366b1203634fe1c4798fccae"
+      "bytes": 2240702,
+      "sha256": "8af9dfe0b755d72e96243d838ee7d0c1acc02901fc7425a4c84d8fe4eb1cb97d"
     },
     {
       "file": "assets/videos/library/dumbbell-goblet-squat.jpg",
-      "bytes": 59837,
-      "sha256": "6628c452a601bf05aed37859b9233d39452cab42d3eb4bca098a684d88abf43d"
+      "bytes": 79462,
+      "sha256": "4fb067f55ab515aaad22332be44ca7391f40d86e8e9b84873c3a970d77eb5d2a"
     },
     {
       "file": "assets/videos/library/dumbbell-goblet-squat.mp4",
-      "bytes": 887406,
-      "sha256": "795efdb440a3390008c3c8eb3feb50fdc2c62e58483dd39191822f73252e9075"
+      "bytes": 2489052,
+      "sha256": "2a43f56e40b45dac7b43a1c790c822929e6930a5e4e0b99e8788a4103e5c966b"
     },
     {
       "file": "assets/videos/library/dumbbell-reverse-lunge.jpg",
-      "bytes": 61653,
-      "sha256": "cb406feca5c8ca6a18b1db1b75d1f829b125a9e6bd36539df67c715d75fd1a0d"
+      "bytes": 81634,
+      "sha256": "02aa321e15cd895cb47df8389432889a3ccbe72394b62ee90d02dd6b58e5f9af"
     },
     {
       "file": "assets/videos/library/dumbbell-reverse-lunge.mp4",
-      "bytes": 880721,
-      "sha256": "24a0cc5c01b7f5a7a7af529a2e0154b228c0b55f1f83d2513884fabcfbe873cb"
+      "bytes": 2480686,
+      "sha256": "789bb192c5b1d75ed051750babd79a86d699803f6ba998991cff9f7dc3017ad6"
     },
     {
       "file": "assets/videos/library/dynamic-arm-raises.jpg",
-      "bytes": 63116,
-      "sha256": "441b89a761f31206df9dcf94a05ef6dac14d87578b2b24d9c457673f8f98648c"
+      "bytes": 80747,
+      "sha256": "1772306d1c9f79df2b891968c196b029dc0ab24ca4da5a602eac6436c7cc36a2"
     },
     {
       "file": "assets/videos/library/dynamic-arm-raises.mp4",
-      "bytes": 702296,
-      "sha256": "c17b9f8a76f096fafa6f2bb5b45c1909cc1fbfc82730208b8cdedeb3a49e9ca9"
+      "bytes": 1967643,
+      "sha256": "64327cf547ca93e8a8133da5d7adfa923fd95c86175b0509752e74e40f1ace5c"
     },
     {
       "file": "assets/videos/library/dynamic-shoulder-activation-hinge.jpg",
-      "bytes": 54668,
-      "sha256": "316829655c808966a6214c8bd5877475f08e1033cf6de2e092a1213a21df0618"
+      "bytes": 73995,
+      "sha256": "5e3053fadcc3de42ad6363d15b1d67f7cb321afc81da0e11d9a16b8e585e2ec6"
     },
     {
       "file": "assets/videos/library/dynamic-shoulder-activation-hinge.mp4",
-      "bytes": 925810,
-      "sha256": "5eaf419785514fef5ebadbed788048fb3dfe062838a0ba3fdcbf7420494c0c24"
+      "bytes": 2584513,
+      "sha256": "db702a6604ec2c7c4b870e5fc4a2590f12d87c8dc5b6b750f708555847d96a4b"
     },
     {
       "file": "assets/videos/library/elbow-plank.jpg",
-      "bytes": 65219,
-      "sha256": "d0c184affb0ecacea82cbb2cd9ced529832ee72034f3010016bbc438480e4bd9"
+      "bytes": 88986,
+      "sha256": "a7e55e50f2b7d60ae0b738cc4550384383994ec7a55b94b6a6a0d5c7b97d3c71"
     },
     {
       "file": "assets/videos/library/elbow-plank.mp4",
-      "bytes": 926585,
-      "sha256": "eb29c77d9091fb69b7eeabcb3644907a7c74fb9d6502376dbf1195f722e1e1f9"
+      "bytes": 2527353,
+      "sha256": "4d63bcfd4fa7812bf02f0923c1271d4760e4308954c6dac1654b2f137f3f1e8c"
     },
     {
       "file": "assets/videos/library/forward-lunge-continuous-tension.jpg",
-      "bytes": 60877,
-      "sha256": "0c1f8c73a18e84f9c4244e18b7b0a37c77015cb7b11085e17a66750ceec4ed33"
+      "bytes": 81051,
+      "sha256": "cd0729b095c47ca51bbe833ec0d61096443dde558d19893bb9a876785df3f227"
     },
     {
       "file": "assets/videos/library/forward-lunge-continuous-tension.mp4",
-      "bytes": 905407,
-      "sha256": "18ac06dbe88feb45044c458fca2d9e1777c8735800789b7bc41d8f4ac68fc481"
+      "bytes": 2478039,
+      "sha256": "333b123b3f1cab0574b991b2017e45288e56b56e1594ade057520b65d3acb30a"
     },
     {
       "file": "assets/videos/library/forward-step-balance-lunge.jpg",
-      "bytes": 54638,
-      "sha256": "2b04e7b371ee44310606767d44f3ebfb5ab7f55de680959d4c0eab08ba1c9dae"
+      "bytes": 72453,
+      "sha256": "5979e58d935eeff1303e46f312a03c7bd362cef38afc563dab9346ed51235f0a"
     },
     {
       "file": "assets/videos/library/forward-step-balance-lunge.mp4",
-      "bytes": 987240,
-      "sha256": "3ed438908ecf6a0501bce604b9e1addbd41294b7b0eec5b9fbeaa98bd794133d"
+      "bytes": 2765881,
+      "sha256": "8a8f23c2fd36e85d22d13a1aa05ceaa0ecf195bc24f442256931ed0a6fd83a1e"
     },
     {
       "file": "assets/videos/library/front-foot-elevated-split-squat.jpg",
-      "bytes": 65103,
-      "sha256": "003fa1d2c7143b6327f4d5b2e2e510264bf22fd5d9413848253ab9258b919e8d"
+      "bytes": 84594,
+      "sha256": "c64ec4ed471139759072e50d05be23224fa51dc52a519b4c3046a8195996586c"
     },
     {
       "file": "assets/videos/library/front-foot-elevated-split-squat.mp4",
-      "bytes": 993891,
-      "sha256": "f8fb426767b0261c037e02e612988ce3d478cf40470c0238e0ea897e44a4aca1"
+      "bytes": 2762837,
+      "sha256": "f5cf997b599265023e1c3ce4d236ee899d6b8ab28d66d06f9dbc2cf32f3f7de7"
     },
     {
       "file": "assets/videos/library/glute-ball-release.jpg",
-      "bytes": 61116,
-      "sha256": "0aec7f49805ef17518a4e2ebbecd093a4abbcf5634a8a619c5d112c0feec6581"
+      "bytes": 80465,
+      "sha256": "323cd411f4c427ae4f1693d37945941a9d6131ccc42d2cc386a7bd21c17eeb80"
     },
     {
       "file": "assets/videos/library/glute-ball-release.mp4",
-      "bytes": 926374,
-      "sha256": "c0a77b23d97051a625cc47db72d500d307e3e77c35816329f7d1eca8516df3e5"
+      "bytes": 2549479,
+      "sha256": "27ac94466baede2ded314b00bb7aa8960796b90ab5ab5bbbdce08158abb36182"
     },
     {
       "file": "assets/videos/library/glute-bridge-activation.jpg",
-      "bytes": 62252,
-      "sha256": "54c30e2bdd32b1a87d9d839aeb488837aa561dc037b63224b8d7aa6f1e86e46a"
+      "bytes": 83432,
+      "sha256": "8d036c7c76cb12b511995afa94826a4e8f24ff54b25149359749a562fe5b875b"
     },
     {
       "file": "assets/videos/library/glute-bridge-activation.mp4",
-      "bytes": 810733,
-      "sha256": "e14fa2696f554965f8b4c96b53418c23503b576a373460666849ed891d8b08e1"
+      "bytes": 2277756,
+      "sha256": "8de97a94eedc0e7e94e899b12bdd0845980b5c9d1725d005f71f8d6f940ac714"
     },
     {
       "file": "assets/videos/library/hip-hinge-activation-barbell.jpg",
-      "bytes": 60095,
-      "sha256": "87b79546ff267a9486a4f926ede00ac158586b6a511c809bc30143866f4f7b65"
+      "bytes": 78211,
+      "sha256": "f3f5e53330743fa529c3267e75f81952f21ba2e251f7eb71e9a3711325eb9456"
     },
     {
       "file": "assets/videos/library/hip-hinge-activation-barbell.mp4",
-      "bytes": 972387,
-      "sha256": "4acfcf2e4340aaf92f02cb6cae8dda8ed6ff2d206218e17101dee5b9e2a13705"
+      "bytes": 2694361,
+      "sha256": "80da54418976e0898c181c930389b8c08fbaf026814ab468681f026d91da779a"
     },
     {
       "file": "assets/videos/library/isometric-lunge-with-arm-drive.jpg",
-      "bytes": 62062,
-      "sha256": "65c72f63da8dc4d5b05d817e2118c54cf02b02a7bc4a58e844f224c8468c720a"
+      "bytes": 83359,
+      "sha256": "3bcd39641c27d6451fbd559b48d9b9bd833d8ee8c3e3261849b812770da96634"
     },
     {
       "file": "assets/videos/library/isometric-lunge-with-arm-drive.mp4",
-      "bytes": 863590,
-      "sha256": "7d99ef1239c3930d13727f2607df8bab9794d141a392051c33f074eae525d79c"
+      "bytes": 2420992,
+      "sha256": "52930bf9e330c0878948277bc98c49dfb7d88af0a2f89e934ee44b26fc655ca3"
     },
     {
       "file": "assets/videos/library/knee-drive.jpg",
-      "bytes": 53880,
-      "sha256": "0b2f363afc4fabd6bedc5445822c491b60545d5d6a4345383805688800ba3994"
+      "bytes": 73220,
+      "sha256": "dbb8c1f8e8623e52abc3ef939e5e83451db64330988758af636db732d77c5891"
     },
     {
       "file": "assets/videos/library/knee-drive.mp4",
-      "bytes": 826105,
-      "sha256": "ffbdd9aea8da500e61c0393745f27e702b6a0eedfdeb1c1592a2b41788e8e94b"
+      "bytes": 2350588,
+      "sha256": "ebb3b2a8f6baa3bd534c186dcf52a5efda0a44980f4cdc89fd4386ddef872b65"
     },
     {
       "file": "assets/videos/library/lateral-bound-power-drill.jpg",
-      "bytes": 48128,
-      "sha256": "eb2b61671f965e35e5e9e93a1a12546dd40d866284ad14bb7784c54a9044c345"
+      "bytes": 62885,
+      "sha256": "cdefe79c4c7063a3c847b9405c37320e37a2ee5aa94be8fc6e0a55c01466642d"
     },
     {
       "file": "assets/videos/library/lateral-bound-power-drill.mp4",
-      "bytes": 831498,
-      "sha256": "6b21a1fc53f474cb25ad64fc5404df5d5018590fac0646cd7fb74b69b2e2b0e1"
+      "bytes": 2347827,
+      "sha256": "3d43f4a3d7ac21365fc529340eb1a0cf26e86061355d13c8c3d2560f5a1a4556"
     },
     {
       "file": "assets/videos/library/lateral-shuffle.jpg",
-      "bytes": 53601,
-      "sha256": "f260a06c2e7bf86d25467cabd428556edc74764ef02de8f5ae3e0cbc6e2acda5"
+      "bytes": 71326,
+      "sha256": "61750da84b42a03eb5273cd07ca3e556997c47b8128f95be065349f8fe00afb5"
     },
     {
       "file": "assets/videos/library/lateral-shuffle.mp4",
-      "bytes": 946430,
-      "sha256": "84f9bc03e65026efa204077b1e733609cd46c8685d0d9087f7d08170f8ebc88b"
+      "bytes": 2645469,
+      "sha256": "c1c0542fdbea48845efa4bce4dd91a2dc0b48cda7e11659c18cb5ba7dba9ea65"
     },
     {
       "file": "assets/videos/library/lateral-skater-jumps.jpg",
-      "bytes": 59155,
-      "sha256": "b6cabcade020a2ac6a6efb746765e1720dac807e670cd67ecd0f3843be44e899"
+      "bytes": 78394,
+      "sha256": "ced88a40450eea8105f49142ee231c1f04cb9078b14aba2531305c5a55936257"
     },
     {
       "file": "assets/videos/library/lateral-skater-jumps.mp4",
-      "bytes": 883915,
-      "sha256": "5ad3ffc8e3d01711dfa55770b99de68ff4e2de3e5a5c9537c81b01795bd96ac1"
+      "bytes": 2474992,
+      "sha256": "f2a4fa01a6fa05bcd302c518567bc4264faf4751a5b43e3397e6022e8e174399"
     },
     {
       "file": "assets/videos/library/mini-band-lateral-shuffle.jpg",
-      "bytes": 56138,
-      "sha256": "d4086c45c71b85b30d5201705b389ecb360bc817bddab42953301d25ccd09818"
+      "bytes": 72796,
+      "sha256": "0be5ff510f50690cc5aa384671ac689827b1d5fd3fde891dca15b667302a255d"
     },
     {
       "file": "assets/videos/library/mini-band-lateral-shuffle.mp4",
-      "bytes": 938838,
-      "sha256": "bd32b71544273302bc05a2d9fe861118b81330afe41a47259dbc1c8325b26626"
+      "bytes": 2655204,
+      "sha256": "35687f2bb85c10b1ca1958895c93e8ef930ba7cb7d611b4c10d772ca8f97c29d"
     },
     {
       "file": "assets/videos/library/multi-ball-coordination-drill.jpg",
-      "bytes": 57341,
-      "sha256": "53ae351322610307ad73b85a424c63e0a5d86e9bf74a9bee93a58ba429776792"
+      "bytes": 78071,
+      "sha256": "e31b2eaf17157e1e645865247bb086f47fde8460fb1f433423e91b8fdeafe820"
     },
     {
       "file": "assets/videos/library/multi-ball-coordination-drill.mp4",
-      "bytes": 860787,
-      "sha256": "2f2a9b8e948119b68a553441f49822a80d029e73ca4118ffcabc86ea9a94396a"
+      "bytes": 2370997,
+      "sha256": "b1925e5a0789b33335905f49b9c3fedf79f0373a060c916bf4b1a0b9a5e0509f"
     },
     {
       "file": "assets/videos/library/offset-goblet-squat.jpg",
-      "bytes": 55452,
-      "sha256": "bb74dede9ee690992d3c4ca1f4f6b5dfca289e364e80290ca2bc9e6b517c310d"
+      "bytes": 74704,
+      "sha256": "b263ecbc1a4b072fa31c4b81a607a4da626b95a5b41dbb43c031e2271e362b9f"
     },
     {
       "file": "assets/videos/library/offset-goblet-squat.mp4",
-      "bytes": 896249,
-      "sha256": "ee1d3413b8f0693238a58764b3fccb98e69fec85642e78bec7e2e5f140987b01"
+      "bytes": 2450747,
+      "sha256": "ebfe1d396eb7638285a47edf541b11eef45b4b42d41605385fa743ec261a0c89"
     },
     {
       "file": "assets/videos/library/offset-load-forward-lunge.jpg",
-      "bytes": 62519,
-      "sha256": "b98352c0501a6a8af1e03939ecf986abf51e1a0d6900707aecbc6fec3be46db0"
+      "bytes": 83872,
+      "sha256": "c7418cd274eb476826010afb633242ea5c4818f19807d2a430823044f5f9bb01"
     },
     {
       "file": "assets/videos/library/offset-load-forward-lunge.mp4",
-      "bytes": 897520,
-      "sha256": "e80c31c17608f77305cc4105bb9b667e5ed8df7329a3dfc074497721bc5c086b"
+      "bytes": 2471779,
+      "sha256": "68a2b0328586c406f83c62b253fd496cf2406187f296b0658bbce1dc0208df58"
     },
     {
       "file": "assets/videos/library/prone-scapular-retraction-hold.jpg",
-      "bytes": 64755,
-      "sha256": "f0897e86cad331391029adfba302086f7712bc5d705784766b3fe2c7ce76b072"
+      "bytes": 88105,
+      "sha256": "469b8a5679fef7fa171cbcec84396658cc79dd531731e55820861c793c0a6288"
     },
     {
       "file": "assets/videos/library/prone-scapular-retraction-hold.mp4",
-      "bytes": 1073243,
-      "sha256": "957f6f5a75ba4e6a30f8298254c61cc659c474b1744ca9cff46e976ceb4a9589"
+      "bytes": 2991721,
+      "sha256": "dc0ffd6abe1f32ff254f55d88c8f4018b0d8a4b47518fe6e1042ce5cbccc81ff"
     },
     {
       "file": "assets/videos/library/proximal-hamstring-ball-release.jpg",
-      "bytes": 61578,
-      "sha256": "df43b8bd83e64efe90aa6a0f593c2406160e8d7bee0bd5a1ac735bdc41bd900e"
+      "bytes": 82634,
+      "sha256": "ee49e0263f1b0a3c1d5efd6736dde31c88f06751c2db843cd052bfaae0d896a4"
     },
     {
       "file": "assets/videos/library/proximal-hamstring-ball-release.mp4",
-      "bytes": 929032,
-      "sha256": "2ca12a02950d4a2d14043d4ae039803cd74ae7bc8374c1ab403aff52946cd03a"
+      "bytes": 2545525,
+      "sha256": "b329b4724597ce2f1947ce978fa5a73128ea60ee7961877a78a77eabc7ce2dfb"
     },
     {
       "file": "assets/videos/library/reactive-lateral-box-jump-with-rotation.jpg",
-      "bytes": 57060,
-      "sha256": "09b256bddaff3b7aa2392de1901026864568030836ce545ea9c5f22aff30fae2"
+      "bytes": 74130,
+      "sha256": "2a51ef64b2eef84a3aae1ffc2314333bfead5886462a61e11b16789a8d66bf28"
     },
     {
       "file": "assets/videos/library/reactive-lateral-box-jump-with-rotation.mp4",
-      "bytes": 824087,
-      "sha256": "6ac62e0a46c5879fb9bead572e28ec71cff1d74c929509719ffde190b7e16f4c"
+      "bytes": 2398806,
+      "sha256": "ab18faaaa5c8ce3fb5d1ca106cfa4d23b331f90719f168d30afc83fe784c7984"
     },
     {
       "file": "assets/videos/library/repeated-single-leg-hops.jpg",
-      "bytes": 55486,
-      "sha256": "9cdcefbb5fe22a08c44fd9f1c2c5ba723a1292642b84f6adae79a08a11d5fd90"
+      "bytes": 71945,
+      "sha256": "c90a918e8b5614ae019d3d6dc9d96362db92d876f0be386ba44705975a82eef4"
     },
     {
       "file": "assets/videos/library/repeated-single-leg-hops.mp4",
-      "bytes": 879620,
-      "sha256": "a8556804a6accb84053329375a131045fdb6e59aa80db3b482dc7230f7c9cd38"
+      "bytes": 2489486,
+      "sha256": "eb4f011877b6388b51518bd7f3ee623b9ca2dd2523833df31033b0f7fde779e2"
     },
     {
       "file": "assets/videos/library/resisted-alternating-knee-drive.jpg",
-      "bytes": 56756,
-      "sha256": "a37f3bcbad61d5ea1a86ea214eff8e2b3c1dda923b2e71500070bb580c29f499"
+      "bytes": 73561,
+      "sha256": "bc27b1d95f1008f11cfdb667cca4592e54589920dfdca2fad6af5df80679acd3"
     },
     {
       "file": "assets/videos/library/resisted-alternating-knee-drive.mp4",
-      "bytes": 839696,
-      "sha256": "817dc79cd84163b1e6370984946db795534f87cf27eca6628281e333ffdeae5e"
+      "bytes": 2391156,
+      "sha256": "22fcc41b2831966731c0723b337487f01b85abeccdac834c9d6174d8b383d58f"
     },
     {
       "file": "assets/videos/library/resisted-high-knee-run.jpg",
-      "bytes": 53653,
-      "sha256": "a337c534c1fb30abd9f5025f2aa164e538bc7311b0944509c0199e9bcdb2f576"
+      "bytes": 69392,
+      "sha256": "4e3bd18fd80b6773dc1c2db1e1729819b57e83bbc1acd3a1995e3f6cec3ab369"
     },
     {
       "file": "assets/videos/library/resisted-high-knee-run.mp4",
-      "bytes": 867912,
-      "sha256": "b5444a83f54c98a3e4274a056b81578472359b02621c474b3c4d1bb7df5a33d7"
+      "bytes": 2396905,
+      "sha256": "3deaf6448056c1f1eab266c539c72a57737ab56c5a117d46149a5d980d46613b"
     },
     {
       "file": "assets/videos/library/resisted-running-drill-single-leg.jpg",
-      "bytes": 60917,
-      "sha256": "de6345282a2f55a6d1b0b3700a7f1dfa07dbffe03ce4fecc30e4835a53a10293"
+      "bytes": 80101,
+      "sha256": "a1d4278d52bcc02604dc515fd8964326b5acac46abdbdb61baf095c249e00515"
     },
     {
       "file": "assets/videos/library/resisted-running-drill-single-leg.mp4",
-      "bytes": 847174,
-      "sha256": "f6d0804a3d4728812a7042fa2e586e0651cf16a12a640616acf407d00492d22b"
+      "bytes": 2385476,
+      "sha256": "cd7a9ca13af3098e96011099d1ed09842ced366d9667a5498dd0ac92787f4501"
     },
     {
       "file": "assets/videos/library/resisted-split-stance-drive.jpg",
-      "bytes": 68771,
-      "sha256": "286a3cf9378c5d02ff6095d033a4442c6598ff993b1aae760c07b170402107cb"
+      "bytes": 88709,
+      "sha256": "d7b05e77b13ac84715c4c7c54daca80f72ff0347a36ac003e5b811f0e7f89bf8"
     },
     {
       "file": "assets/videos/library/resisted-split-stance-drive.mp4",
-      "bytes": 839386,
-      "sha256": "fd3023ebd6b809f5ffeb74c4386485437b9d3bb67575009af177ae94bfba4496"
+      "bytes": 2392771,
+      "sha256": "ec457469c7850e18a7a348cefa2d9d3067b2dfdeca3d1c6260ce3bbb0c7dd4ed"
     },
     {
       "file": "assets/videos/library/reverse-nordic-curl.jpg",
-      "bytes": 59623,
-      "sha256": "f8611c99feee94a0e13160d98d1a9cf312d2d7d7eecbb1661d193e96bbe534ae"
+      "bytes": 79992,
+      "sha256": "5cfd4809f58185a9f50a9770996b0c8c7ae11144bbd6978d4ce553be93322a87"
     },
     {
       "file": "assets/videos/library/reverse-nordic-curl.mp4",
-      "bytes": 891569,
-      "sha256": "1b650fa978a45e91dda3ec1bdb4e0f716c1c6ca22288e9ced8bfcb93b1261955"
+      "bytes": 2452396,
+      "sha256": "b8207fcaeaf04c50febb84203b82fbe4291839736b6b79cdf3a00b3a349e382e"
     },
     {
       "file": "assets/videos/library/reverse-tabletop-hip-rotation.jpg",
-      "bytes": 61480,
-      "sha256": "d12c950065a9f720e43a7c2a7461b72e440854fb0b81693f21918a7853d497a8"
+      "bytes": 82635,
+      "sha256": "017f164d8f6912d7330de9cf2a9f513dff6a03ceff1d69d421edbfc58d594d42"
     },
     {
       "file": "assets/videos/library/reverse-tabletop-hip-rotation.mp4",
-      "bytes": 941946,
-      "sha256": "b7597c4cc20414ea5771edcfea3e1a31e52b72fb7385a25d84b15a9a9bbeeffe"
+      "bytes": 2594469,
+      "sha256": "e15af1e4e305ab3b5e4f5b3baf4e3d31d9139811f857eddbf32add01a6f975f9"
     },
     {
       "file": "assets/videos/library/rotational-medicine-ball-throw.jpg",
-      "bytes": 59048,
-      "sha256": "a8b508076f28c04c1158a9f78819d60c29bbeba559f65b5a091e67086e8bc3d5"
+      "bytes": 80306,
+      "sha256": "afe36f75725ad3fbae84398ffdb95fa8f151e13832cb3f08ac8fa81ae746d358"
     },
     {
       "file": "assets/videos/library/rotational-medicine-ball-throw.mp4",
-      "bytes": 836158,
-      "sha256": "701b33297a1b7c648061a983576f52190c1d206aef7ff12ea7510d349d51f3ed"
+      "bytes": 2357237,
+      "sha256": "c9d374ff9cc00c0d97bc61ddfe191a0a333739f5d05575d803234136ab464cf9"
     },
     {
       "file": "assets/videos/library/single-arm-curl-anti-rotation.jpg",
-      "bytes": 59912,
-      "sha256": "f000a058b62798429c35abc38a3aee5219dbfdbb2e19997326ec3a83137f0d3e"
+      "bytes": 81913,
+      "sha256": "7a756faa478accff893f281ec3317728777fef983cac560498b42d82e1b9b67c"
     },
     {
       "file": "assets/videos/library/single-arm-curl-anti-rotation.mp4",
-      "bytes": 895555,
-      "sha256": "b1ed7f91c71d27288d3ee827e4681947658a3af44620dd67977af081b2aabb64"
+      "bytes": 2474022,
+      "sha256": "169bb1afaa2e8e693b9eb302e98d7cc88d823bd63bb3d826b37a09b28cf93ec5"
     },
     {
       "file": "assets/videos/library/single-arm-dumbbell-row.jpg",
-      "bytes": 57373,
-      "sha256": "15d67b97dfdee66bec4f40bd800323b956ad487b3b72df10fc33115e3240335f"
+      "bytes": 76987,
+      "sha256": "dcec036ba2803d1504e9947efacacd0e9dd0a2c86fa97496d929933a71b3c26b"
     },
     {
       "file": "assets/videos/library/single-arm-dumbbell-row.mp4",
-      "bytes": 937241,
-      "sha256": "6eab2fcf5c18f97a713e28879cd0cd8520f2dfe2451bf3b6b29ae2adf2bf5efd"
+      "bytes": 2563515,
+      "sha256": "ab8e5a32fffe06350e391ae2a039131e1cbfd8250f7dec5f70a813ce8711db30"
     },
     {
       "file": "assets/videos/library/single-arm-wall-reaction-catch.jpg",
-      "bytes": 56344,
-      "sha256": "de13d106a10c15070c3888d498dbeb234ab465806e1c2adb763d9d7325b5c23e"
+      "bytes": 74522,
+      "sha256": "9b34bfeea1c02980a44f00c8daf48b4c8f94074085505fb146fa469e15871b38"
     },
     {
       "file": "assets/videos/library/single-arm-wall-reaction-catch.mp4",
-      "bytes": 873635,
-      "sha256": "f0fc4cfd83c352a33cd6fdceb540126bb2f4b895887cc495378f1e78bb8c25a0"
+      "bytes": 2418316,
+      "sha256": "efaa522520fb17f449423c333f1f1e25a0c5e206ea46cb6732b1801a5d8203fd"
     },
     {
       "file": "assets/videos/library/single-leg-band-knee-drive.jpg",
-      "bytes": 54789,
-      "sha256": "334e38a58b434277a250a6c88206ec97c79841a81e792935f5d3d47b66ac4b2d"
+      "bytes": 74276,
+      "sha256": "469a54ad1f9e435911321c6caa42be9a8f3590fc3fe9ce101c740ef24dff1d23"
     },
     {
       "file": "assets/videos/library/single-leg-band-knee-drive.mp4",
-      "bytes": 881521,
-      "sha256": "a3c95debff93f994a157b7efae71fe6c2b6ebd8b91ee9ada64b6566966b9f6ce"
+      "bytes": 2481928,
+      "sha256": "edd19c34eee8f90b98fa8f0fcfc8dc3c7d107b2c85f36f56beca66e59d77136e"
     },
     {
       "file": "assets/videos/library/single-leg-hop-to-stick.jpg",
-      "bytes": 55436,
-      "sha256": "27426822ac2306868c7be4c7ea28fc6084667416aa12fe8c9a76723ad2625e8c"
+      "bytes": 72135,
+      "sha256": "13e1711334f641e9cc9d185184547b5ceb502fd52c7e1fd3533ff5fafe363888"
     },
     {
       "file": "assets/videos/library/single-leg-hop-to-stick.mp4",
-      "bytes": 883027,
-      "sha256": "13bb6d1b8490ef86c33162f4326a2f60b9b7c3837ec87998f7a99c847a6bef68"
+      "bytes": 2480192,
+      "sha256": "164a58472a34c67ddd7720219fb79a277ee356620e89911461a0e739ffb90d41"
     },
     {
       "file": "assets/videos/library/single-leg-lateral-reach-band.jpg",
-      "bytes": 56922,
-      "sha256": "aae12e3d786f1345cf21037b944884f1f25c452bf41fcf385ce4bc81fdd7f3cc"
+      "bytes": 75321,
+      "sha256": "fcbf796f8fc2d2035960a348960d0958da4eb2a5f08c8132c35302c494aeef3c"
     },
     {
       "file": "assets/videos/library/single-leg-lateral-reach-band.mp4",
-      "bytes": 951383,
-      "sha256": "8b384d4e00d471c897ddb836456588604d116ac27c3787f1b368c194a60a723b"
+      "bytes": 2645194,
+      "sha256": "eb72d62147c3af8333eb3105bb6098d1420bf5dde79e2a6df04675b89429d561"
     },
     {
       "file": "assets/videos/library/single-leg-rdl-bodyweight.jpg",
-      "bytes": 62327,
-      "sha256": "8a44d4c1fa0f5e00eac59f8d73f2fdb66f4dd84fd097e9e3b5bc7d00a68f33ce"
+      "bytes": 83501,
+      "sha256": "1401be9a3093b845e97e1f38deb3b10341de34f57d20274ce7fa69d37e54a556"
     },
     {
       "file": "assets/videos/library/single-leg-rdl-bodyweight.mp4",
-      "bytes": 870742,
-      "sha256": "a909cdeece7fda1230eafff00753c61864376242a42f5293cbe0dc51ec10a388"
+      "bytes": 2450948,
+      "sha256": "6418cd87407f1cb300ae48b6f7980c830e9b42adc6a2a95c3b75ce7dc22e8d0a"
     },
     {
       "file": "assets/videos/library/step-up-calf-drive.jpg",
-      "bytes": 60525,
-      "sha256": "863c232265ec2674423a5f9095743359ebdde45f1ce8ddd73118d2f212272df9"
+      "bytes": 80283,
+      "sha256": "25c6a34f4261198038e34650f3535744152f9a694390483ba93eb10ac17d27b8"
     },
     {
       "file": "assets/videos/library/step-up-calf-drive.mp4",
-      "bytes": 965635,
-      "sha256": "9f69c09bfb0b19d6b8bd8a8bf023960cde22cf8a37dcade12e8718c4a476d1b6"
+      "bytes": 2685871,
+      "sha256": "7b09aa734142763436d6e9b0248da0f19bdc7e5fda8b47ec53466bb519dda966"
     },
     {
       "file": "assets/videos/library/trx-reverse-single-leg-squat.jpg",
-      "bytes": 61101,
-      "sha256": "a8b2069c21ec3e0005f0b5da83103f7e5a0370dda930f64b4f816a4acb69ce67"
+      "bytes": 79347,
+      "sha256": "920e781bfb76a4cfae80051ab17cc8416f7a9fa8bbf58a087bca2b08aaa86fe6"
     },
     {
       "file": "assets/videos/library/trx-reverse-single-leg-squat.mp4",
-      "bytes": 871999,
-      "sha256": "ddc3a3031522e7060e86f232f9e388f4550e89090a18a13bcb0d79a9b0f83205"
+      "bytes": 2454354,
+      "sha256": "917fc79c56c10e342be2039bd63c94a215be5e09327a5cc10a78586a902c2628"
     },
     {
       "file": "config/firebase-config.js",
@@ -1177,8 +1177,8 @@
     },
     {
       "file": "platform.html",
-      "bytes": 46491,
-      "sha256": "625a5ff981e515a1140fb052531e7932c5d2d96f2366e956586f80d9e57fd32f"
+      "bytes": 46488,
+      "sha256": "cbee9d3447c591063f54508cbfc5bf2f200b299abf92d32673aeeba0ae61e2e2"
     },
     {
       "file": "auth.html",
@@ -1197,8 +1197,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3399,
-      "sha256": "87890027d8bdf7c0e8afdb2e54a93cade5b3bb5a050e8a44e68b8a0c238789f8"
+      "bytes": 3398,
+      "sha256": "d00c0805db95081eaab996dd1691eb27161006808fa194b5d84d72f14a0acbbb"
     },
     {
       "file": "offline.html",
@@ -1207,43 +1207,43 @@
     },
     {
       "file": "pricing.html",
-      "bytes": 60660,
-      "sha256": "53f62a941e1a3f2e9007eb88dd277fac744b78bf5abe3977a3883957242cd9ec"
+      "bytes": 60658,
+      "sha256": "26b4473b69e73e84cf9a26b04ac6a6886ef355121a131313bafcf66d64782973"
     },
     {
       "file": "checkout.html",
-      "bytes": 27346,
-      "sha256": "8290f0ad08be23986c8792c689d9fcb05b42872763f563038ff25eb8e3d31a03"
+      "bytes": 27344,
+      "sha256": "d3a4cbce60bfbdc96e9e105e218a84eafedadf5a2c66f2aa73fc592120f61325"
     },
     {
       "file": "payment-success.html",
-      "bytes": 18099,
-      "sha256": "887a84eef83c53e997b5e6006a844cfcb520c16b52fb132e915cac6804fa44e6"
+      "bytes": 18097,
+      "sha256": "783adf74daa6c30ae18d0c5e79f61130fd7bed6e2cd659c917cc03d6c95c0eaa"
     },
     {
       "file": "payment-cancel.html",
-      "bytes": 15007,
-      "sha256": "9612f07aa683febb9a00a4f1eee4c67b043869e6c04df4079234d41076d76682"
+      "bytes": 15005,
+      "sha256": "4627c9dccab324658a518f2cdd2a5c49fd36ac9f43db74b25d0eeb84cae5a006"
     },
     {
       "file": "privacy.html",
-      "bytes": 20373,
-      "sha256": "8b6a29444dc35d40efe3b2487c626541002b59c2e1e8c590f0bdce1cb0dcc445"
+      "bytes": 20371,
+      "sha256": "90cb67aed7c27602eef6b8f009e9d7d6288c907dc87adccefeee806211615002"
     },
     {
       "file": "terms.html",
-      "bytes": 14398,
-      "sha256": "6a67791c13abb7ec5443617cfd467a7ec81cc71b613d1d6ae9c1109a630a73fb"
+      "bytes": 14396,
+      "sha256": "60039401317ac4ad334dcb3135aef5fc433bfcbdddb5d0bdffe8c8c64a03528e"
     },
     {
       "file": "impressum.html",
-      "bytes": 11740,
-      "sha256": "e8e57e78d8370d29e8be4ac5fb8706b08406ea854f3dc31a3e3a6f903d3005cc"
+      "bytes": 11738,
+      "sha256": "af7c96b1e8a33cc360dae7e3a3d7453099d6598ff453284b11c23f653391604a"
     },
     {
       "file": "GPS_TRAINING/index.html",
-      "bytes": 12924,
-      "sha256": "c72b402ea7492a31254fd253124b0d6682cd48b2daec6e886569650833b411fc"
+      "bytes": 12915,
+      "sha256": "6a57c62b16b3d9acd8cc8c0c5f8d1d5898f059099e4cdb1355710c64db38b113"
     },
     {
       "file": "GPS_TRAINING/styles.css",
@@ -1337,8 +1337,8 @@
     },
     {
       "file": "index.html",
-      "bytes": 13171,
-      "sha256": "6002593ae65ac074a709448a1f4e46be9a5692283be21c0297d8044a88edc135"
+      "bytes": 13162,
+      "sha256": "0c53d565eca486cbdc25d487b4bf19b0b80a79e5a8a17f2cac29dbab8c5cbbb4"
     },
     {
       "file": "styles.css",

@@ -556,6 +556,7 @@
       return m[lang] || m.en;
     }
     function detectExerciseKind(ex) {
+      ex = window.PACExerciseContent?.executionSource(ex) || ex;
       const name = resolveExerciseName(ex, "en").toLowerCase();
       const tags = Array.isArray(ex?.tags) ? ex.tags.map(t => String(t).toLowerCase()) : [];
       const has = (...arr) => arr.some(x => name.includes(x) || tags.includes(x));
@@ -572,6 +573,7 @@
     }
 
     function detectIsometricExercise(ex) {
+      ex = window.PACExerciseContent?.executionSource(ex) || ex;
       const name = resolveExerciseName(ex, "en").toLowerCase();
       const tags = Array.isArray(ex?.tags) ? ex.tags.map(t => String(t).toLowerCase()) : [];
       const text = `${name} ${String(ex?.description || "").toLowerCase()} ${String(ex?.technique || "").toLowerCase()}`;
@@ -584,6 +586,7 @@
     }
 
     function detectSideExercise(ex) {
+      ex = window.PACExerciseContent?.executionSource(ex) || ex;
       const name = resolveExerciseName(ex, "en").toLowerCase();
       const tags = Array.isArray(ex?.tags) ? ex.tags.map(t => String(t).toLowerCase()) : [];
       const text = `${name} ${String(ex?.description || "").toLowerCase()} ${String(ex?.technique || "").toLowerCase()}`;
@@ -596,6 +599,7 @@
     }
     // Якщо в Firestore не задано sets/reps, підставляємо адекватні дефолти за типом вправи.
     function resolveExercisePrescription(ex, stage, lang = diLang()) {
+      ex = window.PACExerciseContent?.executionSource(ex) || ex;
       const task = window.PACExerciseTask.resolve(ex);
       if (task.mode === "running") {
         return { sets: task.planned.sets ?? "—", reps: task.planned.workSec ?? "—", repsUnit: "sec", timedSeconds: task.planned.workSec ?? 0 };
@@ -709,6 +713,7 @@
     }
 
     function resolveExerciseTimerConfig(ex, exPrescription, stage) {
+      ex = window.PACExerciseContent?.executionSource(ex) || ex;
       const task = window.PACExerciseTask.resolve(ex);
       if (task.mode === "running") {
         const p = task.planned;
@@ -2578,6 +2583,7 @@
     }
 
     function eliteDirectVideoUrl(ex = {}) {
+      if (ex.demoUnavailable === true) return "";
       const raw = ex.videoUrl || ex.videoSrc || ex.demoVideoUrl || (/\.(mp4|webm)(\?|$)/i.test(ex.videoKey || "") ? ex.videoKey : "");
       if (!raw) return "";
       try {
@@ -2594,8 +2600,8 @@
       const directUrl = eliteDirectVideoUrl(getEliteMeta()?.exercise);
       const externalClock=getEliteMeta()?.task?.mode==='running';
       const drillUrl = isDrillVideoKey(videoId) ? `${drillPlayerUrl(String(videoId).trim().slice(6), externalClock?false:shouldAutoplay)}${silentDemo ? "&silent=1" : ""}${externalClock?'&clock=daily':''}` : "";
-      const cleanId = normalizeYouTubeId(videoId);
-      const key = drillUrl || directUrl || cleanId || "none";
+      const cleanId = getEliteMeta()?.exercise?.demoUnavailable === true ? "" : normalizeYouTubeId(videoId);
+      const key = drillUrl || directUrl || cleanId || (getEliteMeta()?.exercise?.demoUnavailable ? `none:${getEliteMeta().exercise.videoKey || getEliteMeta().exercise.name}` : "none");
       if (ELITE_MEDIA.key === key && host.childElementCount) {
         if (shouldAutoplay) {
           host.querySelector("video")?.play().catch(() => {if(host.querySelector('video')?.dataset.demoLoop==='true')eliteShowVideoCover(true);});
@@ -2613,7 +2619,15 @@
       eliteShowVideoCover(false); eliteShowVideoEndLogo(false);
       if (ELITE_YT_PLAYER) { try { ELITE_YT_PLAYER.destroy?.(); } catch {} ELITE_YT_PLAYER = null; ELITE_YT_VIDEO_ID = ""; }
       host.replaceChildren();
-      if (key === "none") {
+      if (key === "none" || key.startsWith('none:')) {
+        if(getEliteMeta()?.exercise?.demoUnavailable){
+          const panel=document.createElement('div');
+          panel.style.cssText='height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:clamp(16px,4vw,36px);overflow:auto;background:linear-gradient(135deg,#19170f,#080808);color:#eee;line-height:1.5';
+          const title=document.createElement('strong');title.textContent=eliteUi('Техніка виконання','Exercise technique');title.style.color='#d4af37';
+          const text=document.createElement('p');text.textContent=exerciseTechnique(getEliteMeta().exercise,getEliteMeta().stage);text.style.margin='0';
+          const note=document.createElement('small');note.textContent=eliteUi('Відеодемонстрація ще не додана.','Video demonstration has not been added yet.');note.style.color='#aaa';
+          panel.append(title,text,note);host.append(panel);eliteMediaStatus();return;
+        }
         eliteMediaStatus(eliteUi("Демонстрація поки недоступна. Завдання й керування доступні нижче.", "Demo unavailable. The task and controls are available below."));
         return;
       }
@@ -3929,6 +3943,8 @@ try { await saveDailyProgress(); } catch (_) {}
 
     function renderExercises(exercises, container) {
         if (!container) return;
+        // Refresh built-in content for saved plans without changing their identity or prescription.
+        exercises = exercises.map(ex => window.PACExerciseContent?.resolve(ex) || ex);
         window.PACExerciseTask.ensureItems(exercises);
         stopAllExerciseCoachTimers(true);
         if (ELITE_EXEC.open) closeEliteExecutionMode();
@@ -3955,7 +3971,7 @@ try { await saveDailyProgress(); } catch (_) {}
                             const speedTarget = speedTargetFromExercise(ex);
                             if (runningTarget && !ex.runningTarget) ex.runningTarget = runningTarget;
                             if (speedTarget && !ex.speedTarget) ex.speedTarget = speedTarget;
-                            const cleanId = ex.videoKey ? ex.videoKey.toString().trim() : "";
+                            const cleanId = ex.demoUnavailable ? "" : ex.videoKey ? ex.videoKey.toString().trim() : "";
                             const isDrillCanvas = isDrillExercise(ex);
                             const drillCanvasId = drillIdFromExercise(ex);
                             const exId = `v-${stageKey}-${index}`;

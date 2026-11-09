@@ -274,6 +274,7 @@ function pickLocalizedValue(map, lang) {
 }
 
 function resolveExerciseName(ex, lang = weeklyLang()) {
+  ex = window.PACExerciseContent?.resolve(ex) || ex;
   const raw = fixMojibake(ex?.name || "").trim();
   const mapped = fixMojibake(pickLocalizedValue(ex?.name_i18n, lang));
   if (mapped) {
@@ -297,6 +298,7 @@ function resolveExerciseName(ex, lang = weeklyLang()) {
 }
 
 function resolveExerciseDescription(ex, lang = weeklyLang()) {
+  ex = window.PACExerciseContent?.resolve(ex) || ex;
   const mapped = fixMojibake(pickLocalizedValue(ex?.description_i18n, lang));
   if (mapped) {
     if (!((lang !== "uk" && lang !== "ru") && hasCyrillic(mapped))) return mapped;
@@ -3386,6 +3388,12 @@ function compactWeeklyExercise(ex) {
     "videoSrc",
     "demoVideoUrl",
     "demoAutoplay",
+    "demoUnavailable",
+    "mediaStatus",
+    "videoPoster",
+    "contentVersion",
+    "movementPattern",
+    "impact",
     "drillId",
     "type",
     "coachGuided",
@@ -3428,6 +3436,13 @@ function compactWeeklyExercise(ex) {
 
   const description = clampWeeklyText(ex.description, PAC_WEEKLY_PLAN_MAX_LONG_TEXT);
   if (description) out.description = description;
+  const technique = clampWeeklyText(ex.technique, PAC_WEEKLY_PLAN_MAX_LONG_TEXT);
+  if (technique) out.technique = technique;
+  const techniqueI18n = compactWeeklyI18nMap(ex.technique_i18n, PAC_WEEKLY_PLAN_MAX_LONG_TEXT);
+  if (techniqueI18n) out.technique_i18n = techniqueI18n;
+  ["primaryMuscles", "secondaryMuscles", "equipment"].forEach(key=>{
+    const values=compactWeeklyStringArray(ex[key]);if(values)out[key]=values;
+  });
   const recommendation = clampWeeklyText(ex.recommendation, PAC_WEEKLY_PLAN_MAX_LONG_TEXT);
   if (recommendation) out.recommendation = recommendation;
 
@@ -3521,6 +3536,10 @@ function makeWeeklyPlanFirestoreSafe(planData) {
       (variant?.exercises || []).forEach((ex) => {
         delete ex.description_i18n;
         delete ex.recommendation_i18n;
+        // Built-in explanatory text can be restored from its stable catalog identity.
+        if(ex.contentVersion && window.PACExerciseContent?.lookup(ex)){
+          delete ex.technique_i18n;delete ex.technique;
+        }
         if (ex.description) ex.description = clampWeeklyText(ex.description, 320);
         if (ex.recommendation) ex.recommendation = clampWeeklyText(ex.recommendation, 240);
       });
@@ -4025,6 +4044,7 @@ function modalZoneLabel(zoneKey) {
 }
 
 function formatExerciseZonesCompact(ex) {
+  ex = window.PACExerciseContent?.resolve(ex) || ex;
   const primary = Array.isArray(ex?.primaryZones) ? ex.primaryZones.filter(Boolean) : [];
   const secondary = Array.isArray(ex?.secondaryZones) ? ex.secondaryZones.filter(Boolean) : [];
   if (!primary.length && !secondary.length) return "";
@@ -4144,6 +4164,10 @@ const exTemplate = LIB?.[stage]?.[category]?.exercises?.find(e => e.name === nam
   const plan = data[key][variantIndex];
   plan.exercises = Array.isArray(plan.exercises) ? plan.exercises : [];
   const i18n = buildExerciseI18nMapFromRaw(exTemplate.name, exTemplate.description);
+  if(exTemplate.contentVersion){
+    i18n.name_i18n={...i18n.name_i18n,...exTemplate.name_i18n};
+    i18n.description_i18n={...i18n.description_i18n,...exTemplate.description_i18n};
+  }
   plan.exercises.push({
   ...exTemplate,
   planItemId: window.PACExerciseTask.newItemId(),
@@ -5582,6 +5606,7 @@ function normalizeZoneList(raw) {
 }
 
 function getExerciseZones(ex) {
+  ex = window.PACExerciseContent?.resolve(ex) || ex;
   const primary = normalizeZoneList(ex?.primaryZones);
   const secondaryRaw = normalizeZoneList(ex?.secondaryZones);
   const secondary = secondaryRaw.filter((z) => !primary.includes(z));

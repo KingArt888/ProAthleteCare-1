@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Бібліотека вправ · ProAthleteCare</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#090909;color:#eee;font:16px/1.5 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:20px}h1{color:#d4af37;font-size:clamp(23px,4vw,32px)}a{color:#d4af37}header p{color:#bbb}.filters{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}label{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px}input,select,button{font:inherit;color:inherit;background:#171717;border:1px solid #63521e;border-radius:10px;padding:12px}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e4c64b;outline-offset:3px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:18px}article{border:1px solid #343020;border-radius:14px;overflow:hidden;background:#111;display:flex;flex-direction:column}article>button{border:0;border-radius:0;padding:0;aspect-ratio:1.48;background:#16150f;width:100%;display:grid;place-items:center}article img{width:100%;height:100%;object-fit:contain}article .copy{padding:16px}h2{font-size:18px;margin:0 0 8px}p{margin:8px 0}.muscles{font-size:14px;color:#d4af37}.status{font-size:13px;color:#aaa}.technique{font-size:14px;color:#ccc}dialog{padding:0;border:1px solid #8b741e;border-radius:16px;background:#101010;color:#eee;width:min(960px,96vw);max-height:94dvh;overflow:auto}dialog::backdrop{background:#000b;backdrop-filter:blur(7px)}.modal-head{display:flex;gap:16px;justify-content:space-between;align-items:center;padding:14px}.modal-head h2{margin:0}.modal-head button{flex-shrink:0}video{width:100%;max-height:60dvh;display:block;object-fit:contain;background:#000;pointer-events:none}video::-webkit-media-controls{display:none!important}#demo-copy{padding:16px}#play{background:#d4af37;color:#050505;font-weight:bold}#empty{padding:24px;color:#aaa}
+  </style>
+</head>
+<body><main>
+  <header><a href="daily-individual.html">← Daily</a><h1>Бібліотека вправ</h1><p>Переглянь демонстрацію та техніку. Перегляд не починає тренування й не змінює твій план.</p></header>
+  <div class="filters"><label for="search">Знайти вправу або м’яз<input id="search" type="search" placeholder="Наприклад: присід або сідничний"></label><label for="media">Демонстрація<select id="media"><option value="all">Усі вправи</option><option value="local">З локальним відео</option><option value="missing">Ще без відео</option></select></label></div>
+  <p id="count" role="status"></p><section class="grid" id="library" aria-label="Вправи"></section><p id="empty" hidden>Вправ не знайдено.</p>
+</main>
+<dialog id="demo" aria-labelledby="demo-title"><div class="modal-head"><h2 id="demo-title"></h2><button id="close" type="button" aria-label="Закрити демонстрацію">✕</button></div><div id="demo-media"></div><div id="demo-copy"><p id="demo-muscles" class="muscles"></p><p id="demo-technique"></p><button type="button" id="play" hidden>Пауза</button></div></dialog>
+<script src="../js/exercise_library.js?v=daily-phone-library-v1"></script>
+<script src="../js/exercise-library-content.js?v=daily-phone-library-v1"></script>
+<script src="../js/exercise-library-preview.js?v=daily-phone-library-v1"></script>
+</body></html>

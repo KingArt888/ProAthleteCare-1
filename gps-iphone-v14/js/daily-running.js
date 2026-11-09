@@ -84,6 +84,8 @@
     const newTraining=doc.getElementById('btnNewTraining'),oldHidden=newTraining?.hidden;if(newTraining)newTraining.hidden=true;
     const back=doc.createElement('button');back.type='button';back.textContent='← Daily · Підсумок';back.style.cssText='position:fixed;right:12px;top:12px;z-index:2147483647;padding:12px;border-radius:10px;border:1px solid #a98c24;background:#d4af37;color:#080808;font-weight:bold';doc.body.append(back);
     back.onclick=()=>{back.remove();if(newTraining)newTraining.hidden=oldHidden;frame.style.cssText=previous;frame.setAttribute('aria-hidden','true');background.forEach(el=>el.inert=false);if(wasOpen)dialog.showModal();};back.focus();
+    const target=doc.getElementById(api.getSession({includeRoute:false}).fieldSelection?'fieldReplayPanel':'gpsRoutePanel');
+    if(target){target.style.scrollMarginTop='76px';frame.contentWindow.requestAnimationFrame(()=>target.scrollIntoView({block:'start'}));}
   }
   async function fresh(task=sourceTask){root.PACExerciseTask.toGPS(task);await completion;if(saveError)throw Error(saveError);sourceTask=copy(task);api.restartTask(copy(sourceTask));completion=null;localSaved=false;saveError=null;publish();}
   function result(){const session=api?.getSession({includeRoute:false});if(!session?.endTime)return null;return root.PACGPSAdapter.prepare(session,{task:session.dailyTask});}

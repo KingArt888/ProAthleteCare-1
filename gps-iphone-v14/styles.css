@@ -1332,3 +1332,9 @@ body.field-screen-open{overflow:hidden}
 .field-stage-controls{height:158px;box-sizing:border-box;padding:8px 12px;overflow:auto;background:#080b08ed}.field-stage-controls #fieldMarkerStatus{max-height:34px;overflow:auto}
 .field-focused #fieldStage .field-svg{top:50px;bottom:168px;height:calc(100% - 218px)}
 @media(orientation:landscape){#fieldStage.is-expanded .field-svg{top:45px;bottom:110px;height:calc(100% - 155px)}#fieldStage.is-expanded .field-stage-controls{height:105px}}
+/* Outdoor results use the same vendored Leaflet/provider as field calibration. */
+#outdoorRouteMap { height:clamp(280px,58dvh,580px);width:100%;border-radius:14px;background:#dce4dd;color:#111;isolation:isolate; }
+#outdoorRouteMap[hidden] { display:none; }
+.outdoor-map-controls { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
+#outdoorRouteMap .leaflet-control-attribution { font-size:11px;background:rgba(255,255,255,.9);color:#222; }
+#outdoorRouteMap .leaflet-control-attribution a { color:#075b9b; }

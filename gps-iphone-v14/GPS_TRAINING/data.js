@@ -1493,6 +1493,7 @@
 
         el.completeFlag.hidden = true;
         el.acquiring.hidden = true;
+        el.notice.hidden = true; // An ended recording is no longer trying to reacquire GPS.
         hideModal();
         showScreen("summary");
         renderSummary();
@@ -1610,6 +1611,7 @@
     function renderRoute() {
         const panel = document.getElementById("gpsRoutePanel");
         if (panel) panel.hidden = false;
+        const geographic = window.PACRouteMap?.show(session) || false;
         const route = session.route;
 
         if (route.length < 2) {
@@ -1678,7 +1680,7 @@
         el.routeEnd.setAttribute("cy", coords[coords.length - 1].y);
 
         const segments = route.filter(function (p) { return p.newSegment; }).length + 1;
-        el.routeMap.hidden = false;
+        el.routeMap.hidden = geographic;
         el.routeNote.textContent = segments > 1
             ? route.length + " points · " + segments + " segments (GPS gap filtered)"
             : route.length + " recorded points";

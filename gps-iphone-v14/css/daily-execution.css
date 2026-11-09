@@ -52,6 +52,7 @@
   #di-elite-overlay .di-elite-body{height:100%;min-height:0;padding:12px;overflow:hidden}
 }
 @media(max-height:480px) and (orientation:landscape){
+ #di-elite-overlay.is-running-drill .di-elite-body{gap:2px;padding:4px}
   #di-elite-overlay .di-elite-top{padding:4px 8px}
   #di-elite-overlay .di-elite-title{font-size:1rem}
   #di-elite-overlay .di-elite-body{padding:6px;gap:4px}
@@ -120,3 +121,13 @@
 #di-elite-overlay video[data-demo-loop="true"]{pointer-events:none}
 #di-elite-overlay video[data-demo-loop="true"]::-webkit-media-controls,
 #di-elite-overlay video[data-demo-loop="true"]::-webkit-media-controls-enclosure{display:none!important}
+#di-elite-overlay #di-running-location[hidden]{display:none}
+#di-elite-overlay #di-running-brief{position:relative}
+#di-elite-overlay #di-running-location{position:absolute;right:7px;top:5px;margin:0;gap:4px}
+#di-elite-overlay #di-running-location button{flex:none;min-height:26px;padding:3px 8px;font-size:.7rem}
+#di-elite-overlay .di-running-goal-label{padding-right:135px}
+@media(max-height:480px) and (orientation:landscape){
+ #di-elite-overlay #di-running-brief{padding:8px}
+ #di-elite-overlay #di-running-brief strong{font-size:1.1rem;line-height:1.15}
+ #di-elite-overlay #di-running-brief>span{font-size:.65rem;line-height:1.15}
+}

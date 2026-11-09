@@ -164,7 +164,7 @@
     records.forEach(r=>{try{G.validateCalibration(r.calibration);$('homeFieldSaved').add(new Option(r.name+' · '+r.calibration.sport,r.id))}catch(_){}});$('homeFieldSaved').value=id;
   }
   function syncHome(){const run=document.querySelector('[data-activity="run"]').getAttribute('aria-pressed')==='true';$('homeFieldSetup').hidden=!run;$('homeFieldOptions').hidden=$('homeRunLocation').value!=='field';}
-  $('homeRunLocation').value=localStorage.getItem('pac-gps-run-location-v1')==='field'?'field':'route';fillHomeFields();syncHome();
+  $('homeRunLocation').value=localStorage.getItem('pac-gps-run-location-v1')==='field'?'field':'route';fillHomeFields(localStorage.getItem('pac-gps-preferred-field-v1')||'');syncHome();
   $('homeRunLocation').onchange=()=>{localStorage.setItem('pac-gps-run-location-v1',$('homeRunLocation').value);$('homeFieldMessage').textContent='';syncHome()};
   $('homeFieldSaved').onchange=()=>{localStorage.setItem('pac-gps-preferred-field-v1',$('homeFieldSaved').value);$('homeFieldMessage').textContent='Field selected for your next Running session.'};
   new MutationObserver(syncHome).observe($('activityGrid'),{subtree:true,attributes:true,attributeFilter:['aria-pressed']});

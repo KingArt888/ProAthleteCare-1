@@ -61,7 +61,7 @@
         task: clone(task), status: 'in-progress', phase: 'ready', createdAt: now(),
         index: 1, side: 0, sideTotal: options.sideTotal || 1, targets: mode === 'test3' ? [8,5,3] : Array(sets).fill(task.planned.reps ?? options.reps ?? null),
         timed, plannedWorkSec: task.planned.workSec ?? options.workSec ?? null,
-        prescriptionSource: task.planned.sets != null && (task.planned.reps != null || task.planned.workSec != null) ? 'plan' : 'legacy-derived',
+        prescriptionSource: task.planned.prescriptionSource || (task.planned.sets != null && (task.planned.reps != null || task.planned.workSec != null) ? 'plan' : 'legacy-derived'),
         rows: [], pending: { loadKg: null, reps: null },
         activeMs: 0, activeSince: null, startedAt: null, recovered: false, sync: { status: 'local-only' } };
       run.task.sessionId = sessionId; run.task.executionId = executionId;

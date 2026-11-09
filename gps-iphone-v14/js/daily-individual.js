@@ -104,8 +104,8 @@
         personal: "ПЕРСОНАЛЬНО",
         restDay: "ДЕНЬ ВІДПОЧИНКУ",
         done: "Done",
-        sets: "SETS",
-        reps: "REPS",
+        sets: "ПІДХОДИ",
+        reps: "ПОВТ.",
         secShort: "СЕК",
         timerStart: "ВИКОНУВАТИ",
         timerStop: "СТОП",
@@ -606,7 +606,7 @@
       }
       if (ex?.prescription && typeof ex.prescription === "object" && !isDrillExercise(ex)) {
         const p = ex.prescription;
-        return { sets: p.sets ?? ex.sets ?? "—", reps: p.timedSeconds ?? p.reps ?? "—",
+        if (Number(p.sets ?? ex.sets)>0 && Number(p.timedSeconds ?? p.reps)>0) return { sets: p.sets ?? ex.sets, reps: p.timedSeconds ?? p.reps,
           repsUnit: p.repsUnit || (p.timedSeconds ? "sec" : "reps"), timedSeconds: Number(p.timedSeconds || (p.repsUnit === "sec" ? p.reps : 0)) || 0 };
       }
       const num = (v) => {
@@ -673,9 +673,10 @@
         .find(p => p.sets || p.reps || p.seconds) || { sets: "", reps: "", seconds: "" };
 
       const isIsometric = detectIsometricExercise(ex);
-      let sets = num(ex?.sets) || num(ex?.setsCount) || num(ex?.prescriptionSets) || fromPattern.sets || fromDescription.sets;
-      let reps = num(ex?.reps) || num(ex?.repsCount) || num(ex?.prescriptionReps) || fromPattern.reps || fromDescription.reps;
-      let timedSeconds = num(ex?.holdSec) || num(ex?.workSec) || num(ex?.durationSec) || fromPattern.seconds || fromDescription.seconds;
+      const partial = ex?.prescription && typeof ex.prescription === 'object' ? ex.prescription : {};
+      let sets = num(partial.sets) || num(ex?.sets) || num(ex?.setsCount) || num(ex?.prescriptionSets) || fromPattern.sets || fromDescription.sets;
+      let reps = num(partial.repsUnit !== 'sec' ? partial.reps : null) || num(ex?.reps) || num(ex?.repsCount) || num(ex?.prescriptionReps) || fromPattern.reps || fromDescription.reps;
+      let timedSeconds = num(partial.timedSeconds) || num(partial.repsUnit === 'sec' ? partial.reps : null) || num(ex?.holdSec) || num(ex?.workSec) || num(ex?.durationSec) || fromPattern.seconds || fromDescription.seconds;
 
       if (isIsometric && !timedSeconds) timedSeconds = "30";
 
@@ -2125,6 +2126,7 @@
       const locationChoice=document.createElement('div');locationChoice.id='di-running-location';locationChoice.className='di-running-chips';locationChoice.hidden=true;locationChoice.setAttribute('role','group');locationChoice.setAttribute('aria-label',eliteUi('Де бігаємо','Running location'));
       locationChoice.innerHTML=`<button type="button" data-location="field">${eliteUi('Поле','Field')}</button><button type="button" data-location="route">Outdoor</button>`;body.append(locationChoice);
       const current = section("current");
+      const prescriptionSummary=document.createElement('div');prescriptionSummary.id='di-elite-prescription-summary';current.append(prescriptionSummary);
       current.append(body.querySelector(".di-elite-progress"), kpis[0]);
       const controls = section("controls");
       for (const selector of [".di-elite-adjust", "#di-elite-main-btn", "#di-elite-pause-btn", ".di-elite-main-sub", ".di-elite-nav"]) controls.append(body.querySelector(selector));
@@ -3026,11 +3028,16 @@
         }
         if (rangeEl) rangeEl.textContent = s.type;
       } else {
-        setEliteKeyLabels();
+        setEliteKeyLabels({target:eliteIsTimed(meta)?eliteUi('ЧАС ПІДХОДУ','SET DURATION'):eliteUi('ПОВТОРЕННЯ','REPETITIONS')});
         if (targetEl) targetEl.textContent = targetText;
         if (restAfterEl) restAfterEl.textContent = `${eliteResolveRestSec(meta)}${ti("timerSecShort")}`;
         if (lastEl) lastEl.textContent = (lastLoad != null && lastReps != null) ? `${lastLoad} kg × ${lastReps}` : "—";
       }
+      const prescriptionSummary=document.getElementById('di-elite-prescription-summary');
+      prescriptionSummary.hidden=isTargetDrill;
+      if(!isTargetDrill)prescriptionSummary.textContent=eliteHasStrengthRun(meta)&&ELITE_STRENGTH.run.mode==='test3'
+        ? `${eliteUi('Тест','Test')}: ${ELITE_STRENGTH.run.targets.join(' → ')} ${ti('reps').toLowerCase()}`
+        : `${ELITE_EXEC.totalSets} ${ti('sets').toLowerCase()} × ${targetTextCompact}`;
       if (lastDateEl) {
         const d = toNumSafe(perf?.updatedAt);
         if (!isTargetDrill) lastDateEl.textContent = d ? `${new Date(d).toLocaleDateString()}${perf.lastMode ? ` · ${perf.lastMode === "test3" ? eliteUi("Тест", "Test") : eliteUi("Тренування", "Workout")}` : ""}` : "";
@@ -4022,6 +4029,19 @@ try { await saveDailyProgress(); } catch (_) {}
                             const exTimer = resolveExerciseTimerConfig(ex, exPrescription, stage);
                             const task = window.PACExerciseTask.resolve(ex, { userId: CURRENT_UID, weekId: CURRENT_WEEK_ID,
                               dayIdx: CURRENT_DAY_IDX, variantKey: CURRENT_VARIANT_KEY, variantIndex: CURRENT_VARIANT_INDEX });
+                            // Legacy library entries already display derived doses. Carry that same
+                            // prescription into details and the journal, with explicit provenance.
+                            if(task.mode==='gym'){
+                              let derived=false;
+                              const fill=(key,value)=>{const n=Number(value);if(task.planned[key]==null&&Number.isFinite(n)&&n>0){task.planned[key]=n;derived=true;}};
+                              fill('sets',exPrescription.sets);
+                              if(exPrescription.repsUnit==='sec')fill('workSec',exPrescription.timedSeconds||exPrescription.reps);
+                              else fill('reps',exPrescription.reps);
+                              if(task.planned.restSec==null&&Number.isFinite(Number(exTimer?.restSec))){task.planned.restSec=Number(exTimer.restSec);derived=true;}
+                              if(derived)task.planned.prescriptionSource='legacy-derived';
+                              task.missing=task.missing.filter(key=>!(key==='sets'&&task.planned.sets>0||key==='reps'&&(task.planned.reps>0||task.planned.workSec>0)||key==='restSec'&&task.planned.restSec!=null));
+                              task.ready=task.missing.length===0;
+                            }
                             exerciseFlowOrder.push({ exId, exKey, timer: exTimer });
                             exerciseMetaById[exId] = {
                               exId,
@@ -4049,7 +4069,7 @@ try { await saveDailyProgress(); } catch (_) {}
                                     
                                     <div style="flex:1;">
                                         <h4 style="color:#fff; margin:0 0 4px 0; font-size:1rem; font-weight:800;">${safeExName}</h4>
-                                        <p style="color:#d4af37; margin:0 8px 0 0; font-size:0.7rem; font-weight:700; text-transform:uppercase;">${escapeHtml(exPrescription.sets)} ${escapeHtml(ti("sets"))} × ${escapeHtml(exPrescription.reps)} ${escapeHtml(repUnitLabel)}</p>
+                                        <p style="color:#d4af37; margin:0 8px 0 0; font-size:0.7rem; font-weight:700; text-transform:uppercase;">${escapeHtml(exPrescription.sets)} ${escapeHtml(ti("sets"))} × ${escapeHtml(exPrescription.reps)} ${escapeHtml(repUnitLabel)}${exPrescription.repsUnit!=='sec'&&detectSideExercise(ex)?` / ${escapeHtml(ti('elitePerSide'))}`:''}</p>
                                         ${exDescription ? `<p style="color:#c8c8c8; font-size:0.73rem; margin:8px 0 0 0; line-height:1.35; border-left:2px solid #3f3f3f; padding-left:8px;"><b style="color:#d4af37;">${safeDescriptionLabel}:</b> ${safeExDescription}</p>` : ""}
                                         ${exTechnique ? `<p style="color:#cfcfcf; font-size:0.74rem; margin:8px 0 0 0; line-height:1.35; border-left:2px solid #4a4a4a; padding-left:8px;"><b style="color:#d4af37;">${safeTechniqueLabel}:</b> ${safeExTechnique}</p>` : ""}
                                         ${exRecommendation ? `<p style="color:#d7d7d7; font-size:0.72rem; margin:8px 0 0 0; line-height:1.35; border-left:2px solid #5a5a5a; padding-left:8px;"><b style="color:#d4af37;">${safeRecommendationLabel}:</b> ${safeExRecommendation}</p>` : ""}

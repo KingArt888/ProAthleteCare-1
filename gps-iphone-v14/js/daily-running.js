@@ -76,14 +76,16 @@
     const restore=()=>{if(restored)return;restored=true;frame.style.cssText=previous;frame.setAttribute('aria-hidden','true');background.forEach(el=>el.inert=false);if(wasOpen)info.showModal();publish();};
     try{api.editField(edit,restore);frame.focus();}catch(error){restore();throw error;}
   }
-  function replay(){
+  function replay(onNewTest){
     if(!api||api.getState()!=='finished')throw Error('FINISHED_RUN_REQUIRED');
     const dialog=document.getElementById('di-running-result'),wasOpen=dialog?.open,previous=frame.style.cssText,doc=frame.contentDocument;
     if(wasOpen)dialog.close();const background=[...document.body.children].filter(el=>el!==frame&&!el.inert);background.forEach(el=>el.inert=true);
     frame.removeAttribute('aria-hidden');frame.style.cssText='position:fixed;inset:0;width:100%;height:100dvh;border:0;z-index:2147483647;background:#060606';
     const newTraining=doc.getElementById('btnNewTraining'),oldHidden=newTraining?.hidden;if(newTraining)newTraining.hidden=true;
-    const back=doc.createElement('button');back.type='button';back.textContent='← Daily · Підсумок';back.style.cssText='position:fixed;right:12px;top:12px;z-index:2147483647;padding:12px;border-radius:10px;border:1px solid #a98c24;background:#d4af37;color:#080808;font-weight:bold';doc.body.append(back);
-    back.onclick=()=>{back.remove();if(newTraining)newTraining.hidden=oldHidden;frame.style.cssText=previous;frame.setAttribute('aria-hidden','true');background.forEach(el=>el.inert=false);if(wasOpen)dialog.showModal();};back.focus();
+    const back=doc.createElement('button');back.id='di-gps-replay-back';back.type='button';back.textContent='← Daily · Підсумок';back.style.cssText='position:fixed;right:12px;top:12px;z-index:2147483647;padding:12px;border-radius:10px;border:1px solid #a98c24;background:#d4af37;color:#080808;font-weight:bold';doc.body.append(back);
+    let next=null,restored=false;const restore=(reopen=true)=>{if(restored)return;restored=true;back.remove();next?.remove();if(newTraining)newTraining.hidden=oldHidden;frame.style.cssText=previous;frame.setAttribute('aria-hidden','true');background.forEach(el=>el.inert=false);if(reopen&&wasOpen)dialog.showModal();};
+    back.onclick=()=>restore();back.focus();
+    if(typeof onNewTest==='function'){next=doc.createElement('button');next.id='di-gps-replay-new';next.type='button';next.textContent='＋ Новий тест';next.style.cssText=back.style.cssText;next.style.right='auto';next.style.left='12px';next.onclick=()=>{restore(false);onNewTest();};doc.body.append(next);}
     const target=doc.getElementById(api.getSession({includeRoute:false}).fieldSelection?'fieldReplayPanel':'gpsRoutePanel');
     if(target){target.style.scrollMarginTop='76px';frame.contentWindow.requestAnimationFrame(()=>target.scrollIntoView({block:'start'}));}
   }

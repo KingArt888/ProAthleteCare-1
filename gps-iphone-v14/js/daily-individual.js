@@ -1716,9 +1716,18 @@
           }else{ELITE_RUNNING.error="";window.PACDailyRunning.start();}
         }else if(live.state==='paused'){window.PACDailyRunning.resume();}
         else if(live.state==='running'){await window.PACDailyRunning.finish();}
-        else if(live.state==='finished'){if(live.saveError)await window.PACDailyRunning.finish();else document.getElementById('di-running-result').showModal();}
+        else if(live.state==='finished'){if(live.saveError)await window.PACDailyRunning.finish();else await eliteNewRunningAttempt();}
       }catch(error){if(!ELITE_EXEC.open||getEliteMeta()!==context)return;if(error.message==='FIELD_REQUIRED'){ELITE_RUNNING.error=eliteUi("Обери або відкалібруй поле у деталях.","Choose or calibrate a field in Details.");eliteRunningPanel('setup');document.getElementById('di-elite-info').showModal();}else ELITE_RUNNING.error=eliteUi("Результат ще не збережено. Не закривай сторінку й повтори дію.","Result not saved yet. Keep the page open and retry.");}
       renderEliteExecutionOverlay();
+    }
+
+    async function eliteNewRunningAttempt(openSetup=false){
+      const meta=getEliteMeta();if(!meta||ELITE_RUNNING.connecting)return;
+      if(!meta.task.ready){document.getElementById('di-running-result').close();if(canEditRunningPlan())eliteOpenRunningPrescription();return;}
+      ELITE_RUNNING.connecting=true;ELITE_RUNNING.gpsCheck=null;ELITE_RUNNING.gpsFailed=false;ELITE_RUNNING.error='';renderEliteExecutionOverlay();
+      try{await window.PACDailyRunning.fresh(meta.task);if(getEliteMeta()!==meta||!ELITE_EXEC.open)return;document.getElementById('di-running-result').close();document.getElementById('di-elite-info').close();if(openSetup){eliteRunningPanel('setup');document.getElementById('di-elite-info').showModal();}}
+      catch{ELITE_RUNNING.error=eliteUi('Попередній запис ще не збережений. Повтори збереження перед новим тестом.','The previous recording has not saved yet. Retry saving before a new test.');}
+      finally{ELITE_RUNNING.connecting=false;if(getEliteMeta()===meta&&ELITE_EXEC.open)renderEliteExecutionOverlay();}
     }
 
     function eliteRenderRunning(meta) {
@@ -1735,8 +1744,9 @@
       button.disabled=!!ELITE_RUNNING.connecting||!!ELITE_RUNNING.checkingGPS;
       button.textContent=ELITE_RUNNING.connecting?eliteUi('ПІДКЛЮЧЕННЯ…','CONNECTING…'):live.state==='ready'?eliteUi('ПОЧАТИ ТРЕНУВАННЯ','START WORKOUT'):live.state==='paused'?eliteUi('ПРОДОВЖИТИ','RESUME'):live.state==='finished'?eliteUi('ПІДСУМОК','SUMMARY'):eliteUi('ЗАВЕРШИТИ','FINISH');
       if(live.saveError)button.textContent=eliteUi("ПОВТОРИТИ ЗБЕРЕЖЕННЯ","RETRY SAVE");
-      pause.style.display=['running','paused'].includes(live.state)?'block':'none';
-      pause.textContent=live.state==='paused'?eliteUi("ПРОДОВЖИТИ","RESUME"):ti('elitePause');
+      if(live.state==='finished'&&!live.saveError)button.textContent=eliteUi('НОВИЙ ТЕСТ','NEW TEST');
+      pause.style.display=['running','paused','finished'].includes(live.state)?'block':'none';
+      pause.textContent=live.state==='finished'?eliteUi('РЕЗУЛЬТАТ','RESULT'):live.state==='paused'?eliteUi("ПРОДОВЖИТИ","RESUME"):ti('elitePause');
       document.getElementById('di-elite-target').textContent=live.state==='ready'?formatDurationClock(meta.task.planned.workSec):formatDurationClock(live.remainingSec);
       document.getElementById('di-elite-set-k').textContent=eliteUi('СЕРІЯ','SERIES');
       document.getElementById('di-elite-target-k').textContent=live.phase==='rest'?eliteUi("ПАУЗА","REST"):live.phase==='prep'?eliteUi("ПІДГОТОВКА","PREPARE"):eliteUi("РОБОТА","WORK");
@@ -1747,6 +1757,7 @@
       const gps=live.timerOnly?eliteUi("Без GPS","Timer only"):live.gpsStatus==='denied'?eliteUi("GPS: немає дозволу","GPS: denied"):
         live.gpsReady||live.gpsStatus==='active'?eliteUi("GPS готовий","GPS ready"):eliteUi("GPS ще не підключено","GPS not connected");
       sub.textContent=ELITE_RUNNING.error||gps;
+      if(live.state==='finished'&&!ELITE_RUNNING.error)sub.textContent=eliteUi('Завершений запис. Для нового запуску натисни «Новий тест».','Finished recording. Choose New test to start another attempt.');
       document.getElementById('di-running-timer').hidden=!(live.state==='ready'&&!!ELITE_RUNNING.gpsFailed);
 
       if(live.state==='finished'){
@@ -1768,10 +1779,11 @@
       document.getElementById('di-running-fields').hidden=setup.mode!=='field';
       document.getElementById('di-running-edit-field').disabled=!setup.fieldId||live?.state!=='ready'||!!ELITE_RUNNING.connecting;
       const locked=['running','paused'].includes(live?.state),locationNote=document.getElementById('di-running-location-note');
-      if(locationNote){locationNote.hidden=!locked;locationNote.textContent=eliteUi('Місце зафіксовано для цього запису. Щоб змінити його, заверши запис і почни новий.','Location is fixed for this recording. Finish it and start a new attempt to change location.');}
+      if(locationNote){locationNote.hidden=!locked&&live?.state!=='finished';locationNote.textContent=live?.state==='finished'?eliteUi('Це завершений запис. Натисни «Новий тест», щоб знову вибрати місце й калібрувати поле.','This recording is finished. Choose New test to select a location and calibrate a field again.'):eliteUi('Місце зафіксовано для цього запису. Щоб змінити його, заверши запис і почни новий.','Location is fixed for this recording. Finish it and start a new attempt to change location.');}
+      const newSetup=document.getElementById('di-running-new-setup');if(newSetup){newSetup.hidden=live?.state!=='finished';newSetup.disabled=!!ELITE_RUNNING.connecting||!live?.localSaved;}
       const finishRecord=document.getElementById('di-running-finish-record');if(finishRecord){finishRecord.hidden=!locked;finishRecord.disabled=!!ELITE_RUNNING.connecting;}
-      document.querySelectorAll('#di-running-setup [data-location],#di-running-location [data-location]').forEach(el=>{el.setAttribute('aria-pressed',String(el.dataset.location===setup.mode));el.disabled=live?.state!=='ready'||!!ELITE_RUNNING.connecting||!!ELITE_RUNNING.checkingGPS;});
-      document.querySelectorAll('#di-running-setup button,#di-running-setup select').forEach(el=>{if(el.id!=='di-running-edit-field'&&!el.closest('#di-running-coach'))el.disabled=live?.state!=='ready'||!!ELITE_RUNNING.connecting||!!ELITE_RUNNING.checkingGPS;});
+      document.querySelectorAll('#di-running-setup [data-location],#di-running-location [data-location]').forEach(el=>{el.setAttribute('aria-pressed',String(el.dataset.location===setup.mode));el.disabled=live?.state!=='ready'||!!ELITE_RUNNING.connecting;});
+      document.querySelectorAll('#di-running-setup button,#di-running-setup select').forEach(el=>{if(!['di-running-edit-field','di-running-new-setup','di-running-finish-record'].includes(el.id)&&!el.closest('#di-running-coach'))el.disabled=live?.state!=='ready'||!!ELITE_RUNNING.connecting||(el.id==='di-running-check-gps'&&!!ELITE_RUNNING.checkingGPS);});
     }
 
     function eliteRunningPanel(panel){
@@ -2185,12 +2197,13 @@
       const routeTiming=document.createElement('button');routeTiming.id='di-running-use-route-time';routeTiming.type='button';routeTiming.className='di-running-time-suggestion';routeTiming.textContent=eliteUi('Взяти час руху зі схеми як орієнтир','Use diagram movement as a timing suggestion');routeTiming.onclick=()=>{const p=getEliteMeta()?.task.planned,rows=getEliteMeta()?.motionEstimates||window.PACExerciseTask.motionEstimates(getEliteMeta()?.exercise||{}),row=rows.find(r=>r.playerId===coachForm.elements.playerId.value),seconds=row?.workSec!=null?row.workSec/(row.repetitions||1):p?.routeIntervalSec;if(!seconds)return;coachForm.elements.workSec.value=Math.ceil(seconds);coachForm.elements.restSec.value='';document.getElementById('di-running-coach-status').textContent=eliteUi('Перевір повтори та відпочинок і збережи план. Це орієнтир зі схеми, а не виміряний час бігу.','Review repetitions and rest, then save. This is a diagram estimate, not measured running time.');};coachForm.querySelector('.di-running-coach-grid').before(routeTiming);
       const recovery=document.createElement('details');recovery.className='di-running-recovery';recovery.innerHTML=`<summary>${eliteUi('Орієнтири відпочинку','Recovery guide')}</summary><p>${eliteUi('HIIT: орієнтир 1:1 або довше. Короткі прискорення: 1–2 хв. Максимальна швидкість: 3–5 хв. Обери за метою й готовністю атлета.','HIIT: approximately 1:1 or longer. Short accelerations: 1–2 min. Maximum speed: 3–5 min. Choose for the goal and athlete readiness.')}</p><button type="button" data-rest-factor="1">1:1</button> <button type="button" data-rest-factor="2">1:2</button><p><a href="https://www.acsm.org/docs/default-source/files-for-resource-library/high-intensity-interval-training.pdf" target="_blank" rel="noopener">ACSM</a> · <a href="https://dxpprod.nsca.com/globalassets/education/nsca-coach/nsca-coach-5.4.pdf" target="_blank" rel="noopener">NSCA</a></p>`;recovery.querySelectorAll('[data-rest-factor]').forEach(button=>button.onclick=()=>{const work=Number(coachForm.elements.workSec.value);if(work>0)coachForm.elements.restSec.value=Math.round(work*Number(button.dataset.restFactor));});coachForm.querySelector('button[type=submit]').before(recovery);
       coachForm.addEventListener('submit',eliteSaveCoachRunning);assignment.append(coachForm);const roleField=coachForm.elements.playerId.closest('label');coachForm.querySelector('.di-running-coach-grid').prepend(roleField);coachForm.elements.playerId.onchange=()=>{const row=(getEliteMeta()?.motionEstimates||window.PACExerciseTask.motionEstimates(getEliteMeta()?.exercise||{})).find(row=>row.playerId===coachForm.elements.playerId.value);coachForm.elements.distanceM.value=row?.distanceM!=null?row.distanceM/(row.repetitions||1):'';};
-      const replayButton=document.createElement('button');replayButton.type='button';replayButton.id='di-running-replay';replayButton.className='di-elite-secondary-btn';replayButton.textContent=eliteUi('Переглянути GPS-маршрут','View GPS route');replayButton.onclick=()=>window.PACDailyRunning.replay();result.append(replayButton);
+      const replayButton=document.createElement('button');replayButton.type='button';replayButton.id='di-running-replay';replayButton.className='di-elite-secondary-btn';replayButton.textContent=eliteUi('Переглянути GPS-маршрут','View GPS route');replayButton.onclick=()=>window.PACDailyRunning.replay(()=>eliteNewRunningAttempt());result.append(replayButton);
       const newRun=document.createElement('button');newRun.id='di-running-new';newRun.type='button';newRun.className='di-elite-secondary-btn';newRun.textContent=eliteUi("Новий запуск цього завдання","New attempt of this task");result.append(newRun);
-      newRun.addEventListener('click',async()=>{try{const meta=getEliteMeta();if(!meta.task.ready){document.getElementById('di-running-result').close();if(canEditRunningPlan()){eliteOpenRunningPrescription();}return;}ELITE_RUNNING.gpsFailed=false;await window.PACDailyRunning.fresh(meta.task);ELITE_RUNNING.error='';document.getElementById('di-running-result').close();}catch{ELITE_RUNNING.error=eliteUi("Попередній результат ще не збережено.","Previous result not saved yet.");}renderEliteExecutionOverlay();});
+      newRun.textContent=eliteUi('НОВИЙ ТЕСТ','NEW TEST');newRun.className='di-elite-main-btn';result.insertBefore(newRun,replayButton);newRun.addEventListener('click',()=>eliteNewRunningAttempt());
 
       controls.append(document.getElementById('di-running-timer'));
       const setupAction=fn=>{try{fn();ELITE_RUNNING.error='';}catch(error){ELITE_RUNNING.error=eliteUi('Не вдалося змінити налаштування. Заверши поточний запуск або перевір збереження поля.','Unable to change setup. Finish the current attempt or check field storage.');}renderEliteExecutionOverlay();};
+      const newSetup=document.createElement('button');newSetup.id='di-running-new-setup';newSetup.type='button';newSetup.className='di-elite-main-btn';newSetup.textContent=eliteUi('Новий тест · налаштувати поле','New test · field setup');newSetup.hidden=true;newSetup.onclick=()=>eliteNewRunningAttempt(true);runningSetup.prepend(newSetup);
       const locationNote=document.createElement('p');locationNote.id='di-running-location-note';locationNote.hidden=true;locationNote.setAttribute('role','status');runningSetup.append(locationNote);
       const finishRecord=document.createElement('button');finishRecord.type='button';finishRecord.id='di-running-finish-record';finishRecord.className='di-elite-secondary-btn';finishRecord.hidden=true;finishRecord.textContent=eliteUi('Завершити поточний запис','Finish current recording');finishRecord.onclick=async()=>{try{await window.PACDailyRunning.finish();info.close();}catch{ELITE_RUNNING.error=eliteUi('Не вдалося зберегти запис. Повтори завершення.','Could not save the recording. Retry finishing.');renderEliteExecutionOverlay();}};runningSetup.append(finishRecord);
       document.getElementById('di-running-timer').onclick=()=>setupAction(()=>{window.PACDailyRunning.timerOnly();window.PACDailyRunning.start();document.getElementById('di-elite-info').close();});
@@ -2524,7 +2537,7 @@
       if (pauseBtn) {
         pauseBtn.addEventListener("click", () => {
           if(getEliteMeta()?.task?.mode==='running'){
-            if(ELITE_RUNNING.live?.state==='paused')window.PACDailyRunning.resume();else window.PACDailyRunning.pause();
+            if(ELITE_RUNNING.live?.state==='finished')document.getElementById('di-running-result').showModal();else if(ELITE_RUNNING.live?.state==='paused')window.PACDailyRunning.resume();else window.PACDailyRunning.pause();
           }else eliteTogglePause();
         });
       }

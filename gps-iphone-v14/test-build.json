@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261109-library-v1",
-  "builtAt": "2026-11-09T09:08:42.545Z",
+  "builtAt": "2026-11-09T09:13:02.057Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -237,8 +237,8 @@
     },
     {
       "file": "js/exercise-library-content.js",
-      "bytes": 57879,
-      "sha256": "48750d3ce04ad24ea4aea15f58b7a84f288cd7a7f8bc136d1196170125a0c1df"
+      "bytes": 58136,
+      "sha256": "cc86219df36a075d697775b9fef4e56fd7f6f79bc5588c441680e35097976e07"
     },
     {
       "file": "js/exercise-library-preview.js",

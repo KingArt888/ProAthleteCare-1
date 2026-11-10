@@ -433,8 +433,8 @@ document.addEventListener("athletecore:ready", (e) => {
         const line=document.createElement('p');line.textContent=`${date}: Daily + legacy — ${pacLoadLang()==='uk'?'уточни, чи це одне тренування; до уточнення не враховуються':'confirm whether these are the same session; excluded until resolved'}`;
         if(!isDelegatedView)for(const [choice,label] of [['same',uk?'Це одне тренування':'Same session'],['separate',uk?'Це різні тренування':'Separate sessions']]){const button=document.createElement('button');button.textContent=label;button.onclick=async()=>{button.disabled=true;try{await journalClient().resolveLegacy(date,choice);await syncLoadFromFirebase(currentUserId);}catch(e){button.disabled=false;alert(e.message);}};line.append(button);}host.append(line);
       }
-      for(const entry of journalDocuments.slice().sort((a,b)=>b.data.date.localeCompare(a.data.date)).slice(0,60)){
-        const detail=document.createElement('details'),summary=document.createElement('summary');summary.textContent=`${entry.data.date} · ${entry.data.sessionId||'legacy'}`;detail.append(summary);
+      for(const entry of journalDocuments.filter(e=>e.data.status!=='deleted'&&!e.data.supersededBy).sort((a,b)=>b.data.date.localeCompare(a.data.date)).slice(0,60)){
+        const detail=document.createElement('details'),summary=document.createElement('summary');summary.textContent=`${entry.data.date} · ${entry.data.sessionId?.startsWith('daily-')?'Daily / GPS':uk?'Окреме заняття':'Separate session'}`;detail.append(summary);
         for(const row of Object.values(entry.data.executionIndex||{})){const p=document.createElement('p');p.textContent=`${row.name}: ${row.recordedCount}/${row.plannedCount??'—'} · reps ${row.repsPct??'—'}% · time ${row.timePct??'—'}% · distance ${row.distancePct??'—'}%`;detail.append(p);}
         if(entry.data.schemaVersion===2){const button=document.createElement('button');button.textContent=uk?'Фактичні підходи / серії':'Actual sets / intervals';button.onclick=async()=>{button.disabled=true;try{for(const execution of await journalClient().executions(entry.data.sessionId,currentUserId)){renderExecutionActual(detail,execution);
           if(execution.payload.route){const link=document.createElement('button');link.textContent='GPS route JSON';link.onclick=async()=>{try{const url=await firebase.storage().ref(execution.payload.route.path).getDownloadURL();window.open(url,'_blank','noopener');}catch(e){alert(e.message);}};detail.append(link);}
@@ -773,8 +773,9 @@ window.pacDeleteMyLoadSeasonData = async function pacDeleteMyLoadSeasonData() {
     }
 
     // очистка локально + перерендер
-    dailyLoadData = [];
-    renderCharts(0, 0);
+    await syncLoadFromFirebase(currentUserId);
+    window.dispatchEvent(new CustomEvent('pac:journal-synced'));
+    if(typeof window.refreshAthleteCore==='function')await window.refreshAthleteCore();
     
 
     alert(ti("deleteOk"));
@@ -905,6 +906,7 @@ window.pacDeleteMyLoadSeasonData = async function pacDeleteMyLoadSeasonData() {
 
     async function handleFormSubmit(e) {
         e.preventDefault();
+        if(e.target.dataset.saving==='true')return;
         if (isDelegatedView) return;
         const user = window.auth.currentUser;
         if (!user) return alert(ti("authErr"));
@@ -921,6 +923,10 @@ window.pacDeleteMyLoadSeasonData = async function pacDeleteMyLoadSeasonData() {
             rpe: parseInt(rpeInput.value),
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
+        const submitButton=form.querySelector('[type="submit"]'),submitLabel=submitButton?.textContent;
+        let saveStatus=document.getElementById('load-save-status');if(!saveStatus){saveStatus=document.createElement('p');saveStatus.id='load-save-status';form.append(saveStatus);}
+        saveStatus.setAttribute('role','status');saveStatus.textContent=pacLoadLang()==='uk'?'Зберігаємо…':'Saving…';
+        form.dataset.saving='true';if(submitButton){submitButton.disabled=true;submitButton.textContent=pacLoadLang()==='uk'?'ЗБЕРІГАЄМО…':'SAVING…';}
 
         try {
             const R=window.PACSessionRepository,selected=form.elements.sessionTarget?.value||'new';
@@ -948,8 +954,11 @@ window.pacDeleteMyLoadSeasonData = async function pacDeleteMyLoadSeasonData() {
             document.getElementById('load-date').value = localLoadDate();
             if(form.elements.sessionTarget)form.elements.sessionTarget.dataset.userChoice='';
             renderSessionJournal(window.PACSessionJournal.project(journalDocuments));
+            saveStatus.textContent=pacLoadLang()==='uk'?'Збережено. Навантаження оновлено.':'Saved. Load updated.';
         } catch (err) {
-            alert(ti("saveErr"));
+            saveStatus.setAttribute('role','alert');saveStatus.textContent=pacLoadLang()==='uk'?'Не вдалося зберегти. Введені дані залишилися у формі — спробуй ще раз.':'Could not save. Your entries remain in the form; try again.';
+        } finally {
+            delete form.dataset.saving;if(submitButton){submitButton.disabled=false;submitButton.textContent=submitLabel;}
         }
     }
     

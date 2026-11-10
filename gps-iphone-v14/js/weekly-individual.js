@@ -1370,7 +1370,8 @@ Object.assign(WEEKLY_I18N.pt, {
 
 
 function applyWeeklyActivityOptionLabels() {
-  document.querySelectorAll(".activity-type-select").forEach((sel) => {
+  document.querySelectorAll(".activity-type-select").forEach((sel,idx) => {
+    sel.setAttribute('aria-label',`${wt('colActivity')}: ${getWeeklyDayShortNames()[idx]}`);
     const train = sel.querySelector('option[value="TRAIN"]');
     const match = sel.querySelector('option[value="MATCH"]');
     const rest = sel.querySelector('option[value="REST"]');
@@ -2838,6 +2839,10 @@ async function loadFromFirebase(uid) {
 
     // 2) якщо нема дока — fallback на published template (лише вправи, без автопідбору мікроциклу)
     if (!doc || !doc.exists) {
+      // A missing document must not reuse the previous athlete/week's editor cache.
+      __PAC_WEEK_PLAN_CACHE__ = null;
+      localStorage.setItem(STORAGE_KEY, '{}');
+      document.querySelectorAll('.activity-type-select').forEach(sel=>{sel.value='TRAIN';});
       const planData = await getPublishedWeekPlanData(currentWeekId, null, uid, true);
       document.getElementById('weekly-plan-form').hidden=false;
       if (hasMeaningfulPlanData(planData)) {
@@ -2948,10 +2953,9 @@ async function loadFromFirebase(uid) {
 function normalizeMicrocycleDays(rawMicro) {
   const raw = (rawMicro && typeof rawMicro === "object" && !Array.isArray(rawMicro)) ? rawMicro : {};
   const out = {};
+  const legacyIndexing=!Object.prototype.hasOwnProperty.call(raw,'day0')&&Object.prototype.hasOwnProperty.call(raw,'day7');
   for (let idx = 0; idx < 7; idx += 1) {
-    const modern = raw[`day${idx}`];
-    const legacy = raw[`day${idx + 1}`]; // backward-compat: old docs used day1..day7
-    const val = String(modern || legacy || "").toUpperCase().trim();
+    const val = String(raw[`day${idx+(legacyIndexing?1:0)}`] || 'TRAIN').toUpperCase().trim();
     if (!val) continue;
     out[`day${idx}`] = val;
   }
@@ -2989,7 +2993,10 @@ async function syncMicrocycleToFirebase() {
   const meta = calcMicrocycleMetaFromUI();
   const templatePlanData = await getPublishedWeekPlanData(currentWeekId, String(meta.mode || "").toLowerCase(), currentUserId);
   let nextPlanData = {};
-  if (hasMeaningfulPlanData(templatePlanData)) {
+  const existingPlanData=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+  if(hasMeaningfulPlanData(existingPlanData)){
+    nextPlanData=makeWeeklyPlanFirestoreSafe(existingPlanData).planData;
+  }else if (hasMeaningfulPlanData(templatePlanData)) {
     nextPlanData = templatePlanData;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(window.PACExerciseTask.ensurePlan(templatePlanData)));
   } else {
@@ -3095,6 +3102,7 @@ __PAC_WEEK_PLAN_CACHE__ = {
   state: nextState,
   customNotifiedAt: prev.customNotifiedAt || null
 };
+    return true;
 
   } catch (e) {
     console.error("Помилка збереження microcycle:", e);
@@ -3106,6 +3114,7 @@ __PAC_WEEK_PLAN_CACHE__ = {
     if (String(e?.code || "").includes("permission-denied")) {
       alert(wt("microcycleSaveDenied"));
     }
+    return false;
   }
 }
 // =====================================================
@@ -3757,14 +3766,15 @@ async function safePlanUpdatedNotificationQuietCommit() {
 
 // ✅ SAVE: 800ms debounce
 const schedulePlanSave = pacDebounce(async () => {
-  await safePlanWriteOnly();
+  try{weeklySaveStatus('saving');await safePlanWriteOnly();weeklySaveStatus('saved');}
+  catch(error){weeklySaveStatus('error',()=>schedulePlanSave());return;}
   // кожен save перезапускає “таймер завершення правок”
   schedulePlanNotify();
 }, 800);
 
 // ✅ NOTIFY: quiet commit через 10s без змін
 const schedulePlanNotify = pacDebounce(async () => {
-  await safePlanUpdatedNotificationQuietCommit();
+  try{await safePlanUpdatedNotificationQuietCommit();}catch(error){console.warn('Plan saved; notification pending:',error?.message);}
 }, 10000);
 let __PAC_FORCE_LAST_MS__ = 0;
 
@@ -3962,8 +3972,7 @@ const existed = Boolean(getPlanVariant(data, finalStatus, occ));
 
   let html = `
     <div style="font-size:11px; opacity:.7; margin-bottom:6px;">
-      ${wt("statusLabel")}: <b>${statusDisplayName(finalStatus)}</b> • ${wt("keyLabel")}: <b>status_plan_${usedKey}</b>
-      ${existed ? "" : ` • <span style='opacity:.7'>(${wt("createdEmpty")})</span>`}
+      ${wt("statusLabel")}: <b>${statusDisplayName(finalStatus)}</b>
       
     </div>
     <div class="generated-exercises-list">
@@ -3980,9 +3989,9 @@ const existed = Boolean(getPlanVariant(data, finalStatus, occ));
       stageExs.forEach((ex, i) => {
         html += `
           <div class="exercise-row" style="display:flex; gap:8px; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #222;">
-            <div style="font-size:.9rem;">${escapeHtml(resolveExerciseName(ex))}</div>
+            <div style="font-size:.9rem;">${escapeHtml(resolveExerciseName(ex))}${weeklyExerciseDose(ex)}</div>
             ${(window.canCoachEdit || window.isAdmin) ? `
-              <button class="gold-button btn-small" type="button"
+              <button class="gold-button btn-small" type="button" aria-label="${escapeHtml((weeklyLang()==='uk'?'Видалити вправу: ':'Remove exercise: ')+resolveExerciseName(ex))}"
                 onclick="removeExerciseFromStatus(${dayIndex}, '${finalStatus}', '${stage}', ${i})">
                 ✖
               </button>
@@ -4006,6 +4015,14 @@ const existed = Boolean(getPlanVariant(data, finalStatus, occ));
 
   html += `</div>${renderWeeklyNutritionForDay(dayIndex, finalStatus)}`;
   container.innerHTML = html;
+}
+
+function weeklyExerciseDose(ex){
+  const task=window.PACExerciseTask.resolve(ex),p=task.planned,uk=weeklyLang()==='uk',parts=[];
+  if(p.sets>0&&(p.reps>0||p.workSec>0))parts.push(`${p.sets} × ${p.reps>0?`${p.reps} ${uk?'повт.':'reps'}`:`${p.workIsEstimate?'≈ ':''}${p.workSec} ${uk?'с':'s'}`}`);
+  if(p.loadKg!=null)parts.push(p.loadKg===0?(uk?'Вага тіла':'Bodyweight'):`${p.loadKg} ${uk?'кг':'kg'}`);
+  if(p.restSec!=null)parts.push(`${uk?'Відпочинок':'Rest'} ${p.restSec} ${uk?'с':'s'}`);
+  return parts.length?`<div style="font-size:.75rem;color:#bfae77;margin-top:4px">${escapeHtml(parts.join(' · '))}</div>`:'';
 }
 
 function rerenderDayByIndex(dayIndex) {
@@ -4233,6 +4250,18 @@ function closeExerciseModal() {
 }
 
 
+function weeklySaveStatus(state,retry){
+  let host=document.getElementById('weekly-save-status');
+  if(!host){host=document.createElement('p');host.id='weekly-save-status';host.className='note-info';document.getElementById('weekly-plan-form')?.before(host);}
+  host.setAttribute('role',state==='error'?'alert':'status');host.replaceChildren();
+  const uk=weeklyLang()==='uk';host.textContent=state==='saving'?(uk?'Зберігаємо…':'Saving…'):state==='saved'?(uk?'Збережено':'Saved'):(uk?'Зміни ще не збережено. Перевір з’єднання та повтори.':'Changes are not saved yet. Check your connection and retry.');
+  if(retry){const button=document.createElement('button');button.type='button';button.textContent=uk?'Повторити збереження':'Retry saving';button.className='gold-button';button.onclick=()=>{button.disabled=true;retry();};host.append(' ',button);}
+}
+async function weeklySaveMicrocycle(){
+  weeklySaveStatus('saving');
+  try{if(await syncMicrocycleToFirebase()!==true)throw Error('MICROCYCLE_SAVE_FAILED');weeklySaveStatus('saved');scheduleFinalizeMicrocycle({delayMs:20000});}
+  catch(error){weeklySaveStatus('error',weeklySaveMicrocycle);}
+}
 function initWeeklyIndividualUI() {
   __PAC_ACTIVITY_SELECTS__ = document.querySelectorAll('.activity-type-select');
   applyWeeklyStaticTranslations();
@@ -4246,8 +4275,7 @@ function initWeeklyIndividualUI() {
 
     sel.addEventListener('change', async () => {
   updateCycleColors();
-  await syncMicrocycleToFirebase();   // зберегти одразу UI/state
-  scheduleFinalizeMicrocycle({ delayMs: 20000 }); // 1 фінальна нотифікація після паузи
+  await weeklySaveMicrocycle();
 });
   });
 }

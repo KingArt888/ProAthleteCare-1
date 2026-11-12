@@ -21,6 +21,7 @@
   let currentSportType = "";
   let currentSportProfile = "TEAM_MD";
   let latestPlanDateId = "";
+  let savingWeight = false;
 
   function canWriteWeightData({ notify = true } = {}) {
     if (!isDelegatedReadOnly) return true;
@@ -476,6 +477,14 @@
   const locale = () => ({ uk: "uk-UA", en: "en-US", de: "de-DE", es: "es-ES", ru: "ru-RU", pt: "pt-PT" }[lang()] || "en-US");
   const fix = (s) => { const raw = String(s || ""); if (!/[ÐÑÃâ]/.test(raw)) return raw; try { return decodeURIComponent(escape(raw)); } catch { return raw; } };
   const dietI18n = () => (window.PACDietI18n && typeof window.PACDietI18n === "object" ? window.PACDietI18n : null);
+  const recipeText = () => ({
+    uk:['Рецепт і склад','хв','г','Орієнтовні значення; залежать від продуктів. Маса круп, м’яса та риби — після приготування, вівсянки — суха. Враховуй алергії. Калорійність має відповідати цілі та навантаженню, а не бути мінімальною.'],
+    en:['Recipe and ingredients','min','g','Approximate values; products vary. Weigh grains, meat and fish cooked, oats dry. Consider allergies. Energy intake should match your goal and training, rather than be as low as possible.'],
+    de:['Rezept und Zutaten','Min.','g','Nährwerte sind Schätzungen und produktabhängig. Getreide, Fleisch und Fisch gegart, Haferflocken trocken wiegen. Allergien beachten. Die Energiezufuhr sollte zu Ziel und Training passen, nicht möglichst niedrig sein.'],
+    es:['Receta e ingredientes','min','g','Valores aproximados según el producto. Pesa cereales, carne y pescado cocidos, avena seca. Ten en cuenta las alergias. La energía debe ajustarse a tu objetivo y entrenamiento, no ser la mínima posible.'],
+    ru:['Рецепт и состав','мин','г','Значения примерные и зависят от продуктов. Крупы, мясо и рыбу взвешивай готовыми, овсянку — сухой. Учитывай аллергии. Калорийность должна соответствовать цели и нагрузке, а не быть минимальной.'],
+    pt:['Receita e ingredientes','min','g','Valores aproximados, variam por produto. Pese cereais, carne e peixe cozidos, aveia seca. Considere alergias. A energia deve corresponder ao objetivo e treino, em vez de ser a menor possível.']
+  }[lang()] || ['Recipe and ingredients','min','g','Approximate nutrition.']);
   const mealName = (meal) => {
     const api = dietI18n();
     if (api && typeof api.pickName === "function") return fix(api.pickName(meal, lang()));
@@ -527,7 +536,7 @@
     const grams = Number(meal?.portionGrams || 0);
     if (!unit || !value) return "";
     if (unit === "pcs" && grams > 0) return `${Math.round(value)} pcs (~${Math.round(grams)} g)`;
-    return `${roundUnitValue(value, unit)} ${unit}`;
+    return `${roundUnitValue(value, unit)} ${unit === 'g' ? recipeText()[2] : unit}`;
   }
   function mealLabelWithPortion(meal) {
     const base = mealName(meal);
@@ -660,11 +669,11 @@
     const base = normAnalysis(baseAnalysis);
     if (!base) return null;
 
-    const mode = effectiveGoalMode(base.modeCode);
-    const out = { ...base, modeCode: mode };
+    const mode = effectiveGoalMode(base.baseModeCode || base.modeCode);
+    const out = { ...base, baseModeCode:base.baseModeCode || base.modeCode, baseTargetKcal:Number(base.baseTargetKcal || base.targetKcal), modeCode: mode };
 
     const kcalMul = mode === "mg" ? 1.1 : mode === "wl" ? 0.88 : 1.0;
-    out.targetKcal = Math.max(1200, Math.round(Number(base.targetKcal || 0) * kcalMul));
+    out.targetKcal = Math.max(1200, Math.round(out.baseTargetKcal * kcalMul));
 
     let ratios = { p: 0.30, f: 0.25, c: 0.45 };
     if (mode === "wl") ratios = { p: 0.35, f: 0.30, c: 0.35 };
@@ -753,6 +762,8 @@
   window.calculateAge = (raw) => { const a = age(raw); return a == null ? "--" : a; };
 
   function applyI18n() {
+    const disclaimer=document.querySelector('[data-pac-disclaimer="weight"]');
+    if(disclaimer)disclaimer.textContent=({uk:'Орієнтовні розрахунки та приклади харчування для фітнесу. Це не вимірювання складу тіла та не індивідуальне призначення дієтолога.',en:'Estimated calculations and example fitness meals. This is not a body composition measurement or an individual dietitian prescription.',de:'Geschätzte Berechnungen und Mahlzeitenbeispiele für Fitness. Keine Messung der Körperzusammensetzung und keine individuelle Ernährungsverordnung.',es:'Cálculos estimados y ejemplos de comidas para fitness. No es una medición de composición corporal ni una dieta individual prescrita.',ru:'Ориентировочные расчёты и примеры питания для фитнеса. Это не измерение состава тела и не индивидуальное назначение диетолога.',pt:'Cálculos estimados e exemplos de refeições para fitness. Não é uma medição da composição corporal nem uma prescrição alimentar individual.'})[lang()];
     document.title = t("title");
     setText("weight-tagline", t("tagline"));
     setText("weight-main-title", t("pageTitle"));
@@ -1031,6 +1042,7 @@
       .trim();
   }
   function mealScaleFactor(meal, slot) {
+    if (meal?.recipeId) return Math.max(0.1, Number(meal.recipeScale) || 1);
     const parsed = parsePortionFromName(mealNameEn(meal), slot);
     const base = Math.max(1, Number(parsed.gramsApprox || 0));
     const planned = Math.max(1, Number(meal?.portionGrams || base));
@@ -1065,6 +1077,11 @@
       DAY_SLOTS.forEach((slot) => {
         const meals = Array.isArray(plan?.[slot]) ? plan[slot] : [];
         meals.forEach((m) => {
+          if (m.recipeId && Array.isArray(m.ingredients)) {
+            const scale = mealScaleFactor(m, slot);
+            m.ingredients.forEach(i => addParsed(i.names?.[lang()] || i.names?.en || i.key, 'g', Number(i.grams) * scale));
+            return;
+          }
           const enName = mealNameEn(m) || mealName(m);
           const parts = splitMealParts(enName);
           const scale = mealScaleFactor(m, slot);
@@ -1090,7 +1107,7 @@
             }
           });
 
-          if (!matched) addUnknown(enName);
+          if (!matched) addUnknown(mealName(m));
         });
       });
     });
@@ -1144,14 +1161,17 @@
       return;
     }
 
+    const escapeText=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const parsedHtml = rows.parsed.map((r) => {
       let qtyText = "";
       if (r.unit === "kg") qtyText = `${Math.round(Number(r.qty || 0) * 1000)} g`;
       else if (r.unit === "l") qtyText = `${Math.round(Number(r.qty || 0) * 1000)} ml`;
       else if (r.unit === "pcs") qtyText = `${Math.round(Number(r.qty || 0))} ${t("shoppingPcs")}`;
+      else if (r.unit === "g") qtyText = `${Math.round(Number(r.qty || 0))} ${recipeText()[2]}`;
+      else if (r.unit === "ml") qtyText = `${Math.round(Number(r.qty || 0))} ml`;
       else qtyText = `${Number(r.qty || 0).toFixed(1)} ${t("shoppingPortions")}`;
       return `<div style="display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px solid #1b1b1b;">
-        <span style="color:#ddd; font-size:12px;">${r.name}</span>
+        <span style="color:#ddd; font-size:12px;">${escapeText(r.name)}</span>
         <strong style="color:#FFC72C; font-size:12px;">~ ${qtyText}</strong>
       </div>`;
     }).join("");
@@ -1160,7 +1180,7 @@
       ? `<div style="margin-top:10px; padding-top:10px; border-top:1px dashed #2a2a2a;">
           <div style="font-size:11px; color:#FFC72C; margin-bottom:6px;">${t("shoppingUnknown")}</div>
           ${rows.unknown.map((r) => `<div style="display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid #171717;">
-            <span style="color:#888; font-size:11px;">${r.name}</span>
+            <span style="color:#888; font-size:11px;">${escapeText(r.name)}</span>
             <strong style="color:#888; font-size:11px;">${r.qty} ${t("shoppingPortions")}</strong>
           </div>`).join("")}
         </div>`
@@ -1408,12 +1428,13 @@
 
   async function onAnalyze(e) {
     if (e) e.preventDefault();
+    if (savingWeight || !currentUserId) return;
     if (!canWriteWeightData()) return;
     const w = Number(document.getElementById("weight-value")?.value || 0);
     const h = Number(document.getElementById("user-height")?.value || 0);
     const b = String(document.getElementById("user-birthdate")?.value || "").trim();
     const a = age(b);
-    if (!w || !h || a == null) {
+    if (!Number.isFinite(w) || w <= 0 || !Number.isFinite(h) || h <= 0 || a == null) {
       alert(`${t("fillAlert")} ${t("birthHint")}`);
       return;
     }
@@ -1423,7 +1444,7 @@
     const bmr = (10 * w) + (6.25 * h) - (5 * a) + 5;
     const kcal = Math.round(bmr * 1.55 * mode.mod);
 
-    window.currentAnalysis = {
+    const analysis = {
       modeCode: mode.code,
       statusColor: mode.color,
       weight: w,
@@ -1436,6 +1457,13 @@
       c: Math.round((kcal * mode.c) / 4)
     };
 
+    savingWeight = true;
+    const submit=document.getElementById('weight-btn-save-analyze');if(submit)submit.disabled=true;
+    const owner=currentUserId;
+    try {
+    if (!await saveHistory(w, bmi, analysis)) return;
+    if (owner !== currentUserId || firebase.auth().currentUser?.uid !== owner) return;
+    window.currentAnalysis = analysis;
     setScanMarker(currentUserId, todayId());
     weeklyPlan = {};
     activeDayId = null;
@@ -1445,9 +1473,10 @@
     renderWeekDayBar();
     renderShoppingList();
 
-    await saveHistory(w, bmi, window.currentAnalysis);
     await loadHistory();
     updateUI();
+    window.dispatchEvent(new CustomEvent('pac:profile-updated',{detail:{userId:owner}}));
+    } finally { savingWeight=false;if(submit)submit.disabled=isDelegatedReadOnly; }
   }
 
   async function saveHistory(weight, bmi, analysis) {
@@ -1456,9 +1485,11 @@
     try {
       const id = `${currentUserId}_${todayId()}`;
       await db.collection(COL_WEIGHT).doc(id).set({ userId: currentUserId, source: "manual", date: todayId(), weight, bmi, analysis: normAnalysis(analysis), timestamp: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+      return true;
     } catch (e) {
       console.error("save history", e);
       alert(t("saveHistErr"));
+      return false;
     }
   }
 
@@ -1646,6 +1677,7 @@
     next.portionUnit = baseUnit;
     next.portionValue = roundUnitValue(baseValue * safeScale, baseUnit);
     next.portionGrams = Math.max(0, Math.round(baseGrams * safeScale));
+    if (next.recipeId) next.recipeScale = (Number(next.recipeScale) || 1) * safeScale;
     return next;
   }
   function pickMealsByTarget(key, target, speed, usedMealKeys = new Set(), options = {}) {
@@ -1788,7 +1820,8 @@
     const scale = desiredK > 0 ? desiredK / baseK : 1;
     const scaled = out.map((m) => applyMealScale(m, scale, slot));
 
-    if (scaled.length) {
+    // Never invent calories/carbs to close a target gap: recipes must match their ingredients.
+    if (scaled.length && !scaled.some(m => m.recipeId)) {
       const afterK = scaled.reduce((acc, m) => acc + Number(m.kcal || 0), 0);
       const deltaK = Math.round(desiredK - afterK);
       if (Math.abs(deltaK) >= 5) {
@@ -1967,17 +2000,25 @@
       return;
     }
 
-    let html = meals.map((m) => `
-      <div style="background:transparent; padding:12px 0; border-bottom:1px solid #1a1a1a; display:flex; justify-content:space-between; align-items:center; gap:12px;">
-        <div style="opacity:${m.eaten ? "0.4" : "1"}; flex:1; transition:opacity 0.25s; min-width:0;">
-          <div style="color:#fff; font-size:13px; font-weight:600; word-break:break-word;">${mealLabelWithPortion(m)}</div>
-          <div style="color:#777; font-size:10px; margin-top:4px;">${m.p}P | ${m.f}F | ${m.c}C | <span style="color:#FFC72C;">${m.kcal} kcal</span></div>
-        </div>
-        <button onclick="window.toggleMealStatus('${m.uid}')" style="background:${m.eaten ? "#FFC72C" : "transparent"}; border:1px solid ${m.eaten ? "#FFC72C" : "#333"}; min-width:82px; height:30px; border-radius:6px; cursor:pointer; color:${m.eaten ? "#000" : "#888"}; font-size:11px; font-weight:700;">${t("done")}</button>
-      </div>`).join("");
-
-    html += `<div style="margin-top:24px; padding-bottom:16px; text-align:center;"><button onclick="window.resetDailyPlan()" style="background:transparent; border:1px solid #222; color:#666; font-size:10px; padding:10px 18px; border-radius:20px; cursor:pointer; letter-spacing:0.4px; text-transform:uppercase; transition:0.2s;">${t("resetBtn")}</button></div>`;
-    box.innerHTML = html;
+    box.replaceChildren();
+    const text=recipeText();
+    for(const m of meals){
+      const row=document.createElement('article');row.className='recipe-card';
+      const main=document.createElement('div');main.className='recipe-main';
+      const title=document.createElement('h3');title.textContent=mealLabelWithPortion(m);
+      const macros=document.createElement('p');macros.className='recipe-macros';macros.textContent=`${t('p')}: ${m.p} · ${t('f')}: ${m.f} · ${t('c')}: ${m.c} · ≈ ${m.kcal} kcal`;
+      main.append(title,macros);
+      if(m.recipeId && Array.isArray(m.ingredients)){
+        const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=`${text[0]} · ${m.minutes} ${text[1]}`;details.append(summary);
+        const list=document.createElement('ul'),scale=mealScaleFactor(m,activeTab);
+        for(const i of m.ingredients){const li=document.createElement('li');li.textContent=`${i.names?.[lang()]||i.names?.en||i.key}: ${Math.round(Number(i.grams)*scale)} ${text[2]}`;list.append(li);}
+        const steps=document.createElement('p');steps.textContent=m.instructions?.[lang()]||m.instructions?.en||'';details.append(list,steps);main.append(details);
+      }
+      const button=document.createElement('button');button.type='button';button.className='recipe-done';button.textContent=t('done');button.setAttribute('aria-pressed',String(Boolean(m.eaten)));button.disabled=isDelegatedReadOnly;button.addEventListener('click',()=>window.toggleMealStatus(m.uid));
+      row.append(main,button);box.append(row);
+    }
+    const note=document.createElement('p');note.className='recipe-note';note.textContent=text[3];box.append(note);
+    const reset=document.createElement('button');reset.type='button';reset.className='recipe-reset';reset.textContent=t('resetBtn');reset.disabled=isDelegatedReadOnly;reset.addEventListener('click',()=>window.resetDailyPlan());box.append(reset);
   }
 
   async function savePlan() {
@@ -2237,6 +2278,7 @@
   }
 
   firebase.auth().onAuthStateChanged(async (user) => {
+    if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, { once:true }));
     setAuthPending(true);
     if (!user) {
       isDelegatedReadOnly = false;

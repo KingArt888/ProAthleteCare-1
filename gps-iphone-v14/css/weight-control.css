@@ -421,3 +421,11 @@
     margin-top: 12px;
 }
 
+/* Compact recipe details keep the nutrition screen usable on a phone. */
+.recipe-card{display:flex;align-items:flex-start;gap:12px;padding:16px 0;border-bottom:1px solid #333}
+.recipe-main{flex:1;min-width:0}.recipe-main h3{font-size:14px;line-height:1.5;margin:0;color:#fff;overflow-wrap:anywhere}
+.recipe-macros,.recipe-note{font-size:12px;line-height:1.6;color:#aaa}.recipe-main summary{cursor:pointer;color:#e2bd43;min-height:44px;padding:10px 0;font-size:13px}
+.recipe-main details p,.recipe-main li{font-size:13px;line-height:1.6;color:#ddd}.recipe-main ul{padding-left:18px}
+.recipe-done,.recipe-reset{min-height:44px;border:1px solid #777;border-radius:8px;background:#111;color:#eee;padding:8px 12px;cursor:pointer}
+.recipe-done[aria-pressed=true]{background:#e2bd43;color:#080808}.recipe-reset{margin:16px 0;width:100%}
+.recipe-done:disabled,.recipe-reset:disabled{opacity:.5;cursor:default}

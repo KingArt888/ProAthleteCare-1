@@ -152,8 +152,12 @@
 
   function normalizeMeal(meal, slot, index) {
     const normalized = meal || {};
+    if (normalized.recipeId) return normalized;
     const slotRows = bySlot[slot] || [];
-    const row = slotRows[index];
+    const comparable = s => fixMojibake(s).normalize('NFKC').replace(/[’‘]/g,"'").toLowerCase().replace(/\s+/g,' ').trim();
+    const names = [normalized.name, ...LANGS.map(l=>normalized[`name_${l}`])].filter(Boolean).map(comparable);
+    // Saved plans have no catalogue index. Resolve by original content, never by today's array position.
+    const row = Object.values(bySlot).flat().find(r=>r.some(n=>names.includes(comparable(n))));
     if (row) Object.assign(normalized, rowsToMeal(row));
     normalized.name = fixMojibake(normalized.name_uk || normalized.name || row?.[0] || "");
     return normalized;
@@ -169,7 +173,7 @@
   }
 
   function pickName(meal, lang) {
-    const normalized = meal || {};
+    const normalized = normalizeMeal({...meal});
     const key = `name_${langIndex[lang] == null ? "en" : lang}`;
     return normalized[key] || normalized.name_en || fixMojibake(normalized.name) || normalized.name_uk || "";
   }

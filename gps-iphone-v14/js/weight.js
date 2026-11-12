@@ -1082,8 +1082,11 @@
     if (!Number.isFinite(base) || !Number.isFinite(planned)) return 1;
     return Math.max(0.6, Math.min(1.8, planned / base));
   }
+  function shoppingPlanDays() {
+    return weekDatesByWeekId(currentWeekId()).filter(day=>DAY_SLOTS.some(slot=>Array.isArray(weeklyPlan?.[day]?.[slot])&&weeklyPlan[day][slot].length));
+  }
   function buildShoppingListRows() {
-    const days = Object.keys(weeklyPlan || {});
+    const days = shoppingPlanDays();
     if (!days.length) return { parsed: [], unknown: [] };
 
     const parsedMap = new Map();
@@ -1176,8 +1179,18 @@
     const summary = document.getElementById("shopping-week-summary");
     if (!box || !sub) return;
 
-    const mode = effectiveGoalMode(window.currentAnalysis?.modeCode);
-    sub.textContent = `${t("shoppingSub")} ${t("shoppingFor")}: ${goalModeLabel(mode)}`;
+    const week=weekDatesByWeekId(currentWeekId()),days=shoppingPlanDays();
+    const words=({
+      uk:['Період','Враховано днів меню','Сума запланованих інгредієнтів за вказані дні, без фактичних перекусів із щоденника. Крупи, м’ясо й риба в рецептах зважуються готовими; вівсянка — сухою. Це не автоматичний перерахунок у вагу сирих продуктів.'],
+      en:['Period','Menu days included','Planned ingredients summed for these days, excluding actual diary snacks. Recipe grains, meat and fish are weighed cooked; oats dry. This does not automatically convert to raw grocery weights.'],
+      de:['Zeitraum','Berücksichtigte Menütage','Summe der geplanten Zutaten dieser Tage, ohne zusätzliche Tagebuch-Snacks. Getreide, Fleisch und Fisch gegart wiegen, Haferflocken trocken. Keine automatische Umrechnung in rohe Einkaufsgewichte.'],
+      es:['Periodo','Días de menú incluidos','Suma de ingredientes previstos para estos días, sin tentempiés del diario. Cereales, carne y pescado se pesan cocidos; avena seca. No se convierten automáticamente a peso en crudo.'],
+      ru:['Период','Учтено дней меню','Сумма запланированных ингредиентов за эти дни, без фактических перекусов дневника. Крупы, мясо и рыба взвешиваются готовыми; овсянка — сухой. Это не автоматический пересчёт в вес сырых продуктов.'],
+      pt:['Período','Dias de menu incluídos','Soma dos ingredientes planeados para estes dias, sem lanches do diário. Cereais, carne e peixe são pesados cozidos; aveia seca. Não há conversão automática para peso cru de compra.']
+    })[lang()];
+    sub.textContent=`${words[0]}: ${fmtDate(week[0])} – ${fmtDate(week[6])} · ${words[1]}: ${days.length} / 7`;
+    sub.dataset.menuDays=String(days.length);
+    let note=document.getElementById('shopping-weight-note');if(!note){note=document.createElement('p');note.id='shopping-weight-note';note.className='nutrition-week-sub';sub.after(note);}note.textContent=words[2];
 
     const totals = weeklyMacroSummary();
     if (summary) {

@@ -1,0 +1,55 @@
+(function(){
+const langs=['uk','en','de','es','ru','pt'];
+const rows={
+ title:['Щоденник харчування','Food diary','Ernährungstagebuch','Diario de alimentación','Дневник питания','Diário alimentar'],
+ add:['Додати їжу','Add food','Essen hinzufügen','Añadir comida','Добавить еду','Adicionar comida'],
+ search:['Пошук їжі','Search foods','Lebensmittel suchen','Buscar alimentos','Поиск еды','Pesquisar alimentos'],
+ hint:['Продукт, страва або напій…','Food, dish or drink…','Lebensmittel, Gericht oder Getränk…','Producto, plato o bebida…','Продукт, блюдо или напиток…','Produto, prato ou bebida…'],
+ recent:['Недавні','Recent','Zuletzt','Recientes','Недавние','Recentes'],
+ favorites:['Улюблені','Favorites','Favoriten','Favoritos','Избранное','Favoritos'],
+ library:['Бібліотека','Library','Bibliothek','Biblioteca','Библиотека','Biblioteca'],
+ manual:['Вручну','Manual','Manuell','Manual','Вручную','Manual'],
+ name:['Назва','Name','Name','Nombre','Название','Nome'],
+ amount:['Кількість','Quantity','Menge','Cantidad','Количество','Quantidade'],
+ unit:['Одиниця','Unit','Einheit','Unidad','Единица','Unidade'],
+ g:['г','g','g','g','г','g'],ml:['мл','ml','ml','ml','мл','ml'],portion:['Порція','Serving','Portion','Ración','Порция','Porção'],
+ brf:['Сніданок','Breakfast','Frühstück','Desayuno','Завтрак','Café da manhã'],lnc:['Обід','Lunch','Mittagessen','Almuerzo','Обед','Almoço'],din:['Вечеря','Dinner','Abendessen','Cena','Ужин','Jantar'],snack:['Перекус / напій','Snack / drink','Snack / Getränk','Tentempié / bebida','Перекус / напиток','Lanche / bebida'],
+ meal:['Прийом їжі','Meal','Mahlzeit','Comida','Приём пищи','Refeição'],
+ replace:['Замість плану цього прийому їжі','Replace this meal’s plan','Plan dieser Mahlzeit ersetzen','Sustituir el plan de esta comida','Вместо плана этого приёма пищи','Substituir o plano desta refeição'],
+ replaced:['План цього прийому замінено записами','Meal plan replaced by diary entries','Mahlzeitenplan durch Einträge ersetzt','Plan sustituido por registros','План приёма заменён записями','Plano substituído pelos registos'],
+ excluded:['Замінено іншою їжею — не враховується в підсумку','Replaced by other food — excluded from totals','Durch anderes Essen ersetzt — nicht mitgerechnet','Sustituido por otra comida — no se suma','Заменено другой едой — не учитывается в итоге','Substituído por outra comida — não incluído no total'],
+ save:['Зберегти','Save','Speichern','Guardar','Сохранить','Salvar'],cancel:['Скасувати','Cancel','Abbrechen','Cancelar','Отмена','Cancelar'],close:['Закрити','Close','Schließen','Cerrar','Закрыть','Fechar'],
+ edit:['Редагувати','Edit','Bearbeiten','Editar','Изменить','Editar'],remove:['Видалити','Delete','Löschen','Eliminar','Удалить','Excluir'],
+ deleteQ:['Видалити цей запис їжі?','Delete this food entry?','Diesen Eintrag löschen?','¿Eliminar este registro?','Удалить эту запись еды?','Excluir este registo?'],
+ favorite:['Зберегти в улюблені','Add to favorites','Als Favorit speichern','Añadir a favoritos','Добавить в избранное','Adicionar aos favoritos'],
+ empty:['Записів ще немає. Можна додати їжу без готового плану.','No entries yet. You can log food without a meal plan.','Noch keine Einträge. Essen kann ohne Ernährungsplan erfasst werden.','Sin registros. Puedes registrar comida sin un plan.','Записей пока нет. Можно добавить еду без готового плана.','Sem registos. Pode registar comida sem um plano.'],
+ noResults:['Нічого не знайдено. Спробуй іншу назву або введи вручну.','No matches. Try another name or enter manually.','Keine Treffer. Anderen Namen versuchen oder manuell eingeben.','Sin resultados. Prueba otro nombre o introduce los datos.','Ничего не найдено. Попробуй другое название или введи вручную.','Sem resultados. Tente outro nome ou introduza manualmente.'],
+ loading:['Завантаження…','Loading…','Laden…','Cargando…','Загрузка…','A carregar…'],
+ loadError:['Не вдалося прочитати щоденник. Онови, щоб не загубити записи.','Could not read diary. Refresh before making changes.','Tagebuch nicht lesbar. Vor Änderungen aktualisieren.','No se pudo leer el diario. Actualiza antes de cambiarlo.','Не удалось прочитать дневник. Обнови перед изменениями.','Não foi possível ler o diário. Atualize antes de alterar.'],
+ saveError:['Не збережено. Введення залишилось — спробуй ще раз.','Not saved. Your input is retained; try again.','Nicht gespeichert. Eingaben bleiben erhalten; erneut versuchen.','No guardado. Los datos se conservan; inténtalo de nuevo.','Не сохранено. Ввод остался — попробуй ещё раз.','Não guardado. Os dados foram mantidos; tente novamente.'],
+ catalogError:['Бібліотека недоступна. Спробуй ще раз або введи вручну.','Library unavailable. Retry or enter manually.','Bibliothek nicht verfügbar. Erneut versuchen oder manuell eingeben.','Biblioteca no disponible. Reintenta o introduce los datos.','Библиотека недоступна. Повтори или введи вручную.','Biblioteca indisponível. Tente novamente ou introduza manualmente.'],
+ invalid:['Перевір назву, кількість і калорії. БЖВ можна залишити порожніми.','Check name, quantity and calories. Macros may be left blank.','Name, Menge und Kalorien prüfen. Makros dürfen leer bleiben.','Revisa nombre, cantidad y calorías. Los macros pueden quedar vacíos.','Проверь название, количество и калории. БЖУ можно оставить пустыми.','Confira nome, quantidade e calorias. Os macros podem ficar em branco.'],
+ refresh:['Оновити','Refresh','Aktualisieren','Actualizar','Обновить','Atualizar'],
+ consumed:['З’їдено','Consumed','Verzehrt','Consumido','Съедено','Consumido'],target:['Орієнтир','Target','Richtwert','Objetivo','Ориентир','Meta'],
+ p:['Білки','Protein','Eiweiß','Proteínas','Белки','Proteínas'],f:['Жири','Fat','Fett','Grasas','Жиры','Gorduras'],c:['Вуглеводи','Carbs','Kohlenhydrate','Carbohidratos','Углеводы','Carboidratos'],
+ partial:['БЖВ неповні: частина значень невідома.','Macros incomplete: some values are unknown.','Makros unvollständig: einige Werte unbekannt.','Macros incompletos: algunos valores desconocidos.','БЖУ неполные: часть значений неизвестна.','Macros incompletos: alguns valores desconhecidos.'],
+ source:['Джерело','Source','Quelle','Fuente','Источник','Fonte'],estimate:['Орієнтовно','Estimate','Schätzung','Estimación','Примерно','Estimativa'],
+ perServing:['На одну порцію','Per serving','Pro Portion','Por ración','На одну порцию','Por porção'],
+ sourceNote:['USDA: США, дані 2021–2023. Назви джерела можуть бути англійською. Рецептури й ресторанні порції відрізняються.','USDA: US data, 2021–2023. Source names may be English. Recipes and restaurant servings vary.','USDA: US-Daten 2021–2023. Quellnamen ggf. auf Englisch. Rezepte und Restaurantportionen variieren.','USDA: datos de EE. UU., 2021–2023. Los nombres originales pueden estar en inglés. Las recetas y raciones varían.','USDA: США, данные 2021–2023. Названия источника могут быть на английском. Рецептуры и порции отличаются.','USDA: dados dos EUA, 2021–2023. Os nomes originais podem estar em inglês. Receitas e porções variam.'],
+ recipe:['Рецепт ProAthleteCare','ProAthleteCare recipe','ProAthleteCare-Rezept','Receta ProAthleteCare','Рецепт ProAthleteCare','Receita ProAthleteCare'],
+ readonly:['Перегляд даних атлета','Athlete data view','Athletendaten anzeigen','Vista de datos del atleta','Просмотр данных атлета','Vista dos dados do atleta'],
+ date:['Дата','Date','Datum','Fecha','Дата','Data'],future:['Фактичне харчування записується за сьогодні або минулі дні.','Actual food can be logged for today or past days.','Tatsächliches Essen kann für heute oder vergangene Tage erfasst werden.','Registra comida real de hoy o días anteriores.','Фактическое питание записывается за сегодня или прошлые дни.','Registe alimentos consumidos hoje ou em dias anteriores.']
+};window.PACFoodDiaryText=(key,lang)=>rows[key]?.[langs.indexOf(lang)]||rows[key]?.[1]||key;
+const popular={
+ 'Beer':['Пиво','Beer','Bier','Cerveza','Пиво','Cerveja'],
+ 'Beer, light':['Легке пиво','Light beer','Leichtbier','Cerveza ligera','Лёгкое пиво','Cerveja leve'],
+ 'Beer, nonalcoholic':['Безалкогольне пиво','Nonalcoholic beer','Alkoholfreies Bier','Cerveza sin alcohol','Безалкогольное пиво','Cerveja sem álcool'],
+ 'Beer, higher alcohol':['Міцне пиво','Higher-alcohol beer','Starkbier','Cerveza de mayor graduación','Крепкое пиво','Cerveja de maior teor alcoólico'],
+ 'Wine, red':['Червоне вино','Red wine','Rotwein','Vino tinto','Красное вино','Vinho tinto'],
+ 'Wine, white':['Біле вино','White wine','Weißwein','Vino blanco','Белое вино','Vinho branco'],
+ 'Big Mac (McDonalds)':['Big Mac (McDonald’s, США)','Big Mac (McDonald’s, US)','Big Mac (McDonald’s, USA)','Big Mac (McDonald’s, EE. UU.)','Биг Мак (McDonald’s, США)','Big Mac (McDonald’s, EUA)'],
+ 'Cheeseburger (McDonalds)':['Чізбургер (McDonald’s, США)','Cheeseburger (McDonald’s, US)','Cheeseburger (McDonald’s, USA)','Hamburguesa con queso (McDonald’s, EE. UU.)','Чизбургер (McDonald’s, США)','Cheeseburger (McDonald’s, EUA)'],
+ 'Gyro sandwich':['Гірос у хлібі — подібний до донера','Gyro sandwich — similar to doner','Gyros-Sandwich — ähnlich wie Döner','Bocadillo de gyros — similar al döner','Гирос в хлебе — похож на донер','Sanduíche de gyros — semelhante ao döner']
+};
+window.PACFoodDiaryFoodNames=original=>popular[original]?Object.fromEntries(langs.map((l,i)=>[l,popular[original][i]])):{};
+})();

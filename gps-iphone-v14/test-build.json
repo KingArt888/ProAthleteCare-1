@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261112-nutrition-library-v2",
-  "builtAt": "2026-11-12T21:19:40.648Z",
+  "build": "daily-phone-20261112-food-diary-v1",
+  "builtAt": "2026-11-12T22:05:07.725Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -107,8 +107,8 @@
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 15916,
-      "sha256": "90a39b40a9e02a1f6be6d05217885f06ff2a55829b5e551bf59256f7f15d1ebc"
+      "bytes": 16159,
+      "sha256": "9ee033c82f62a4072b2ec9c1d00faf24daa65e8d8dec650b33f5d37df5352aaf"
     },
     {
       "file": "pages/wellness.html",
@@ -452,8 +452,8 @@
     },
     {
       "file": "js/weight.js",
-      "bytes": 128176,
-      "sha256": "08256f637e10648cfe47f9c6a0830eaf6f77866c5963be8f1a0b064bf9d63a93"
+      "bytes": 131738,
+      "sha256": "07b79fbb099accc3d7b99553095aa73abd08e8f6a8107eb687b6b75bfb89e36f"
     },
     {
       "file": "js/wellness.js",
@@ -1222,8 +1222,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3400,
-      "sha256": "d624c2bc2ed24fa73773629eb5906b629e40acfe26d508396fa42c565fe0eaaf"
+      "bytes": 3393,
+      "sha256": "c08b63db8740b21ef3f46f7d0bc3c73eb46b5d4c8e15f902890f23ae0c0f0fe6"
     },
     {
       "file": "offline.html",
@@ -1449,6 +1449,31 @@
       "file": "vendor/leaflet/images/marker-shadow.png",
       "bytes": 618,
       "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    },
+    {
+      "file": "js/food-diary-core.js",
+      "bytes": 8228,
+      "sha256": "11644c7b23be942f5eaaf4b1de100e295a6bcde0888f8e289eddfa798dfd695e"
+    },
+    {
+      "file": "js/food-diary-i18n.js",
+      "bytes": 11434,
+      "sha256": "007d5fe6951c2d980d5aea3710fd2239a5f26fe51bca7417411da29a6ce5c5ab"
+    },
+    {
+      "file": "js/food-diary.js",
+      "bytes": 22237,
+      "sha256": "a22275dbac94bb3f3332c01e0da9f24bb8dc7b82cf95a5aaa5011a8696537815"
+    },
+    {
+      "file": "css/food-diary.css",
+      "bytes": 3280,
+      "sha256": "fec1a087be59059ca6be7cab851c227426e018663c6df50948f0cd87ef31132d"
+    },
+    {
+      "file": "assets/data/food-catalog.json",
+      "bytes": 1241134,
+      "sha256": "064e6152475916a1d750134f8ed07bf0253f70a7b9a442acba447e6105108698"
     }
   ]
 }

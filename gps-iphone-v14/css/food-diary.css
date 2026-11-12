@@ -1,0 +1,20 @@
+.food-diary{border:1px solid #806a25;background:#10100d;border-radius:12px;padding:14px;margin-bottom:20px;color:#eee}
+.food-diary-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.food-diary-heading h3{margin:0;font-size:17px}
+.food-diary button,.food-diary-dialog button{min-height:44px;border:1px solid #777;border-radius:8px;padding:8px 12px;background:#171717;color:#eee;cursor:pointer;font:inherit}
+#food-diary-add,#food-diary-save{background:#d4af37;color:#080808;border-color:#d4af37;font-weight:700}
+.food-diary button:disabled,.food-diary-dialog button:disabled{opacity:.5;cursor:default}
+.food-diary-note{font-size:12px;line-height:1.5;color:#b8b8ad}.food-diary-summary{display:flex;flex-wrap:wrap;gap:8px 16px;margin:14px 0}.food-diary-summary strong{color:#e5c44f}
+.food-diary-excluded>div:first-child{opacity:.6}
+.food-diary-entry{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid #333}.food-diary-entry>div:first-child{min-width:0;overflow-wrap:anywhere}.food-diary-entry p{font-size:12px;margin:5px 0;color:#aaa}.food-diary-actions{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.food-diary label{font-size:12px}.food-diary input[type=date]{max-width:180px;min-height:44px;margin:8px;background:#111;color:#eee;border:1px solid #777;border-radius:6px}
+.food-diary-dialog{box-sizing:border-box;width:min(620px,calc(100vw - 20px));max-height:calc(100dvh - 24px);padding:18px;border:1px solid #d4af37;border-radius:16px;background:#10100e;color:#eee;overflow:auto;font:14px/1.5 Arial,sans-serif}
+.food-diary-dialog::backdrop{background:#000a;backdrop-filter:blur(6px)}
+.food-diary-dialog input:not([type=checkbox]),.food-diary-dialog select{box-sizing:border-box;width:100%;min-height:44px;background:#090909;color:#eee;border:1px solid #777;border-radius:8px;padding:10px;margin:4px 0 12px;font:inherit}
+.food-diary-dialog label{display:block;font-size:13px}.food-diary-dialog a{color:#e5c44f}.food-diary-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.food-search-results{max-height:240px;overflow:auto;display:grid;gap:6px}.food-search-result{text-align:left;display:flex;flex-direction:column;gap:4px;width:100%;overflow-wrap:anywhere}.food-search-result span{font-size:12px;color:#bbb}
+.food-diary-dialog .food-diary-check{display:flex;gap:10px;align-items:center;min-height:44px;margin:8px 0}.food-diary-check input{width:20px;height:20px;accent-color:#d4af37}
+.food-diary-dialog [data-status]{color:#e5c44f}.food-diary [hidden],.food-diary-dialog [hidden]{display:none!important}
+.food-diary-dialog form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px}.food-diary-dialog form>h4,.food-diary-dialog form>p,.food-diary-dialog form>.food-diary-check,.food-field-wide,.food-field-name,.food-field-kcal,#food-diary-save{grid-column:1/-1}
+.food-diary-dialog form>h4{margin:12px 0 0;font-size:17px}.food-diary-dialog form>.food-diary-note{margin:6px 0 12px}.food-field{min-width:0}
+#food-diary-save{position:sticky;bottom:0;box-shadow:0 0 12px #080808;margin:6px 0}
+@media(max-width:480px){.food-diary-entry{flex-direction:column}.food-diary-heading{align-items:flex-start}.food-diary-heading h3{font-size:15px}.food-diary-dialog{padding:14px}}

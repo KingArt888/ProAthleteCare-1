@@ -1,7 +1,9 @@
 ﻿(function () {
   const db = firebase.firestore();
   const COL_WEIGHT = "weight_history";
-  const COL_PLAN = "athlete_plans";
+  // Nutrition menus are owner reports, not coach training prescriptions.
+  const COL_PLAN = "athlete_nutrition_daily";
+  async function clearNutritionMenu(){if(currentUserId)await db.collection(COL_PLAN).doc(currentUserId+'_menu').set({userId:currentUserId,type:'nutrition_menu',nutritionMenu:null},{merge:true});}
 
   window.currentAnalysis = null;
   window.latestHistoryArray = [];
@@ -872,6 +874,12 @@
     const grid = document.getElementById("nutrition-week-grid");
     const sub = document.getElementById("nutrition-week-sub");
     if (!grid || !sub) return;
+    if(window.PACFoodDiaryCore&&(rows||[]).some(r=>r.foodDiary||r.actualNutrition?.version===1)){
+      const byDate=new Map((rows||[]).map(r=>[r.date,r]));
+      const values=getWeekBounds().map(d=>{const r=byDate.get(getDateId(d));return {day:weekdayShort(d),kcal:r?Number(r.foodDiary?window.PACFoodDiaryCore.project(r.planConsumed||{},r.foodDiary.entries||{}).kcal:r.actualNutrition?.kcal??r.eatenKcal):null};});
+      sub.textContent=`${window.PACFoodDiaryText('consumed',lang())}: ≈ ${Math.round(values.reduce((n,v)=>n+(v.kcal||0),0))} kcal`;
+      grid.replaceChildren();for(const v of values){const cell=document.createElement('div');cell.className='nutrition-week-day';const day=document.createElement('strong');day.textContent=v.day;const value=document.createElement('span');value.textContent=v.kcal===null?'—':Math.round(v.kcal)+' kcal';cell.append(day,value);grid.append(cell);}return;
+    }
 
     const map = new Map();
     (Array.isArray(rows) ? rows : []).forEach((r) => {
@@ -1243,7 +1251,8 @@
   }
 
   function totals(an) {
-    const eaten = sumPlanNutrients(currentDailyPlan, { onlyEaten: true });
+    const actual=window.PACFoodDiary?.projection();
+    const eaten = actual ? {k:actual.kcal,p:actual.p,f:actual.f,c:actual.c} : sumPlanNutrients(currentDailyPlan, { onlyEaten: true });
     const targets = activeDayTargets(an);
     const left = {
       k: Math.max(0, Math.round(targets.k - eaten.k)),
@@ -1251,6 +1260,8 @@
       f: Math.max(0, Math.round(targets.f - eaten.f)),
       c: Math.max(0, Math.round(targets.c - eaten.c))
     };
+    if(actual)for(const k of ['p','f','c'])if(actual.unknown[k])left[k]=null;
+    if(window.PACFoodDiary&&!window.PACFoodDiary.isReady())for(const k of ['k','p','f','c'])left[k]=null;
     return { eaten, left, targets };
   }
 
@@ -1266,8 +1277,8 @@
     }
     const goal = targets || activeDayTargets(an);
     if (totalEl) totalEl.textContent = `${t("saved")}: ${Math.round(goal.k)} kcal`;
-    if (leftEl) leftEl.textContent = `${t("left")}: ${left.k} kcal`;
-    if (bjuEl) bjuEl.textContent = `${t("p")}: ${left.p}g | ${t("f")}: ${left.f}g | ${t("c")}: ${left.c}g`;
+    if (leftEl) leftEl.textContent = `${t("left")}: ${left.k??'—'} kcal`;
+    if (bjuEl) bjuEl.textContent = `${t("p")}: ${left.p??'—'}g | ${t("f")}: ${left.f??'—'}g | ${t("c")}: ${left.c??'—'}g`;
   }
 
   function diffHtml(list) {
@@ -1346,6 +1357,8 @@
   }
 
   function updateUI() {
+    if(currentUserId)window.PACFoodDiary?.connect({uid:currentUserId,authUid:firebase.auth().currentUser?.uid,date:activeDayId||todayId(),readOnly:isDelegatedReadOnly,plan:currentDailyPlan,targetKcal:activeDayTargets(window.currentAnalysis||{}).k,slot:activeTab,changed:updateUI,dateChanged:date=>{activeDayId=date;currentDailyPlan=sanitizePlan(weeklyPlan[date]||{});renderMealList();updateUI();}});
+    if(window.PACFoodDiary?.isReady())renderMealList();
     const an = window.currentAnalysis ? normAnalysis(window.currentAnalysis) : null;
     const list = window.latestHistoryArray || [];
     const w = an?.weight || Number(list[0]?.weight || 0) || null;
@@ -1357,10 +1370,7 @@
       if (an) {
         const { left, targets } = totals(an);
         top.innerHTML = `<div style="background:#000; padding:18px; border-radius:15px; border:1px solid #FFC72C; box-shadow:0 0 10px rgba(255,199,44,0.1);"><div style="font-size:10px; color:${an.statusColor}; text-transform:uppercase; font-weight:700; margin-bottom:12px;">${t("analytics")} | ${modeLabel(an.modeCode)}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:10px;"><div><div class="kcal-anim" style="font-size:36px; color:#fff; font-weight:900; line-height:1;">0</div><div style="font-size:11px; color:#FFC72C; font-weight:600; margin-top:5px;">${t("kcalLeft")}</div></div><div style="text-align:right;"><div style="font-size:18px; color:#fff; font-weight:800;">\uD83D\uDCA7 ${Number(an.water || 0).toFixed(1)}L</div></div></div><div style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px solid #1a1a1a;"><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("p")}</div><div class="p-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("f")}</div><div class="f-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("c")}</div><div class="c-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div></div></div>`;
-        animateValue(top.querySelector(".kcal-anim"), 0, left.k, 700, "", 0);
-        animateValue(top.querySelector(".p-anim"), 0, left.p, 900, "g", 0);
-        animateValue(top.querySelector(".f-anim"), 0, left.f, 900, "g", 0);
-        animateValue(top.querySelector(".c-anim"), 0, left.c, 900, "g", 0);
+        for(const [selector,key,suffix]of [['.kcal-anim','k',''],['.p-anim','p','g'],['.f-anim','f','g'],['.c-anim','c','g']]){const node=top.querySelector(selector);if(left[key]===null)node.textContent='—';else animateValue(node,0,left[key],700,suffix,0);}
         updateFooter(an, left, targets);
       } else {
         top.innerHTML = `<div style="padding:25px; text-align:center; color:#555; border:1px dashed #333; border-radius:15px; background:rgba(255,199,44,0.02);"><div style="font-size:11px; letter-spacing:1px; font-weight:600;">${t("noScan")}</div></div>`;
@@ -1600,7 +1610,7 @@
     if (!confirm(t("delRecQ"))) return;
     try {
       await db.collection(COL_WEIGHT).doc(id).delete();
-      if (currentUserId) await db.collection(COL_PLAN).doc(currentUserId).delete();
+      await clearNutritionMenu();
       window.currentAnalysis = null;
       currentDailyPlan = { brf: [], lnc: [], din: [] };
       tabsVisible(false);
@@ -1888,8 +1898,7 @@
       return;
     }
 
-    if (!activeDayId || !days.includes(activeDayId)) activeDayId = todayId();
-    if (!days.includes(activeDayId)) activeDayId = days[0];
+    if (!activeDayId) activeDayId = days.includes(todayId())?todayId():days[0];
 
     box.innerHTML = days.map((id) => {
       const active = id === activeDayId;
@@ -1988,6 +1997,7 @@
 
   window.generateWeeklyPlan = async function () {
     if (!canWriteWeightData()) return;
+    if(window.PACFoodDiary&&!await window.PACFoodDiary.capturePlan())return;
     const an = normAnalysis(window.currentAnalysis);
     if (!an || typeof dietDatabase === "undefined") {
       alert(t("scanFirst"));
@@ -2033,6 +2043,7 @@
     box.replaceChildren();
     const text=recipeText();
     for(const m of meals){
+      const recorded=window.PACFoodDiary?.isReady()?window.PACFoodDiary.planState(m.uid):null;if(recorded!==null)m.eaten=recorded;
       const row=document.createElement('article');row.className='recipe-card';
       const main=document.createElement('div');main.className='recipe-main';
       const title=document.createElement('h3');title.textContent=mealLabelWithPortion(m);
@@ -2044,7 +2055,7 @@
         for(const i of m.ingredients){const li=document.createElement('li');li.textContent=`${i.names?.[lang()]||i.names?.en||i.key}: ${Math.round(Number(i.grams)*scale)} ${text[2]}`;list.append(li);}
         const steps=document.createElement('p');steps.textContent=m.instructions?.[lang()]||m.instructions?.en||'';details.append(list,steps);main.append(details);
       }
-      const button=document.createElement('button');button.type='button';button.className='recipe-done';button.textContent=t('done');button.setAttribute('aria-pressed',String(Boolean(m.eaten)));button.disabled=isDelegatedReadOnly;button.addEventListener('click',()=>window.toggleMealStatus(m.uid));
+      const button=document.createElement('button');button.type='button';button.className='recipe-done';button.textContent=t('done');button.setAttribute('aria-pressed',String(Boolean(m.eaten)));button.disabled=isDelegatedReadOnly||Boolean(window.PACFoodDiary&&(!window.PACFoodDiary.isReady()||window.PACFoodDiary.isBusy()));button.addEventListener('click',()=>window.toggleMealStatus(m.uid));
       row.append(main,button);box.append(row);
     }
     const note=document.createElement('p');note.className='recipe-note';note.textContent=text[3];box.append(note);
@@ -2068,7 +2079,7 @@
       if (activeDayId && !cleanWeek[activeDayId]) cleanWeek[activeDayId] = sanitizePlan(currentDailyPlan);
 
       const cleanPlan = sanitizePlan(weeklyPlan[activeDayId] || currentDailyPlan);
-      await db.collection(COL_PLAN).doc(currentUserId).set({
+      await db.collection(COL_PLAN).doc(currentUserId+'_menu').set({userId:currentUserId,type:'nutrition_menu',nutritionMenu:{
         plan: cleanPlan, // backward compatibility
         weeklyPlan: cleanWeek,
         analysis: normAnalysis(window.currentAnalysis),
@@ -2081,13 +2092,14 @@
         serverWeekId: weekId,
         serverDateId: todayId(),
         serverDate: new Date().toDateString()
-      });
+      }});
 
       const allMeals = []
         .concat(Array.isArray(cleanPlan.brf) ? cleanPlan.brf : [])
         .concat(Array.isArray(cleanPlan.lnc) ? cleanPlan.lnc : [])
         .concat(Array.isArray(cleanPlan.din) ? cleanPlan.din : []);
-      const done = allMeals.filter((m) => Boolean(m?.eaten)).length;
+      const actual=window.PACFoodDiary?.projection();
+      const done = DAY_SLOTS.reduce((n,slot)=>n+(cleanPlan[slot]||[]).filter(m=>m.eaten||actual?.replacedSlots.includes(slot)).length,0);
       const completionPct = allMeals.length ? Math.round((done / allMeals.length) * 100) : 0;
       const eatenKcal = allMeals
         .filter((m) => Boolean(m?.eaten))
@@ -2098,8 +2110,10 @@
       await db.collection("athlete_nutrition_daily").doc(`${currentUserId}_${nutritionDate}`).set({
         userId: currentUserId,
         date: nutritionDate,
+        planConsumed:Object.fromEntries(DAY_SLOTS.map(slot=>[slot,(cleanPlan[slot]||[]).filter(m=>m.eaten).map(m=>({uid:m.uid||'',eaten:true,kcal:m.kcal??null,p:m.p??null,f:m.f??null,c:m.c??null}))])),
         completionPct,
-        eatenKcal,
+        ...(!window.PACFoodDiary||actual?{eatenKcal:actual?.kcal??eatenKcal}:{}),
+        ...(actual?{actualNutrition:{version:1,kcal:actual.kcal,p:actual.p,f:actual.f,c:actual.c,unknown:actual.unknown}}:{}),
         targetKcal,
         selectedSpeed,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2121,9 +2135,10 @@
   async function loadPlan({ refreshUi = true } = {}) {
     if (!currentUserId) return;
     try {
-      const doc = await db.collection(COL_PLAN).doc(currentUserId).get();
-      if (!doc.exists) return;
-      const data = doc.data() || {};
+      const menus=await db.collection(COL_PLAN).where('userId','==',currentUserId).where('type','==','nutrition_menu').get();
+      const menu=menus.docs.find(d=>d.id===currentUserId+'_menu');let data;
+      if(menu){data=menu.data().nutritionMenu;if(!data)return;}
+      else {try{const legacy=await db.collection('athlete_plans').doc(currentUserId).get();const old=legacy.exists?legacy.data():null;if(!old||(!Array.isArray(old.plan?.brf)&&!Object.values(old.weeklyPlan||{}).some(day=>Array.isArray(day?.brf))))return;data=old;}catch{return;}}
       latestPlanDateId = String(data.serverDateId || "");
       const prefs=data.nutritionPreferences||{};
       nutritionPreferences={diet:['any','vegetarian','vegan'].includes(prefs.diet)?prefs.diet:'any',exclude:Array.isArray(prefs.exclude)?prefs.exclude.filter(x=>['milk','fish','egg','soy','gluten','nuts'].includes(x)):[]};
@@ -2152,8 +2167,9 @@
         activeDayId = String(data.activeDayId || "");
       } else {
         const fallback = sanitizePlan(data.plan || {});
-        weeklyPlan = { [todayId()]: fallback };
-        activeDayId = todayId();
+        const originalDay=/^\d{4}-\d{2}-\d{2}$/.test(data.serverDateId||'')?data.serverDateId:todayId();
+        weeklyPlan = { [originalDay]: fallback };
+        activeDayId = originalDay;
       }
 
       if (!weeklyStatuses || !Object.keys(weeklyStatuses).length) {
@@ -2197,6 +2213,7 @@
     const arr = currentDailyPlan[activeTab] || [];
     const meal = arr.find((x) => x.uid === uid);
     if (!meal) return;
+    if(window.PACFoodDiary){await window.PACFoodDiary.togglePlan(meal,activeTab);renderMealList();updateUI();return;}
     meal.eaten = !meal.eaten;
     if (activeDayId) weeklyPlan[activeDayId] = currentDailyPlan;
     renderMealList();
@@ -2209,7 +2226,8 @@
     if (!canWriteWeightData()) return;
     if (!confirm(t("resetQ"))) return;
     try {
-      if (currentUserId) await db.collection(COL_PLAN).doc(currentUserId).delete();
+      if(window.PACFoodDiary&&!await window.PACFoodDiary.capturePlan())return;
+      await clearNutritionMenu();
       currentDailyPlan = { brf: [], lnc: [], din: [] };
       weeklyPlan = {};
       activeDayId = null;
@@ -2315,6 +2333,7 @@
     if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, { once:true }));
     setAuthPending(true);
     if (!user) {
+      window.PACFoodDiary?.disconnect();
       isDelegatedReadOnly = false;
       currentUserId = null;
       window.currentUserId = null;
@@ -2411,4 +2430,5 @@
     await loadHistory();
     await loadNutritionWeekSummary();
   });
+  window.addEventListener('pac:nutrition-updated',event=>{if(event.detail?.userId===currentUserId)loadNutritionWeekSummary();});
 })();

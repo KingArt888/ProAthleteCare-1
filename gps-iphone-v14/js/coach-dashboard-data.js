@@ -7,10 +7,14 @@
   function testRecord(d={}){return d.isTestAccount===true||d.isTest===true||d.isDemo===true||d.testMode===true||['test','demo','qa','synthetic','seed'].includes(state(d.source))||['test','demo'].includes(state(d.accountType));}
   function inactive(d={}){return d.active===false||d.isActive===false||d.enabled===false||d.aggregationEnabled===false||d.disabled===true||d.deleted===true||d.archived===true||Boolean(d.deletedAt||d.archivedAt)||[d.status,d.accountStatus,d.accessStatus,d.planStatus,d.aggregationStatus].some(v=>['inactive','disabled','archived','deleted','deactivated','revoked','superseded'].includes(state(v)));}
   function clientState(d={}){if(testRecord(d))return 'test';return inactive(d)?'inactive':'active';}
-  function sourceTime(d={}){if(/^\d{4}-\d{2}-\d{2}$/.test(d.date||''))return millis(d.date+'T00:00:00');return millis(d.measuredAt||d.asOf||d.timestamp||d.updatedAt||d.createdAt);}
+  function sourceTime(d={}){
+    const stamp=millis(d.measuredAt||d.asOf||d.timestamp||d.updatedAt||d.createdAt||d.createdAtMs);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(d.date||''))return stamp&&localDate(new Date(stamp))===d.date?stamp:millis(d.date+'T00:00:00');
+    return millis(d.measuredAt||d.asOf||d.date)||stamp;
+  }
   function usable(d={}){return !inactive(d)&&!testRecord(d)&&!d.supersededBy;}
   function fresh(d,now=Date.now(),hours=48){const t=sourceTime(d);return usable(d)&&t>0&&t<=now+300000&&now-t<=hours*3600000;}
-  function latest(rows=[],now=Date.now(),freshOnly=false){return rows.filter(d=>usable(d)&&sourceTime(d)<=now+300000&&(!freshOnly||fresh(d,now))).sort((a,b)=>sourceTime(b)-sourceTime(a))[0]||null;}
+  function latest(rows=[],now=Date.now(),freshOnly=false){return rows.filter(d=>usable(d)&&sourceTime(d)>0&&sourceTime(d)<=now+300000&&(!freshOnly||fresh(d,now))).sort((a,b)=>sourceTime(b)-sourceTime(a))[0]||null;}
   function localDate(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
   function emptyMetrics(){return{readinessPct:null,avg7:null,trend:null,pain:null,acwr:null,cmj:null,weight:null,sleep:null,stress:null,soreness:null,ready:null,metricsAt:0,weightAt:0,cmjAt:0,riskLevel:''};}
   function metrics({wellness=[],injuries=[],weights=[],power=[]}={},now=Date.now()){

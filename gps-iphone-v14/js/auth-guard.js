@@ -559,6 +559,21 @@ try {
   renderDelegatedIndicator(scope);
   applyRoleShell(scope);
 
+  // Record the signed-in actor, never the athlete opened by a coach/admin.
+  // One write per 30 minutes across page loads; no periodic database polling.
+  if (!onPublic && !onAuth && !scope.isDelegated) {
+    const key = 'pac-visit-written:' + user.uid;
+    let last = 0;
+    try { last = Number(localStorage.getItem(key)) || 0; } catch {}
+    if (Date.now() - last >= 30 * 60 * 1000) {
+      dbx.collection('users').doc(user.uid).update({
+        lastActiveAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        try { localStorage.setItem(key, String(Date.now())); } catch {}
+      }).catch(error => console.warn('Visit update failed:', error.code || error.message));
+    }
+  }
+
   const page = currentPageName();
   if (page === "admin.html" && !scope.isAdmin) {
     go(scope.isCoach ? "/ProAthleteCare-1/gps-iphone-v14/pages/coach-dashboard.html" : "/ProAthleteCare-1/gps-iphone-v14/pages/dashboard_user.html");

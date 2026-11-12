@@ -27,6 +27,8 @@
     return result;
   }
   function summary(clients=[]){const active=clients.filter(c=>clientState(c)==='active'),known=active.filter(c=>num(c.readinessPct)!=null);return{active:active.length,test:clients.filter(c=>clientState(c)==='test').length,inactive:clients.filter(c=>clientState(c)==='inactive').length,known:known.length,readiness:known.length?Math.round(known.reduce((s,c)=>s+num(c.readinessPct),0)/known.length):null};}
-  const api={num,millis,testRecord,inactive,clientState,sourceTime,usable,fresh,latest,emptyMetrics,metrics,summary,localDate};
+  function visitTime(d={}){return millis(d.lastActiveAt);}
+  function recentlyActive(d={},now=Date.now(),days=7){const t=visitTime(d);return clientState(d)==='active'&&t>0&&t<=now+300000&&now-t<=days*86400000;}
+  const api={num,millis,testRecord,inactive,clientState,sourceTime,usable,fresh,latest,emptyMetrics,metrics,summary,localDate,visitTime,recentlyActive};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.PACCoachDashboardData=api;
 })(globalThis);

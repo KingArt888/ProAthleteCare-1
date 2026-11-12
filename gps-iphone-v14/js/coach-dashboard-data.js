@@ -21,8 +21,8 @@
     const result=emptyMetrics(),w=latest(wellness,now,true),weight=latest(weights,now),jump=latest(power,now);
     if(w){for(const k of ['sleep','stress','soreness','ready']){const value=num(w.scores?.[k]??w[k]);result[k]=value>=1&&value<=10?value:null;}if(result.ready!=null)result.readinessPct=Math.round(result.ready*10);result.metricsAt=sourceTime(w);}
     // Open injuries remain relevant until updated/resolved; an old timestamp is not recovery.
-    const pain=injuries.filter(usable).map(d=>{const history=Array.isArray(d.history)?d.history:[];const last=history.slice().sort((a,b)=>sourceTime(b)-sourceTime(a)||millis(b.timestamp)-millis(a.timestamp))[0];return num(last?.pain??d.pain??d.painScore);}).filter(v=>v!=null&&v>=0&&v<=10);
-    if(pain.length)result.pain=Math.max(...pain);
+    const pain=injuries.filter(usable).map(d=>{const history=Array.isArray(d.history)?d.history:[];const last=history.slice().sort((a,b)=>sourceTime(b)-sourceTime(a)||millis(b.timestamp)-millis(a.timestamp))[0];return {value:num(last?.pain??d.pain??d.painScore),at:sourceTime(last||d)};}).filter(v=>v.value!=null&&v.value>=0&&v.value<=10).sort((a,b)=>b.value-a.value||b.at-a.at);
+    if(pain.length){result.pain=pain[0].value;result.painAt=pain[0].at;}
     result.weight=num(weight?.value??weight?.weight??weight?.weightKg);result.cmj=num(jump?.best_cm??jump?.bestCm??jump?.best);result.weightAt=weight?sourceTime(weight):0;result.cmjAt=jump?sourceTime(jump):0;
     return result;
   }

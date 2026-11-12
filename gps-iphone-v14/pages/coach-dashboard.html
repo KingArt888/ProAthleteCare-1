@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ProAthleteCare | Coach Workspace</title>
 
-  <link rel="stylesheet" href="../css/style.css?v=coach-activity-20261112-v1" />
-  <link rel="stylesheet" href="../css/admin.css?v=coach-activity-20261112-v1" />
-  <link rel="stylesheet" href="../css/navigation-mobile.css?v=coach-activity-20261112-v1" />
-  <link rel="stylesheet" href="../css/dashboard_user.css?v=coach-activity-20261112-v1" />
-  <link rel="stylesheet" href="../css/coach-dashboard.css?v=coach-activity-20261112-v1" />
+  <link rel="stylesheet" href="../css/style.css?v=coach-care-20261112-v2" />
+  <link rel="stylesheet" href="../css/admin.css?v=coach-care-20261112-v2" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css?v=coach-care-20261112-v2" />
+  <link rel="stylesheet" href="../css/dashboard_user.css?v=coach-care-20261112-v2" />
+  <link rel="stylesheet" href="../css/coach-dashboard.css?v=coach-care-20261112-v2" />
   <style>
     .main-content .ud-card{opacity:1;transform:none}
     .coach-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -72,6 +72,17 @@
 
     <section id="coach-context" class="ud-card ud-card--accent" style="display:none;"></section>
 
+    <section class="ud-launch" aria-label="Coach summary">
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-team">TEAM STATUS</div>
+        <div class="ud-progress-list" id="coach-summary-cards"></div>
+      </div>
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-earnings">COACH EARNINGS</div>
+        <div class="ud-progress-list" id="coach-earnings-cards"></div>
+      </div>
+    </section>
+
     <section class="ud-launch" id="coach-decisions-section" aria-label="Coach decisions">
       <div class="ud-card">
         <div class="ud-kicker" id="coach-kicker-alerts">ALERTS</div>
@@ -85,18 +96,7 @@
       </div>
     </section>
 
-    <section class="ud-launch" aria-label="Coach summary">
-      <div class="ud-card">
-        <div class="ud-kicker" id="coach-kicker-team">TEAM STATUS</div>
-        <div class="ud-progress-list" id="coach-summary-cards"></div>
-      </div>
-      <div class="ud-card">
-        <div class="ud-kicker" id="coach-kicker-earnings">COACH EARNINGS</div>
-        <div class="ud-progress-list" id="coach-earnings-cards"></div>
-      </div>
-    </section>
-
-    <section class="ud-card">
+    <dialog id="coach-users-dialog" class="coach-details-dialog coach-users-dialog" aria-labelledby="coach-users-title"><header><h3 id="coach-users-title">Клієнти / Users</h3><button id="coach-users-close" type="button" aria-label="Закрити">×</button></header><section>
       <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
         <div>
           <div class="ud-kicker" id="coach-kicker-clients">MY CLIENTS</div>
@@ -110,7 +110,7 @@
       </div>
       <p class="ud-mini coach-activity-note" id="coach-activity-note">Активні — підтверджений візит за останні 7 днів. Дата реєстрації не вважається відвідуванням. Дані спортсмена завантажуються після натискання «Деталі».</p>
       <div id="athletes-table" class="sticky-table-container" style="margin-top:12px;"></div>
-    </section>
+    </section></dialog>
 
     <section class="ud-card" hidden>
       <div class="ud-kicker" id="coach-kicker-notes">COACH NOTES</div>
@@ -127,11 +127,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="../config/firebase-config.js?v=coach-activity-20261112-v1"></script>
-<script src="../js/auth-guard.js?v=coach-activity-20261112-v1"></script>
-<script src="../js/navigation-common.js?v=coach-activity-20261112-v1"></script>
-<script src="../js/coach-dashboard-data.js?v=coach-activity-20261112-v1"></script>
-<script src="../js/coach-dashboard.js?v=coach-activity-20261112-v1"></script>
+<script src="../config/firebase-config.js?v=coach-care-20261112-v2"></script>
+<script src="../js/auth-guard.js?v=coach-care-20261112-v2"></script>
+<script src="../js/navigation-common.js?v=coach-care-20261112-v2"></script>
+<script src="../js/coach-dashboard-data.js?v=coach-care-20261112-v2"></script>
+<script src="../js/coach-monitor.js?v=coach-care-20261112-v2"></script>
+<script src="../js/coach-dashboard.js?v=coach-care-20261112-v2"></script>
 </body>
 </html>
 

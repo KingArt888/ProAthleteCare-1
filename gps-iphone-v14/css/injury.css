@@ -36,8 +36,8 @@
 
 /* Розміри карток Injury (Десктопний вигляд: гнучкі) */
 .form-card {
-    width: 45%; 
-    min-width: 350px; 
+    width: 40%;
+    min-width: 400px;
     flex-grow: 1; /* Дозволяємо зростати */
     flex-shrink: 1;
 }
@@ -522,6 +522,7 @@ footer {
 
     /* Встановлюємо 100% ширину для вертикального макета */
     .form-card, .chart-card {
+        box-sizing: border-box;
         width: 100%; 
         /* Знімаємо всі жорсткі обмеження для мобільного вигляду */
         min-width: 0; 

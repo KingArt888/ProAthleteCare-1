@@ -2677,8 +2677,11 @@
     });
 
     if ($("udBackBtn") && !$("udBackBtn").dataset.bound) {
+      const params=new URLSearchParams(location.search),targetUid=params.get('userId');
+      const delegated=Boolean(targetUid&&targetUid!==window.firebase?.auth?.().currentUser?.uid&&(params.get('fromCoach')==='1'||params.get('fromAdmin')==='1'||params.get('asAdmin')==='1'));
+      $("udBackBtn").hidden=!delegated;
       $("udBackBtn").addEventListener("click", () => {
-        window.location.href = "dashboard_user.html";
+        window.location.href = params.get('fromCoach')==='1'?"coach-dashboard.html":"../admin.html";
       });
       $("udBackBtn").dataset.bound = "1";
     }

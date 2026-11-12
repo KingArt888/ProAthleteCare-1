@@ -316,3 +316,4 @@
 .sync-result-list{margin-top:8px;font-size:13px;line-height:1.35;}
 .sync-result-list div::before{content:"• ";color:#FFC72C;font-weight:900;}
 .sync-overlay-actions{margin-top:14px;display:flex;justify-content:flex-end;gap:8px;}
+#udBackBtn[hidden]{display:none!important}

@@ -16,7 +16,14 @@ const MEDICAL_DOCS_LIMIT = 24;
 const MEDICAL_DOC_MAX_SIZE = 25 * 1024 * 1024;
 const MEDICAL_DOC_ALLOWED_EXT = ["pdf", "png", "jpg", "jpeg", "webp", "dcm", "dicom"];
 
-const getToday = () => new Date().toISOString().split('T')[0];
+const getToday = () => {const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+let injuryReadBlocked=true,injurySaving=false;
+function canWriteInjury(){return !isDelegatedReadOnly&&!injuryReadBlocked&&currentUserId===firebase.auth().currentUser?.uid;}
+function injuryReadStatus(failed){
+  let host=document.getElementById('injury-read-status');if(!host){host=document.createElement('p');host.id='injury-read-status';document.getElementById('injury-form')?.before(host);}
+  host.hidden=!failed;host.replaceChildren();host.setAttribute('role',failed?'alert':'status');
+  if(failed){host.textContent=pacInjuryLang()==='uk'?'Не вдалося завантажити історію. Перевір з’єднання та повтори.':'Could not load injury history. Check your connection and retry.';const retry=document.createElement('button');retry.type='button';retry.textContent=pacInjuryLang()==='uk'?'Повторити':'Retry';retry.onclick=()=>{retry.disabled=true;loadInjuriesFromFirebase();};host.append(' ',retry);}
+}
 
 const INJURY_I18N = {
   uk: {
@@ -976,10 +983,14 @@ firebase.auth().onAuthStateChanged(async (user) => {
 });
 async function loadInjuriesFromFirebase() {
     if (!currentUserId) return;
+    const uid=currentUserId;injuryReadBlocked=true;applyMedicalVaultAccessUi();
     try {
         const snapshot = await db.collection(INJURY_COLLECTION)
             .where("userId", "==", currentUserId)
             .get();
+        if(currentUserId!==uid)return;
+        injuryReadBlocked=false;
+        injuryReadStatus(false);
         
         injuries = [];
         snapshot.forEach(doc => {
@@ -1009,8 +1020,10 @@ async function loadInjuriesFromFirebase() {
         refreshUI();
         window.injuries = injuries;
 
-    } catch (e) { 
-        console.error("Load error:", e); 
+    } catch (e) {
+        if(currentUserId!==uid)return;
+        injuryReadBlocked=true;injuries=[];window.injuries=[];refreshUI();injuryReadStatus(true);
+        console.error("Load error:", e);
     }
 }
 
@@ -1031,6 +1044,8 @@ function syncMedicalDocsFromActiveInjury() {
 }
 
 function applyMedicalVaultAccessUi() {
+  document.querySelectorAll('#injury-form input,#injury-form textarea,#injury-form button').forEach(el=>{el.disabled=!canWriteInjury()||injurySaving||(el.id==='injury-location'&&Boolean(selectedId));});
+  document.querySelectorAll('[data-injury-action="edit"],[data-injury-action="delete-entry"],[data-injury-action="update"],[data-injury-action="delete-injury"],[onclick="pacDeleteMyInjuryData()"]') .forEach(el=>{el.hidden=!canWriteInjury();});
   const openBtn = document.getElementById("inj-vault-open-btn");
   const form = document.getElementById("inj-vault-form");
   const readonlyEl = document.getElementById("inj-vault-readonly");
@@ -1437,6 +1452,7 @@ function updatePainChart() {
     });
 }
 window.editEntry = (injuryId, index) => {
+    if(!canWriteInjury())return;
     const inj = injuries.find(i => i.id === injuryId);
     const entry = inj.history[index];
     
@@ -1451,6 +1467,7 @@ window.editEntry = (injuryId, index) => {
     if (painRadio) painRadio.checked = true;
     document.getElementById('injury-form').onsubmit = async (e) => {
         e.preventDefault();
+        if(!canWriteInjury()||injurySaving)return;
         const painInput = document.querySelector('input[name="pain"]:checked');
         if (!painInput) { alert(`${ti("saveErr")}: ${ti("choosePain010")}`); return; }
         const updatedHistory = [...inj.history];
@@ -1489,6 +1506,7 @@ window.editEntry = (injuryId, index) => {
 };
 
 window.deleteEntry = async (injuryId, index) => {
+  if(!canWriteInjury())return;
   if (!confirm(ti("deleteEntryAsk"))) return;
 
   const inj = injuries.find(i => i.id === injuryId);
@@ -1521,6 +1539,7 @@ window.deleteEntry = async (injuryId, index) => {
 
 
 async function deleteFullInjury(id) {
+    if(!canWriteInjury())return;
     if (confirm(ti("deleteFullAsk"))) {
         try {
             await db.collection(INJURY_COLLECTION).doc(id).delete();
@@ -1827,6 +1846,7 @@ function renderInjuryList() {
     }
 }
 window.openUpdateMode = (id) => {
+    if(!canWriteInjury())return;
     activeLocationFilter = id;
     selectedId = id;
     const inj = injuries.find(i => i.id === id);
@@ -1851,6 +1871,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (map) {
         map.onclick = (e) => {
+    if(!canWriteInjury())return;
     if (e.target.classList.contains('injury-marker')) return;
     
     const rect = map.getBoundingClientRect();
@@ -1858,8 +1879,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     marker.style.left = x + '%'; 
     marker.style.top = y + '%';
-    document.getElementById('coordX').value = x.toFixed(2);
-    document.getElementById('coordY').value = y.toFixed(2);
     const locationName = findZoneByCoords(x, y);
     
     selectedId = null; 
@@ -1873,6 +1892,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('injury-location').disabled = false;
   document.getElementById('injury-location').value = locationName; // set localized location
     document.getElementById('injury-date').value = getToday();
+    document.getElementById('coordX').value = x.toFixed(2);
+    document.getElementById('coordY').value = y.toFixed(2);
     document.getElementById('notes-section').style.display = 'block';
     document.getElementById('injury-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
@@ -1882,6 +1903,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.onsubmit = async (e) => {
             e.preventDefault();
+            if(!canWriteInjury()||injurySaving)return;
             const selectedPainInput = document.querySelector('input[name="pain"]:checked');
             if (!selectedPainInput) {
                 alert(`${ti("saveErr")}: ${ti("choosePain010")}`);
@@ -1894,6 +1916,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 source: "manual",
                 timestamp: Date.now()
             };
+            injurySaving=true;applyMedicalVaultAccessUi();
 
             try {
                 if (selectedId) {
@@ -1919,11 +1942,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
                 }
-                loadInjuriesFromFirebase();
+                await loadInjuriesFromFirebase();
                 form.reset();
                 document.getElementById('notes-section').style.display = 'none';
     marker.style.left = '-100px'; // hide selection marker
             } catch (err) { alert(`${ti("saveErr")}: ${err.message}`); }
+            finally{injurySaving=false;applyMedicalVaultAccessUi();}
         };
         defaultInjurySubmitHandler = form.onsubmit;
     }
@@ -1944,7 +1968,7 @@ function pacGetAthleteNameForPdf() {
 
 function pacGetReportDateForPdf() {
   const d = document.getElementById("inj-report-date");
-  return (d && d.value) ? d.value : new Date().toISOString().slice(0,10);
+  return (d && d.value) ? d.value : getToday();
 }
 
 function pacPickInjuryForReport() {
@@ -2664,6 +2688,7 @@ window.pacExportMyInjuryData = async function pacExportMyInjuryData() {
 };
 
 window.pacDeleteMyInjuryData = async function pacDeleteMyInjuryData() {
+  if(!canWriteInjury())return;
   try {
     if (!currentUserId) return alert(ti("noUserId"));
     if (!confirm(ti("deleteAllAsk"))) return;

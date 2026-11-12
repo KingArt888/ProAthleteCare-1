@@ -1,4 +1,4 @@
-﻿(function() {
+(function() {
 
     // ===============================
 // PAC TEXTS (UA) — централізовані тексти
@@ -509,6 +509,13 @@ function pacPickOne(arr, rnd) {
 
     let currentUserId = null;
     let pacTrendChart = null;
+    let wellnessReadBlocked=true,wellnessSaving=false;
+    function wellnessReadStatus(failed,uid){
+      let host=document.getElementById('wellness-read-status');
+      if(!host){host=document.createElement('p');host.id='wellness-read-status';document.getElementById('wellness-form')?.before(host);}
+      host.hidden=!failed;host.replaceChildren();host.setAttribute('role',failed?'alert':'status');
+      if(failed){host.textContent=getUILang()==='uk'?'Не вдалося завантажити Wellness. Перевір з’єднання й повтори.':'Could not load Wellness. Check your connection and retry.';const retry=document.createElement('button');retry.type='button';retry.textContent=getUILang()==='uk'?'Повторити':'Retry';retry.onclick=()=>{retry.disabled=true;window.syncWellnessFromFirebase(uid);};host.append(' ',retry);}
+    }
 
     function getWellnessEffectiveUid(fallback = "") {
       const ctxUid = String(window.pacDelegatedContext?.effectiveUserId || "").trim();
@@ -537,6 +544,8 @@ function pacPickOne(arr, rnd) {
             return;
         }
         currentUserId = uid;
+        wellnessReadBlocked=true;
+        checkDailyRestriction();
         if (typeof window.pacRenderDelegatedIndicator === "function" && window.pacDelegatedContext) {
             window.pacRenderDelegatedIndicator(window.pacDelegatedContext);
         }
@@ -547,6 +556,7 @@ function pacPickOne(arr, rnd) {
                 .where("userId", "==", uid)
                 .orderBy("timestamp", "asc")
                 .get();
+            if(currentUserId!==uid)return;
 
             const history = {};
             const historyArray = []; 
@@ -567,6 +577,8 @@ function pacPickOne(arr, rnd) {
             // Зберігаємо локально для миттєвого доступу
             localStorage.setItem('wellnessHistory', JSON.stringify(history));
             if (lastDate) localStorage.setItem('lastWellnessSubmissionDate', lastDate);
+            else localStorage.removeItem('lastWellnessSubmissionDate');
+            wellnessReadBlocked=false;wellnessReadStatus(false,uid);
 
             // Оновлюємо все
             await loadMatchDayDates(uid);
@@ -587,7 +599,10 @@ function pacPickOne(arr, rnd) {
         } catch (e) {
             console.error("Помилка завантаження даних:", e);
             // ПІДКАЗКА: Якщо в консолі помилка про Index, натисни на посилання в ній!
-        window.__wellnessHistoryArray = historyArray.slice();
+        if(currentUserId!==uid)return;
+        wellnessReadBlocked=true;window.__wellnessHistoryArray=[];
+        localStorage.setItem('wellnessHistory','{}');localStorage.removeItem('lastWellnessSubmissionDate');
+        initCharts();renderWellnessHistory([],uid);wellnessReadStatus(true,uid);checkDailyRestriction();
 
         }
     };
@@ -1101,12 +1116,14 @@ function updateSpiderSignal(scores) {
     function checkDailyRestriction() {
         const lastDate = localStorage.getItem('lastWellnessSubmissionDate');
         const today = getTodayDateString();
-        const button = document.querySelector('.gold-button');
+        const button = document.querySelector('#wellness-form button[type=submit]');
         const authUid = firebase.auth().currentUser?.uid || null;
         const isTrainerViewing = Boolean(currentUserId && authUid && currentUserId !== authUid);
         const answeredToday = (lastDate === today);
 
         applyDailyQuestionVisibility(answeredToday);
+        if(button){button.disabled=wellnessReadBlocked||wellnessSaving;button.style.display=isTrainerViewing||answeredToday?'none':'';}
+        if(wellnessReadBlocked||wellnessSaving)return true;
 
         if (isTrainerViewing && button) {
             button.style.display = 'none';
@@ -1690,7 +1707,7 @@ function initCnsResetWidget() {
     } catch (_) {}
     const hour = new Date().getHours();
     const matchDates = Array.isArray(window.__pacMatchDayDates) ? window.__pacMatchDayDates : [];
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getTodayDateString();
     if (matchDates.includes(today)) return { program: PROGRAMS.match, reasonKey: "match_day", stress, hour };
     if (hour >= 21 || hour <= 5) return { program: PROGRAMS.sleep, reasonKey: "late_evening", stress, hour };
     if (stress >= 7) return { program: PROGRAMS.recovery, reasonKey: "high_stress", stress, hour };
@@ -1808,7 +1825,7 @@ function initCnsResetWidget() {
           running = false;
           clearInterval(timer);
           timer = null;
-          const today = new Date().toISOString().slice(0, 10);
+          const today = getTodayDateString();
           localStorage.setItem("cns_reset_done_date", today);
           setStatus("completed");
           render();
@@ -1855,7 +1872,7 @@ function initCnsResetWidget() {
   });
 
   const doneDate = localStorage.getItem("cns_reset_done_date");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayDateString();
   Object.entries(programButtons).forEach(([key, btn]) => {
     if (!btn) return;
     btn.addEventListener("click", () => setMode(key));
@@ -1878,6 +1895,8 @@ function initCnsResetWidget() {
 
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Ownerless legacy cache is a display cache, never proof of today's submission.
+        localStorage.setItem('wellnessHistory','{}');localStorage.removeItem('lastWellnessSubmissionDate');
         initCharts();
         checkDailyRestriction();
         initCnsResetWidget();
@@ -1917,6 +1936,7 @@ function initCnsResetWidget() {
                     if (val) scores[f] = parseInt(val.value, 10);
                 });
                 if (Object.keys(scores).length < 6) return alert(tUI("completeAllFields"));
+                wellnessSaving=true;checkDailyRestriction();
                 try {
                     const today = getTodayDateString();
                     await window.db.collection(COLLECTION_NAME).add({
@@ -1930,6 +1950,7 @@ function initCnsResetWidget() {
                     alert(tUI("submitSuccess"));
                     await window.syncWellnessFromFirebase(effectiveUid);
                 } catch (err) { alert(tUIFmt("errorWithMessage", { message: err.message })); }
+                finally{wellnessSaving=false;checkDailyRestriction();}
             });
         }
 
@@ -2047,7 +2068,7 @@ window.pacPickOne = function (arr, rnd) {
 // ⚠️ ВАЖЛИВО: ADVICE_DB має існувати ДО цього (у тебе він є у wellness.js) :contentReference[oaicite:0]{index=0}
 window.pacBuildDailyRecommendations = function (scores, dateStr) {
   var s = scores || {};
-  var dateKey = dateStr || new Date().toISOString().slice(0, 10);
+  var dateKey = dateStr || getTodayDateString();
 
   var user = (window.firebase && firebase.auth) ? firebase.auth().currentUser : null;
   var uid = String(currentUserId || window.currentUserId || (user && user.uid) || "guest");

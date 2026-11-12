@@ -28,7 +28,20 @@
     broccoli:food(['Броколі, готова','Broccoli, cooked','Brokkoli, gegart','Brócoli, cocido','Брокколи, готовая','Brócolis, cozido'],3,0.4,5),
     zucchini:food(['Кабачок','Zucchini','Zucchini','Calabacín','Кабачок','Abobrinha'],1.2,0.3,3),
     oil:food(['Оливкова олія','Olive oil','Olivenöl','Aceite de oliva','Оливковое масло','Azeite'],0,100,0),
-    nuts:food(['Волоські горіхи','Walnuts','Walnüsse','Nueces','Грецкие орехи','Nozes'],15,65,14)
+    nuts:food(['Волоські горіхи','Walnuts','Walnüsse','Nueces','Грецкие орехи','Nozes'],15,65,14),
+    yogurt:food(['Грецький йогурт 2%','Greek yogurt 2%','Griechischer Joghurt 2%','Yogur griego 2%','Греческий йогурт 2%','Iogurte grego 2%'],10,2,4),
+    soyYogurt:food(['Натуральний соєвий йогурт','Plain soy yogurt','Sojajoghurt natur','Yogur de soja natural','Натуральный соевый йогурт','Iogurte de soja natural'],4,2.3,2),
+    apple:food(['Яблуко без серцевини','Apple, cored','Apfel ohne Kerngehäuse','Manzana sin corazón','Яблоко без сердцевины','Maçã sem caroço'],0.3,0.2,14),
+    pear:food(['Груша без серцевини','Pear, cored','Birne ohne Kerngehäuse','Pera sin corazón','Груша без сердцевины','Pera sem caroço'],0.4,0.1,15),
+    seeds:food(['Гарбузове насіння','Pumpkin seeds','Kürbiskerne','Semillas de calabaza','Тыквенные семечки','Sementes de abóbora'],30,49,11),
+    buckwheat:food(['Гречка, варена','Buckwheat, cooked','Buchweizen, gekocht','Trigo sarraceno, cocido','Гречка, варёная','Trigo-sarraceno, cozido'],3.4,0.6,20),
+    bulgur:food(['Булгур, варений','Bulgur, cooked','Bulgur, gekocht','Bulgur, cocido','Булгур, варёный','Bulgur, cozido'],3.1,0.2,19),
+    chickpeas:food(['Нут, варений','Chickpeas, cooked','Kichererbsen, gekocht','Garbanzos, cocidos','Нут, варёный','Grão-de-bico, cozido'],8.9,2.6,27),
+    cod:food(['Готова тріска без кісток','Cooked boneless cod','Gegarter Kabeljau ohne Gräten','Bacalao cocido sin espinas','Готовая треска без костей','Bacalhau fresco cozido sem espinhas'],23,1,0),
+    beef:food(['Готова нежирна яловичина','Cooked lean beef','Gegartes mageres Rindfleisch','Ternera magra cocida','Готовая нежирная говядина','Carne bovina magra cozida'],28,7,0),
+    carrot:food(['Морква','Carrots','Karotten','Zanahorias','Морковь','Cenouras'],1,0.2,9),
+    pepper:food(['Солодкий перець','Sweet peppers','Paprika','Pimientos dulces','Сладкий перец','Pimentões'],1,0.3,6),
+    mushroom:food(['Печериці','Button mushrooms','Champignons','Champiñones','Шампиньоны','Cogumelos'],3,0.3,3)
   };
   const methods={
     bowl:translated(['Змішай інгредієнти. Ягоди вимий; заморожені використовуй за вказівками на упаковці. Подавай охолодженим.','Mix the ingredients. Wash berries; follow pack instructions for frozen berries. Serve chilled.','Zutaten vermischen. Beeren waschen; bei Tiefkühlbeeren die Packungsangaben beachten. Gekühlt servieren.','Mezcla los ingredientes. Lava las frutas; sigue el envase si están congeladas. Sirve frío.','Смешай ингредиенты. Ягоды вымой; замороженные используй по инструкции на упаковке. Подавай охлаждённым.','Misture os ingredientes. Lave as frutas; siga a embalagem para frutas congeladas. Sirva frio.']),
@@ -61,6 +74,40 @@
   add('tofu-quinoa','dinners','Medium',['Тофу з кіноа та шпинатом','Tofu with quinoa and spinach','Tofu mit Quinoa und Spinat','Tofu con quinoa y espinacas','Тофу с киноа и шпинатом','Tofu com quinoa e espinafre'],[['tofu',180],['quinoa',180],['spinach',100],['oil',5]],'pan',15);
   add('chicken-vegetables','dinners','Hard',['Куряча запіканка з овочами та картоплею','Chicken, vegetable and potato bake','Hähnchen-Gemüse-Kartoffel-Auflauf','Pollo al horno con verduras y patatas','Куриная запеканка с овощами и картофелем','Frango assado com vegetais e batatas'],[['chicken',140],['potato',200],['zucchini',150],['tomato',100],['oil',8]],'bake',25);
   add('salmon-lentils','dinners','Hard',['Лосось з сочевицею та шпинатом','Salmon with lentils and spinach','Lachs mit Linsen und Spinat','Salmón con lentejas y espinacas','Лосось с чечевицей и шпинатом','Salmão com lentilhas e espinafre'],[['salmon',120],['lentils',180],['spinach',100],['oil',5]],'bake',25);
+  // Complete measured combinations, not renamed duplicates. Titles list the actual components.
+  function namesFor(items){return langs.map(l=>items.map(([key])=>foods[key].names[l]).join(' + '));}
+  const fruitBases=[
+    [['quark',200],['oats',35]], [['skyr',250],['oats',40]], [['yogurt',250],['oats',40]],
+    [['quark',180],['nuts',15]], [['skyr',220],['seeds',20]],
+    [['soyYogurt',250],['oats',50],['seeds',30]], [['soyYogurt',300],['oats',45],['nuts',15],['seeds',20]]
+  ];
+  fruitBases.forEach((base,i)=>['apple','pear'].forEach(fruit=>{const items=[...base,[fruit,130]];add('fruit-'+i+'-'+fruit,'breakfasts','Easy',namesFor(items),items,'bowl',5);}));
+  const toastBases=[['chicken',100],['turkey',110],['tuna',100],['egg',130],['tofu',180],['quark',200],['lentils',220]];
+  toastBases.forEach(([protein,grams],i)=>['tomato','spinach'].forEach(veg=>{const items=[[protein,grams],['bread',80],[veg,80]];add('toast-'+i+'-'+veg,'breakfasts','Medium',namesFor(items),items,'toast',10);}));
+  const bakeBases=[
+    [['quark',200],['oats',45]], [['skyr',250],['oats',45]], [['yogurt',250],['oats',45]],
+    [['quark',200],['rice',120]], [['skyr',250],['rice',120]],
+    [['soyYogurt',250],['oats',50],['seeds',30]], [['soyYogurt',300],['oats',50],['nuts',15],['seeds',20]]
+  ];
+  bakeBases.forEach((base,i)=>['apple','pear'].forEach(fruit=>{const items=[...base,[fruit,120]];add('baked-fruit-'+i+'-'+fruit,'breakfasts','Hard',namesFor(items),items,'bake',25);}));
+  const proteins=[['chicken',130],['turkey',140],['cod',160],['beef',130],['tofu',180],['lentils',220],['chickpeas',220]];
+  const grains=['rice','quinoa','pasta','buckwheat','bulgur','potato'],vegetables=['broccoli','zucchini','carrot','pepper','mushroom','spinach'];
+  for(const [slot,offset]of [['lunches',0],['dinners',3]])proteins.forEach(([protein,amount],i)=>grains.forEach((grain,j)=>{
+    const veg=vegetables[(i+j+offset)%vegetables.length],speed=['Easy','Medium','Hard'][(i+j)%3];
+    const items=[[protein,amount],[grain,protein==='lentils'||protein==='chickpeas'?120:180],[veg,150],['oil',5]];
+    add(slot+'-'+protein+'-'+grain,slot,speed,namesFor(items),items,speed==='Hard'?'bake':'pan',speed==='Easy'?10:speed==='Medium'?15:25);
+  }));
+  const dairy=['quark','skyr','yogurt'],fish=['tuna','salmon','cod'],meat=['chicken','turkey','beef'];
+  for(const meal of Object.values(db).flat()){
+    const keys=meal.ingredients.map(i=>i.key),has=group=>group.some(k=>keys.includes(k));
+    meal.allergens=[...(has(dairy)?['milk']:[]),...(has(fish)?['fish']:[]),...(keys.includes('egg')?['egg']:[]),...(has(['tofu','soyYogurt'])?['soy']:[]),...(has(['bread','pasta','bulgur','oats'])?['gluten']:[]),...(keys.includes('nuts')?['nuts']:[])];
+    meal.diet=has(meat)||has(fish)?'omnivore':has(dairy)||keys.includes('egg')?'vegetarian':'vegan';
+    meal.tags=[meal.diet, ...(has(['lentils','beans','chickpeas'])?['legumes']:[]),...(meal.p>=25?['protein']:[])];
+  }
+  window.PACSportRecipes={
+    meals:()=>Object.values(db).flat(),
+    allows:(meal,prefs={})=>(prefs.diet!=='vegan'||meal.diet==='vegan')&&(prefs.diet!=='vegetarian'||meal.diet!=='omnivore')&&!(prefs.exclude||[]).some(a=>(meal.allergens||[]).includes(a))
+  };
   // Replace only the generator catalogue. Saved plans keep their original names, totals and eaten flags.
   Object.assign(dietDatabase,db);
 })();

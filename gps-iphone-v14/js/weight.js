@@ -22,6 +22,7 @@
   let currentSportProfile = "TEAM_MD";
   let latestPlanDateId = "";
   let savingWeight = false;
+  let nutritionPreferences = {diet:'any',exclude:[]};
 
   function canWriteWeightData({ notify = true } = {}) {
     if (!isDelegatedReadOnly) return true;
@@ -112,6 +113,7 @@
   };
 
   function resetWeightState() {
+    nutritionPreferences = {diet:'any',exclude:[]};
     window.currentAnalysis = null;
     window.latestHistoryArray = [];
     currentDailyPlan = { brf: [], lnc: [], din: [] };
@@ -477,6 +479,28 @@
   const locale = () => ({ uk: "uk-UA", en: "en-US", de: "de-DE", es: "es-ES", ru: "ru-RU", pt: "pt-PT" }[lang()] || "en-US");
   const fix = (s) => { const raw = String(s || ""); if (!/[ÐÑÃâ]/.test(raw)) return raw; try { return decodeURIComponent(escape(raw)); } catch { return raw; } };
   const dietI18n = () => (window.PACDietI18n && typeof window.PACDietI18n === "object" ? window.PACDietI18n : null);
+  function renderRecipePreferences(){
+    const words=({
+      uk:['Харчові вподобання','Застосовуються при генерації нового меню. Перевіряй склад на упаковці; сліди алергенів не визначаються.','Тип харчування','Змішане','Вегетаріанське','Рослинне','Виключити інгредієнти','Молоко','Риба','Яйця','Соя','Глютен / овес','Горіхи','Для цих обмежень і часу приготування бракує страв. Зміни час або обмеження; меню не змінено.'],
+      en:['Food preferences','Apply when generating a new menu. Check product labels; allergen traces are not assessed.','Diet type','Mixed','Vegetarian','Plant-based','Exclude ingredients','Milk','Fish','Eggs','Soy','Gluten / oats','Nuts','Not enough meals for these restrictions and preparation time. Change time or restrictions; your menu was not changed.'],
+      de:['Ernährungsvorlieben','Gelten bei der Erstellung eines neuen Menüs. Produktetiketten prüfen; Allergenspuren werden nicht erfasst.','Ernährungsweise','Gemischt','Vegetarisch','Pflanzlich','Zutaten ausschließen','Milch','Fisch','Eier','Soja','Gluten / Hafer','Nüsse','Nicht genug Gerichte für diese Einschränkungen und Zubereitungszeit. Zeit oder Einschränkungen ändern; das Menü wurde nicht geändert.'],
+      es:['Preferencias alimentarias','Se aplican al generar un menú nuevo. Revisa las etiquetas; no se evalúan trazas de alérgenos.','Tipo de alimentación','Mixta','Vegetariana','Vegetal','Excluir ingredientes','Leche','Pescado','Huevos','Soja','Gluten / avena','Frutos secos','No hay suficientes platos para estas restricciones y tiempo. Cambia el tiempo o las restricciones; el menú no se modificó.'],
+      ru:['Пищевые предпочтения','Применяются при создании нового меню. Проверяй этикетки; следы аллергенов не определяются.','Тип питания','Смешанное','Вегетарианское','Растительное','Исключить ингредиенты','Молоко','Рыба','Яйца','Соя','Глютен / овёс','Орехи','Недостаточно блюд для этих ограничений и времени. Измени время или ограничения; меню не изменено.'],
+      pt:['Preferências alimentares','Aplicam-se ao gerar um novo menu. Confira os rótulos; vestígios de alergénios não são avaliados.','Tipo de alimentação','Mista','Vegetariana','Vegetal','Excluir ingredientes','Leite','Peixe','Ovos','Soja','Glúten / aveia','Nozes','Não há pratos suficientes para estas restrições e tempo. Altere o tempo ou as restrições; o menu não foi alterado.']
+    })[lang()];
+    let host=document.getElementById('nutrition-preferences');
+    if(!host){host=document.createElement('details');host.id='nutrition-preferences';document.getElementById('get-diet-plan-btn')?.before(host);}
+    const open=host.open;host.replaceChildren();host.open=open;host.className='nutrition-preferences';
+    const summary=document.createElement('summary');summary.textContent=words[0];host.append(summary);
+    const note=document.createElement('p');note.textContent=words[1];host.append(note);
+    const count=document.createElement('p');count.id='nutrition-recipe-count';count.setAttribute('aria-live','polite');
+    const updateCount=()=>{const all=window.PACSportRecipes?.meals()||[];count.textContent=({uk:'Відповідних страв у бібліотеці',en:'Matching meals in the library',de:'Passende Gerichte in der Bibliothek',es:'Platos compatibles en la biblioteca',ru:'Подходящих блюд в библиотеке',pt:'Pratos compatíveis na biblioteca'})[lang()]+`: ${all.filter(m=>window.PACSportRecipes.allows(m,nutritionPreferences)).length} / ${all.length}`;};
+    updateCount();host.append(count);
+    const label=document.createElement('label');label.textContent=words[2];label.htmlFor='nutrition-diet';
+    const select=document.createElement('select');select.id='nutrition-diet';['any','vegetarian','vegan'].forEach((v,i)=>{const o=document.createElement('option');o.value=v;o.textContent=words[3+i];select.append(o);});select.value=nutritionPreferences.diet;select.disabled=isDelegatedReadOnly;select.onchange=()=>{nutritionPreferences.diet=select.value;updateCount();};host.append(label,select);
+    const fieldset=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent=words[6];fieldset.append(legend);
+    ['milk','fish','egg','soy','gluten','nuts'].forEach((key,i)=>{const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.value=key;input.checked=nutritionPreferences.exclude.includes(key);input.disabled=isDelegatedReadOnly;input.onchange=()=>{nutritionPreferences.exclude=[...fieldset.querySelectorAll('input:checked')].map(x=>x.value);updateCount();};label.append(input,document.createTextNode(words[7+i]));fieldset.append(label);});host.append(fieldset);host.dataset.noMeals=words[13];
+  }
   const recipeText = () => ({
     uk:['Рецепт і склад','хв','г','Орієнтовні значення; залежать від продуктів. Маса круп, м’яса та риби — після приготування, вівсянки — суха. Враховуй алергії. Калорійність має відповідати цілі та навантаженню, а не бути мінімальною.'],
     en:['Recipe and ingredients','min','g','Approximate values; products vary. Weigh grains, meat and fish cooked, oats dry. Consider allergies. Energy intake should match your goal and training, rather than be as low as possible.'],
@@ -762,6 +786,7 @@
   window.calculateAge = (raw) => { const a = age(raw); return a == null ? "--" : a; };
 
   function applyI18n() {
+    renderRecipePreferences();
     const disclaimer=document.querySelector('[data-pac-disclaimer="weight"]');
     if(disclaimer)disclaimer.textContent=({uk:'Орієнтовні розрахунки та приклади харчування для фітнесу. Це не вимірювання складу тіла та не індивідуальне призначення дієтолога.',en:'Estimated calculations and example fitness meals. This is not a body composition measurement or an individual dietitian prescription.',de:'Geschätzte Berechnungen und Mahlzeitenbeispiele für Fitness. Keine Messung der Körperzusammensetzung und keine individuelle Ernährungsverordnung.',es:'Cálculos estimados y ejemplos de comidas para fitness. No es una medición de composición corporal ni una dieta individual prescrita.',ru:'Ориентировочные расчёты и примеры питания для фитнеса. Это не измерение состава тела и не индивидуальное назначение диетолога.',pt:'Cálculos estimados e exemplos de refeições para fitness. Não é uma medição da composição corporal nem uma prescrição alimentar individual.'})[lang()];
     document.title = t("title");
@@ -1681,10 +1706,10 @@
     return next;
   }
   function pickMealsByTarget(key, target, speed, usedMealKeys = new Set(), options = {}) {
-    const src = Array.isArray(dietDatabase?.[key]) ? dietDatabase[key] : [];
-    if (!src.length) return [];
+    const src = (Array.isArray(dietDatabase?.[key]) ? dietDatabase[key] : []).filter(m=>!window.PACSportRecipes || window.PACSportRecipes.allows(m,nutritionPreferences));
+    if (!src.length) throw Object.assign(new Error('No matching recipes'),{code:'nutrition-empty'});
     let pool = src.filter((x) => String(x.speed || "") === speed);
-    if (!pool.length) pool = [...src];
+    if (!pool.length) throw Object.assign(new Error('No matching preparation time'),{code:'nutrition-empty'});
 
     const status = String(options?.status || "TRAIN").toUpperCase();
     const slot = String(options?.slot || "brf");
@@ -1709,6 +1734,8 @@
       pool = [...preferred, ...fallback];
     }
 
+    const unused=pool.filter(m=>!usedMealKeys.has(mealNameEn(m).toLowerCase()));
+    if(unused.length)pool=unused;
     const candidates = pool
       .map((x) => sanitizeMeal({ ...x, uid: null, eaten: false }))
       .filter((x) => Number(x.kcal || 0) > 0);
@@ -1717,7 +1744,7 @@
     const slotKcal = Math.max(0, Number(target?.kcal || 0));
     const desiredMealCount = (() => {
       // Keep generation fast on web: default 2 meals, 3 only for hard/high-calorie slots.
-      if (selectedSpeed === "Hard" && slotKcal >= 620) return 3;
+      if (!pool.every(m=>m.recipeId) && selectedSpeed === "Hard" && slotKcal >= 620) return 3;
       return 2;
     })();
     const desiredPerMeal = Math.max(1, desiredMealCount) ? (slotKcal / Math.max(1, desiredMealCount)) : slotKcal;
@@ -1986,6 +2013,9 @@
       switchDietTab("brf");
       updateUI();
       await savePlan();
+    } catch(error) {
+      if(error.code==='nutrition-empty')alert(document.getElementById('nutrition-preferences')?.dataset.noMeals || 'No matching recipes');
+      else {console.error('generate menu',error);alert(t('planSaveErr'));}
     } finally {
       setDietComputeState(false);
     }
@@ -2046,6 +2076,7 @@
         sportProfile: currentSportProfile || "TEAM_MD",
         selectedSpeed,
         selectedGoalMode,
+        nutritionPreferences,
         activeDayId,
         serverWeekId: weekId,
         serverDateId: todayId(),
@@ -2094,6 +2125,9 @@
       if (!doc.exists) return;
       const data = doc.data() || {};
       latestPlanDateId = String(data.serverDateId || "");
+      const prefs=data.nutritionPreferences||{};
+      nutritionPreferences={diet:['any','vegetarian','vegan'].includes(prefs.diet)?prefs.diet:'any',exclude:Array.isArray(prefs.exclude)?prefs.exclude.filter(x=>['milk','fish','egg','soy','gluten','nuts'].includes(x)):[]};
+      renderRecipePreferences();
       if (latestPlanDateId === todayId() && data.analysis) {
         setScanMarker(currentUserId, todayId());
       }
@@ -2312,6 +2346,7 @@
     window.currentUserId = resolvedUid;
     applyDelegatedReadOnlyUi();
     resetWeightState();
+    renderRecipePreferences();
     const markerToday = localStorage.getItem(scanKeyForUid(currentUserId)) === todayId();
     scanFormVisible(!markerToday);
     planControlsVisible(markerToday);

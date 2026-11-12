@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261112-nutrition-v1",
-  "builtAt": "2026-11-12T21:10:47.695Z",
+  "build": "daily-phone-20261112-nutrition-library-v2",
+  "builtAt": "2026-11-12T21:19:40.648Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -12,63 +12,63 @@
     },
     {
       "file": "pages/auth-action.html",
-      "bytes": 4271,
-      "sha256": "f85c80473b580ce08e0a364be00873e0f6dc25c0db600cae030ec5674a4f8215"
+      "bytes": 4303,
+      "sha256": "ef726fa4d0914fde68f129422131a9c47adf364d2453f23013ea02a01ffaebee"
     },
     {
       "file": "pages/coach-dashboard.html",
-      "bytes": 8242,
-      "sha256": "a806ef7d922a6dbde9f18a5563066e107c06bc659b7b7b69e0ed65145da4e8f4"
+      "bytes": 8338,
+      "sha256": "d7a5314290fb7ce7c1eba0916630684737c8676c8afb4364a1f915e4e73f68a4"
     },
     {
       "file": "pages/coach-date-plan.html",
-      "bytes": 4254,
-      "sha256": "5bc5585eefc86535613f11b7428f8d4b8f9314e7fa0e67c8de6b6560f51515d9"
+      "bytes": 4310,
+      "sha256": "8213955bf8443ed1b63491e06942ce46e8d135182ace8832a4b04e136ecefa7f"
     },
     {
       "file": "pages/coach-week-editor.html",
-      "bytes": 15014,
-      "sha256": "8dfefd470566144e10f934a7e43a2ba0e63dac0790ca91925e4366428ba9c834"
+      "bytes": 15118,
+      "sha256": "5dbaf72de1378cd14f2caae2ef8cfdf5e5631b951c1467a77faaad3ef5980041"
     },
     {
       "file": "pages/daily-individual.html",
-      "bytes": 6026,
-      "sha256": "754d6b43091d8938fc1c03d91d68863edbb7427c337d8dad793b9d4375d84be9"
+      "bytes": 6186,
+      "sha256": "1899fa7a3b00f287e1e94cbaa77362196df2491d249720743cda008e8c80cd24"
     },
     {
       "file": "pages/dashboard.html",
-      "bytes": 5280,
-      "sha256": "ea63191827eebef0586bccd5bf9bedae1654a0711b45def899bfe1d36059a5cd"
+      "bytes": 5360,
+      "sha256": "d364798325277dfec2d0601c4dbfb9c3571b2b1e86e0daacb2fae88f3a5eab8e"
     },
     {
       "file": "pages/dashboard_user.html",
-      "bytes": 11797,
-      "sha256": "2ed733f6550c1db0b866f70198916316fa8a5a6911af466b6dc1bab7552ba5de"
+      "bytes": 11893,
+      "sha256": "1c62520a2a87e27d8777c05bb6da36f6d4032aa6c652d2a2205ced10b3c0d4c9"
     },
     {
       "file": "pages/drill-canvas-editor.html",
-      "bytes": 44492,
-      "sha256": "cd6a5390f15e1c8c3e142ad7e33b75bec5338fcc0cf47078d60f2d9803d8047c"
+      "bytes": 44596,
+      "sha256": "a1d454acb519da1d442d4ea8648c915b0bc92a78b756904b5fd912baf77d1d34"
     },
     {
       "file": "pages/drill-player.html",
-      "bytes": 2949,
-      "sha256": "cc848722986c2bf95e19991d67b2073b2c3c0b7ac4958e673ac1ef47045df5a4"
+      "bytes": 3021,
+      "sha256": "7a273652b6fdf1b43abf5d52e55a744e6c3e66fcec3b407e3f0a7ee10031aa77"
     },
     {
       "file": "pages/drill-storage-recovery.html",
-      "bytes": 835,
-      "sha256": "19058ed44dab058c451439cde5d03a6e4e55bbd0e64f2b2a6ba2b5a579d97798"
+      "bytes": 851,
+      "sha256": "ec3d151baa92d5aa2a444b4ddd564f2eb3c31b104ba3558f5ca30efd07b5440b"
     },
     {
       "file": "pages/exercise-library-preview.html",
-      "bytes": 3679,
-      "sha256": "aaf79fcf5b2ac249b98ab7405a71a8d49b27d389fac91ddd261855d33c2197e9"
+      "bytes": 3703,
+      "sha256": "184ba131080d99c2c9120ca38acaf1e56f7d460eca5ed5255baef00ad9a715bd"
     },
     {
       "file": "pages/injury.html",
-      "bytes": 19297,
-      "sha256": "81b14918fd8d3479a96029444642b5a0fd96d0e05e98045d8359db8e2a4aa81b"
+      "bytes": 19369,
+      "sha256": "ee5f98b202f35453c6d0b666a85075b63b902dd775815f130f71438fa96d41eb"
     },
     {
       "file": "pages/library-microcycle-checklist.html",
@@ -77,8 +77,8 @@
     },
     {
       "file": "pages/load-season.html",
-      "bytes": 15885,
-      "sha256": "eb22916c3687bcb78e0e0938abe1b313990aeb58e55e070f696dcfd20f03bf71"
+      "bytes": 15997,
+      "sha256": "db7fa83b1110fe56a9ad063da24a48a89f6c5cd1451bc202c0da9edcafff131b"
     },
     {
       "file": "pages/power-hub.html",
@@ -87,33 +87,33 @@
     },
     {
       "file": "pages/power.html",
-      "bytes": 9136,
-      "sha256": "d3b7b12969e6b125b877be5c6b46577e615cd8cb316f17cc6147f6c9c05ad0b5"
+      "bytes": 9224,
+      "sha256": "5d65ea3e561f6a4f4eab66b652f8bc3a371a010d1a477fcee4ad50b83a652178"
     },
     {
       "file": "pages/profile.html",
-      "bytes": 3942,
-      "sha256": "4cadb494c4db00239233bcbcff432e4cde8ab927b8d84d83759fe3e649331093"
+      "bytes": 4030,
+      "sha256": "19ee7119479195802fe45d57d9b1fbbb1153074834928bf4e057544ac431e518"
     },
     {
       "file": "pages/regist.html",
-      "bytes": 8040,
-      "sha256": "a99527178a4203ad47b5332247ebf0d19e6fa5c7790a0f3121e3a1986f7990af"
+      "bytes": 8088,
+      "sha256": "f87908caebf7dcb00ba70672e2f73b3a045c2b0e88fa68aa13115af5be888eba"
     },
     {
       "file": "pages/weekly-individual.html",
-      "bytes": 12375,
-      "sha256": "e0b12189f12d188d430d1d316105fccca9c149473a836234d9fb1ff05efdc867"
+      "bytes": 12519,
+      "sha256": "8fdcd529e17bfcd679fcca2c57b94fd185e91141363bdea49559743577b098ff"
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 15820,
-      "sha256": "15de5ca211b1054b7a34842814acb0d216d4a7f06550883988ce97fd0ce4ee87"
+      "bytes": 15916,
+      "sha256": "90a39b40a9e02a1f6be6d05217885f06ff2a55829b5e551bf59256f7f15d1ebc"
     },
     {
       "file": "pages/wellness.html",
-      "bytes": 27008,
-      "sha256": "f0cbca16096f821d898eb43f6cb4810c9cbe4954697eec1b404386db3fd3e090"
+      "bytes": 27080,
+      "sha256": "2d9a297c6b053f2c6aefa8ded2d19d1118a1ef7ed4dfcd6a475257be303dd5c7"
     },
     {
       "file": "js/admin.js",
@@ -422,8 +422,8 @@
     },
     {
       "file": "js/sport-recipes.js",
-      "bytes": 15753,
-      "sha256": "c0109ea648e29975ee948142463412525b067f765a9fae8113fb0931a86d1bc0"
+      "bytes": 21293,
+      "sha256": "9d60140889bc71ca613e4e634d89507f04ef93a759f17da05f6d33c8ac30e4be"
     },
     {
       "file": "js/strength-execution.js",
@@ -452,8 +452,8 @@
     },
     {
       "file": "js/weight.js",
-      "bytes": 121725,
-      "sha256": "66f23047e58f6c099a93a257bae8fa60ad0f1ed7d45dc3f77154f2ebfe182e54"
+      "bytes": 128176,
+      "sha256": "08256f637e10648cfe47f9c6a0830eaf6f77866c5963be8f1a0b064bf9d63a93"
     },
     {
       "file": "js/wellness.js",
@@ -547,8 +547,8 @@
     },
     {
       "file": "css/weight-control.css",
-      "bytes": 9214,
-      "sha256": "8fbb0671cc49df53d62437c55c697934cb48531e3fc94be0d3be40638a8dd6b7"
+      "bytes": 9847,
+      "sha256": "6e20630d537619b8601928fd9a5bc87bbddafba14d2e14aeade9be8307de0d13"
     },
     {
       "file": "css/wellness.css",
@@ -1202,8 +1202,8 @@
     },
     {
       "file": "platform.html",
-      "bytes": 46470,
-      "sha256": "f53be74e33d193747d911110a16b7d9caacbb534b76f09f38835d4ca8de29e4b"
+      "bytes": 46494,
+      "sha256": "c86fcbaf689438ce541b19229e7875f3320b463ea92d19a51576af09f237b7d9"
     },
     {
       "file": "auth.html",
@@ -1222,8 +1222,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3392,
-      "sha256": "b2c27d95de0ecd31f0eb03a3b0377dc39e491ac5bb5d90f5f1ef99be13b86b8c"
+      "bytes": 3400,
+      "sha256": "d624c2bc2ed24fa73773629eb5906b629e40acfe26d508396fa42c565fe0eaaf"
     },
     {
       "file": "offline.html",
@@ -1232,43 +1232,43 @@
     },
     {
       "file": "pricing.html",
-      "bytes": 60646,
-      "sha256": "bdbedf7eb7b45f2ce91a2c09bd5cb0be98c31f879744a7d06e68143278001cb9"
+      "bytes": 60662,
+      "sha256": "0b28da253941881a0b95a3ab85f1c553847f7370113e42397bd9665d267e1fb1"
     },
     {
       "file": "checkout.html",
-      "bytes": 27332,
-      "sha256": "1a41f68afc086b21f924c85adaf17b1a01df01138f864b0378f5c18c0dc4de7c"
+      "bytes": 27348,
+      "sha256": "722e08b56581255c2696b965567e2a4ff4bbf0685a07f05d259b29a1ada5fad1"
     },
     {
       "file": "payment-success.html",
-      "bytes": 18085,
-      "sha256": "72a2adab6b39910eb2ff6aabd00e5935872769604712d408d5e9c38b31c5fc7e"
+      "bytes": 18101,
+      "sha256": "1b9b5160e95cbdc89e329e9718aac831e183c7f629fae20c00b89702caf3b90c"
     },
     {
       "file": "payment-cancel.html",
-      "bytes": 14993,
-      "sha256": "3af15d38c20c7ac42b6b0c56ce47928316ee4d758fcd1733b8fba0a618291d71"
+      "bytes": 15009,
+      "sha256": "b42332d632deedc03cafa741bc2e699c04598d945a507cdac8ba58307e54c434"
     },
     {
       "file": "privacy.html",
-      "bytes": 20359,
-      "sha256": "3477a12bbb4483cdd0c61147e2841f228466912d7c452a5fee6d0edc3cfb97a6"
+      "bytes": 20375,
+      "sha256": "266bc659526e55ec06296deb8891476fab260fc97176f4cacf15040e82264e78"
     },
     {
       "file": "terms.html",
-      "bytes": 14384,
-      "sha256": "06c5d48ef311278229768a1fd904dd2eaa9dcc787f300580bd571b49aa721af7"
+      "bytes": 14400,
+      "sha256": "fb713753929cafe475373587284e00cce34e00e1a999760cca1487f1a6585712"
     },
     {
       "file": "impressum.html",
-      "bytes": 11726,
-      "sha256": "592c071e2b7c7e60021bdef60ded8e6b5c594f7c6e206dacad2f5214f7926a8a"
+      "bytes": 11742,
+      "sha256": "da0585c0d46c144031ba604dade3bbb1475aada0c1538f6534d58f084137c749"
     },
     {
       "file": "GPS_TRAINING/index.html",
-      "bytes": 12861,
-      "sha256": "3c5178cf0c829435b0144bc06bbc509d2e56b8a22723650a8fc7c1291fd99cbc"
+      "bytes": 12933,
+      "sha256": "7b75d06da8426ad94d161336a7dba5cc28900811673d852d139d1194cd1f4bae"
     },
     {
       "file": "GPS_TRAINING/styles.css",
@@ -1362,8 +1362,8 @@
     },
     {
       "file": "index.html",
-      "bytes": 13108,
-      "sha256": "cf0f13ef31bf2324cbf1f8fad498f50fd9e3aa8f69b32404c4c2a45c5bc8d4ad"
+      "bytes": 13180,
+      "sha256": "7de31aa18a039424249740d0a6d6995ecba070ee2d52e33f8dfafc2774864092"
     },
     {
       "file": "styles.css",

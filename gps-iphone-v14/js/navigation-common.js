@@ -1987,6 +1987,10 @@ document.addEventListener('submit', async (e) => {
 
     // 1. Форма профілю
     if (e.target.id === 'form-profile') {
+  const form=e.target;if(form.dataset.saving==='true')return;
+  const saveButton=form.querySelector('[type="submit"]'),status=document.getElementById('profile-save-status');
+  form.dataset.saving='true';if(saveButton)saveButton.disabled=true;
+  if(status){status.style.display='block';status.setAttribute('role','status');status.textContent=document.documentElement.lang==='uk'?'Зберігаємо…':'Saving…';}
 
   const profileData = {
     uid: user.uid,
@@ -2001,18 +2005,22 @@ document.addEventListener('submit', async (e) => {
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
+  try{
   await db.collection('users').doc(user.uid).set(profileData, { merge: true });
+  if(auth.currentUser?.uid!==user.uid)return;
 
   
 // keep local cache fresh WITHOUT extra read
 setMeCache(user.uid, { ...(__meCache.data || {}), ...profileData });
 setMeDocCache(user.uid, { exists: true, data: () => ({ ...(__meCache.data || {}), ...profileData }) });
 
-  const status = document.getElementById('profile-save-status');
   if (status) {
     status.innerText = "✓ Дані збережено";
     status.style.display = "block";
   }
+  window.dispatchEvent(new CustomEvent('pac:profile-updated',{detail:{userId:user.uid}}));
+  }catch(error){if(status){status.setAttribute('role','alert');status.textContent=document.documentElement.lang==='uk'?'Не вдалося зберегти. Дані залишились у формі — спробуй ще раз.':'Could not save. Your entries remain in the form; try again.';}}
+  finally{delete form.dataset.saving;if(saveButton)saveButton.disabled=false;}
 }
 
             
@@ -2027,6 +2035,7 @@ setMeDocCache(user.uid, { exists: true, data: () => ({ ...(__meCache.data || {})
             age: Number(document.getElementById('set-age').value)
         };
         await db.collection('users').doc(user.uid).set(metricsData, { merge: true });
+        window.dispatchEvent(new CustomEvent('pac:profile-updated',{detail:{userId:user.uid}}));
         if (typeof calculateHealthMetrics === "function") {
             calculateHealthMetrics(metricsData.weight, metricsData.height, metricsData.age);
         }

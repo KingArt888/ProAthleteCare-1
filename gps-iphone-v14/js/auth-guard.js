@@ -321,7 +321,6 @@
 
   async function resolveDelegatedContext(user, options = {}) {
     const dbx = options.db || window.db || firebase.firestore();
-    const SUPER_COACH_UID = "UJXRfD4spSSbNsiZOrFBSvuZkP72";
     const params = parseDelegatedParams();
     const requestedDelegation = Boolean(
       params.viewUserId && (params.fromAdmin || params.fromCoach || params.asAdmin)
@@ -331,9 +330,9 @@
     const me = meSnap?.exists ? (meSnap.data() || {}) : {};
     const role = normalizeRole(me.role);
     const isAdminEmail = String(user.email || "").toLowerCase() === "kulyk015@gmail.com";
-    const isAdmin = isAdminEmail;
+    const isAdmin = isAdminEmail && user.emailVerified === true;
     const isCoach = !isAdmin && role === "coach";
-    const isSuper = isAdmin || user.uid === SUPER_COACH_UID;
+    const isSuper = isAdmin;
 
     let allowed = true;
     let denialReason = "";
@@ -454,6 +453,7 @@ function evaluatePlanAccess(data,now) {
     const blocked=planStatus==='inactive'||expiredTrial||(accessStatus==='expired'&&!['active','trial'].includes(planStatus)&&paidUntil<=now);
     return !blocked&&(active||validTrial)?{ok:true}:{ok:false,reason:trialEnds>0&&trialEnds<=now?'trial_expired':'no_plan_access'};
 }
+window.pacEvaluatePlanAccess=evaluatePlanAccess;
 
 function planAccessDialog(id){
   if(!document.getElementById('pac-access-dialog-style')){
@@ -574,7 +574,9 @@ try {
   }
 
   // PATCH START: trial/paid gate (block private pages only)
-  const gate = await trialGate(user, onPublic, scope.isAdmin);
+  // Personal account data/settings remain accessible after trial expiry.
+  // Protected training collections still enforce their own server rules.
+  const gate = page==='profile.html'&&!scope.isDelegated?{ok:true,accountDataOnly:true}:await trialGate(user, onPublic, scope.isAdmin);
   window.pacPlanAccessState=gate;
   if (!gate.ok) {
     window.pacPlanReadBlocked=true;

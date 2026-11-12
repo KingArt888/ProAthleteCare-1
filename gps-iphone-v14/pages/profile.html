@@ -1,23 +1,28 @@
-<form id="settings-form" class="pro-form">
-    <div class="input-group">
-        <label>Ім'я</label>
-        <input type="text" id="set-firstName" placeholder="Ім'я" required>
-    </div>
-    <div class="input-group">
-        <label>Прізвище</label>
-        <input type="text" id="set-lastName" placeholder="Прізвище" required>
-    </div>
-    <div class="input-group">
-        <label>Клуб / Команда</label>
-        <input type="text" id="set-club" placeholder="Твій клуб">
-    </div>
-    <div class="input-group">
-        <label>Країна</label>
-        <select id="set-country">
-            <option value="Germany">Німеччина</option>
-            <option value="Ukraine">Україна</option>
-            <option value="Cyprus">Кіпр</option>
-        </select>
-    </div>
-    <button type="submit">Зберегти зміни</button>
-</form>
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Мої дані | ProAthleteCare</title>
+  <link rel="stylesheet" href="../css/style.css?v=daily-phone-account-data-v1"><link rel="stylesheet" href="../css/navigation-mobile.css?v=daily-phone-account-data-v1"><link rel="stylesheet" href="../css/profile.css?v=daily-phone-account-data-v1">
+</head>
+<body>
+  <header><a href="../platform.html" class="logo-link"><img src="../assets/images/AK_logo.png" class="logo" alt="ProAthleteCare"></a><h1 class="project-title">ProAthleteCare</h1><button class="menu-toggle" id="menu-toggle-button" aria-label="Меню"><span></span><span></span><span></span></button></header>
+  <div class="content-wrapper">
+    <nav class="sidebar" id="main-sidebar">
+      <a href="dashboard_user.html" id="profile-dashboard-link">Dashboard</a><a href="daily-individual.html">Daily</a><a href="weekly-individual.html">Weekly</a><a href="load-season.html">Load</a><a href="profile.html" id="profile-nav-link">Мої дані</a>
+      <button type="button" class="profile-settings-link" onclick="openProfile()">Налаштування акаунта</button>
+    </nav>
+    <main class="main-content profile-page">
+      <div class="profile-page-heading"><div><p class="profile-eyebrow" id="profile-eyebrow">ОСОБИСТИЙ КАБІНЕТ</p><h2 id="profile-title">Мої дані</h2><p id="profile-subtitle"></p></div><div class="profile-actions"><button type="button" id="profile-refresh">Оновити</button><button type="button" id="profile-edit" hidden>Редагувати профіль</button></div></div>
+      <p id="profile-status" role="status">Завантаження…</p>
+      <section id="profile-access" class="profile-card" hidden></section>
+      <div id="profile-content" hidden>
+        <div class="profile-grid"><section class="profile-card"><h3 id="profile-identity-title">Дані акаунта</h3><dl id="profile-identity"></dl></section><section class="profile-card"><h3 id="profile-sport-title">Спортивний профіль</h3><dl id="profile-sport"></dl></section></div>
+        <div id="profile-athlete-data" class="profile-grid"><section class="profile-card"><h3 id="profile-measurements-title">Останні вимірювання</h3><dl id="profile-measurements"></dl><a id="profile-weight-link" href="weight-control.html">Історія ваги</a></section><section class="profile-card"><h3 id="profile-training-title">Останнє заняття</h3><dl id="profile-training"></dl><a id="profile-load-link" href="load-season.html">Відкрити журнал</a></section><section class="profile-card"><h3 id="profile-wellness-title">Останній звіт Wellness</h3><dl id="profile-wellness"></dl><a id="profile-wellness-link" href="wellness.html">Відкрити Wellness</a></section></div>
+      </div>
+    </main>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="../config/firebase-config.js?v=daily-phone-account-data-v1"></script><script src="../js/auth-guard.js?v=daily-phone-account-data-v1"></script><script src="../js/navigation-common.js?v=daily-phone-account-data-v1"></script><script src="../js/session-normalizer.js?v=daily-phone-account-data-v1"></script><script src="../js/session-repository.js?v=daily-phone-account-data-v1"></script><script src="../js/session-journal.js?v=daily-phone-account-data-v1"></script><script src="../js/coach-dashboard-data.js?v=daily-phone-account-data-v1"></script><script src="../js/profile.js?v=daily-phone-account-data-v1"></script>
+</body>
+</html>

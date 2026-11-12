@@ -2685,6 +2685,7 @@
       });
       $("udBackBtn").dataset.bound = "1";
     }
+    if($('udProfileLink')){const params=new URLSearchParams(location.search),out=new URLSearchParams();for(const key of ['userId','fromCoach','fromAdmin','asAdmin','coachId'])if(params.has(key))out.set(key,params.get(key));$('udProfileLink').href='profile.html'+(out.size?'?'+out:'');$('udProfileLink').textContent=lang()==='uk'?(out.has('userId')?'Дані атлета':'Мої дані'):(out.has('userId')?'Athlete data':'My data');}
 
     if ($("udToggleInsights") && !$("udToggleInsights").dataset.bound) {
       $("udToggleInsights").addEventListener("click", () => {

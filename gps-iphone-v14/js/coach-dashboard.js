@@ -10,7 +10,9 @@
   let coachName = "";
   let currentFilter = "all";
 
-  const ENRICH_LIMIT = 8;
+  const Data=window.PACCoachDashboardData;
+  let loadGeneration=0;
+  const copy=(en,uk)=>getLang()==='uk'?uk:en;
   const ENRICH_CACHE_MS = 5 * 60 * 1000;
   const enrichCache = new Map();
 
@@ -23,8 +25,8 @@
       navCoachDate: "Date Plan",
       navSystemAdmin: "Admin Panel",
       pageTitle: "Coach Workspace",
-      topReadiness: "Team readiness",
-      topNextSession: "Next key session",
+      topReadiness: "Wellness readiness",
+      topNextSession: "Fresh Wellness",
       refresh: "Refresh",
       openWeek: "Open Week",
       datePlan: "Date Plan",
@@ -96,7 +98,7 @@
       navCoachDate: "План за датами",
       navSystemAdmin: "Адмін-панель",
       pageTitle: "Робочий простір тренера",
-      topReadiness: "Готовність команди",
+      topReadiness: "Готовність за Wellness",
       topNextSession: "Наступна ключова сесія",
       refresh: "Оновити",
       openWeek: "Відкрити тиждень",
@@ -225,6 +227,7 @@
 
     set("coach-page-title", tt("pageTitle"));
     set("btn-refresh", tt("refresh"));
+    set('btn-create-drill',copy('Create drill','Створити вправу'));
     set("btn-open-current", tt("openWeek"));
     set("btn-date-plan", tt("datePlan"));
     set("coach-kicker-alerts", tt("kickerAlerts"));
@@ -235,6 +238,7 @@
     set("coach-kicker-clients", tt("kickerClients"));
     set("coach-kicker-notes", tt("kickerNotes"));
 
+    const scope=document.getElementById('coach-client-scope');if(scope){const value=scope.value;scope.innerHTML=[['active',copy('Active','Активні')],['inactive',copy('Inactive','Неактивні')],['test',copy('Test','Тестові')],['all',copy('All','Усі')]].map(([v,t])=>'<option value="'+v+'">'+t+'</option>').join('');scope.value=value;scope.setAttribute('aria-label',copy('Client account state','Стан акаунта клієнта'));}
     const search = document.getElementById("coach-search-input");
     if (search) search.placeholder = tt("searchPlaceholder");
 
@@ -306,7 +310,7 @@
     const day = date.getDay();
     const diff = date.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(date.setDate(diff));
-    return monday.toISOString().split("T")[0];
+    return Data.localDate(monday);
   }
 
   function randomInviteCode(len = 5) {
@@ -340,6 +344,7 @@
   }
 
   function openComposeForAthlete(uid) {
+    document.getElementById('coach-details-modal')?.close();
     const targetUid = String(uid || "").trim();
     if (!targetUid) return;
 
@@ -391,274 +396,86 @@
     }, 60);
   }
 
-  async function fetchLastByUserId(col, uid, limitN = 8) {
-    if(col==='load_season_reports'){
-      const snap=await db.collection(col).where('userId','==',uid).get();
-      return window.PACSessionJournal.project(snap.docs.map(doc=>({id:doc.id,data:doc.data()}))).knownRows.at(-1)||null;
-    }
-    const snap = await db.collection(col).where("userId", "==", uid).limit(limitN).get();
-    if (snap.empty) return null;
-    const list = snap.docs.map((d) => ({ id: d.id, ...(d.data() || {}) }));
-    list.sort((a, b) => safeMillis(b.timestamp || b.createdAt || b.date || b.updatedAt) - safeMillis(a.timestamp || a.createdAt || a.date || a.updatedAt));
-    return list[0] || null;
+  async function fetchPower(uid){
+    const snap=await db.collection('power_tests').doc(uid).collection('tests').get();
+    return snap.docs.map(d=>d.data());
   }
 
-  async function fetchPower(uid) {
-    try {
-      const snap = await db.collection("power_tests").doc(uid).collection("tests").limit(1).get();
-      if (snap.empty) return null;
-      const d = snap.docs[0].data() || {};
-      const cmj = Number(d.best_cm ?? d.bestCm ?? d.best ?? null);
-      return Number.isFinite(cmj) ? cmj : null;
-    } catch { return null; }
+  async function fetchLatestMetrics(uid){
+    const cached=enrichCache.get(uid);if(cached&&Date.now()-cached.ts<ENRICH_CACHE_MS)return cached.data;
+    // Canonical athlete_reports and user-profile percentages may be old test aggregates.
+    // Current display is built from active source records, never those cached percentages.
+    const read=async col=>{const snap=await db.collection(col).where('userId','==',uid).get();return snap.docs.map(d=>d.data());};
+    const results=await Promise.allSettled([read('wellness_reports'),read('injuries'),read('weight_history'),fetchPower(uid)]);
+    const rows=i=>results[i].status==='fulfilled'?results[i].value:[];
+    const data={...Data.metrics({wellness:rows(0),injuries:rows(1),weights:rows(2),power:rows(3)}),readError:results.some(r=>r.status==='rejected')};
+    if(!data.readError)enrichCache.set(uid,{ts:Date.now(),data});return data;
   }
 
-  async function fetchAthleteReport(uid) {
-    try {
-      const snap = await db.collection("athlete_reports").doc(uid).get();
-      if (!snap.exists) return null;
-      return snap.data() || null;
-    } catch { return null; }
+  function riskFrom(a){
+    const pain=Data.num(a.pain),acwr=Data.num(a.acwr);
+    if(pain==null&&acwr==null)return 'unknown';
+    if(pain>=7||acwr>=1.5)return 'high';if(pain>=4||acwr>=1.3)return 'med';return 'low';
   }
 
-  async function fetchLatestMetrics(uid) {
-    const now = Date.now();
-    const cached = enrichCache.get(uid);
-    if (cached && now - cached.ts < ENRICH_CACHE_MS) return cached.data;
-
-    const report = await fetchAthleteReport(uid);
-    if (report) {
-      const rr = {
-        readinessPct: Number(report.readinessPct ?? NaN),
-        trend: String(report.trend || "flat"),
-        avg7: Number(report.compliance7dPct ?? report.last7dAvg ?? NaN),
-        riskLevel: String(report.riskLevel || ""),
-        wellnessAvg: Number(report.wellnessAvg7d ?? NaN),
-        pain: Number(report.injuryPain ?? NaN),
-        acwr: Number(report.acwr ?? NaN),
-        cmj: Number(report.cmj ?? NaN),
-        weight: Number(report.weight ?? NaN),
-      };
-      enrichCache.set(uid, { ts: now, data: rr });
-      return rr;
-    }
-
-    const [w, wel, inj, load, cmj] = await Promise.all([
-      fetchLastByUserId("weight_history", uid, 10).catch(() => null),
-      fetchLastByUserId("wellness_reports", uid, 10).catch(() => null),
-      fetchLastByUserId("injuries", uid, 10).catch(() => null),
-      fetchLastByUserId("load_season_reports", uid, 12).catch(() => null),
-      fetchPower(uid),
-    ]);
-
-    const sleep = Number(wel?.sleep ?? wel?.scores?.sleep ?? NaN);
-    const stress = Number(wel?.stress ?? wel?.scores?.stress ?? NaN);
-    const soreness = Number(wel?.soreness ?? wel?.scores?.soreness ?? NaN);
-    const ready = Number(wel?.ready ?? wel?.scores?.ready ?? NaN);
-
-    const data = {
-      readinessPct: Number.isFinite(ready) ? Math.max(0, Math.min(100, Math.round(ready * 10))) : NaN,
-      trend: "flat",
-      avg7: NaN,
-      riskLevel: "",
-      wellnessAvg: Number.isFinite(ready) ? ready : NaN,
-      pain: Number(inj?.pain ?? inj?.painScore ?? inj?.level ?? NaN),
-      acwr: Number(load?.acwr ?? load?.ACWR ?? NaN),
-      cmj: Number(cmj ?? NaN),
-      weight: Number(w?.value ?? w?.weight ?? NaN),
-      sleep, stress, soreness, ready,
-    };
-    enrichCache.set(uid, { ts: now, data });
-    return data;
+  function filteredAthletes(){
+    const q=String(document.getElementById('coach-search-input')?.value||'').trim().toLowerCase(),scope=document.getElementById('coach-client-scope')?.value||'active';
+    return athletes.filter(a=>(scope==='all'||Data.clientState(a)===scope)&&(currentFilter!=='risk'||riskFrom(a)==='high')&&(currentFilter!=='active'||a.lastSeen>Date.now()-86400000&&a.lastSeen<=Date.now()+300000)&&(!q||[a.displayName,a.firstName,a.lastName,a.email,a.uid].join(' ').toLowerCase().includes(q))).sort((a,b)=>(b.lastSeen||0)-(a.lastSeen||0));
   }
 
-  function riskFrom(a) {
-    if (a.riskLevel) return a.riskLevel;
-    const pain = Number(a.pain);
-    const acwr = Number(a.acwr);
-    if ((Number.isFinite(pain) && pain >= 7) || (Number.isFinite(acwr) && acwr >= 1.5)) return "high";
-    if ((Number.isFinite(pain) && pain >= 4) || (Number.isFinite(acwr) && acwr >= 1.3)) return "med";
-    return "low";
+  function renderTable(){
+    const host=document.getElementById('athletes-table');if(!host)return;
+    const list=filteredAthletes(),ctx=asAdmin?'fromAdmin=1':'fromCoach=1';
+    host.innerHTML=list.length?'<table class="monitor-table"><thead><tr><th>'+tt('tableClient')+'</th><th>'+tt('tableReadiness')+'</th><th>'+copy('Latest Wellness','Останній Wellness')+'</th><th>'+tt('tableActions')+'</th></tr></thead><tbody>'+list.map(a=>{
+      const name=a.displayName||[a.firstName,a.lastName].filter(Boolean).join(' ')||a.email||a.uid,state=Data.clientState(a),ready=Data.num(a.readinessPct);
+      return '<tr><td><b>'+esc(name)+'</b><div class="ud-mini">'+esc(athleteMetaLine(a))+'</div>'+(state!=='active'?'<span class="coach-pill flat">'+(state==='test'?copy('Test account','Тестовий акаунт'):copy('Inactive','Неактивний'))+'</span>':'')+'</td><td data-label="'+esc(tt('tableReadiness'))+'">'+(ready==null?'—':ready+'%')+'</td><td data-label="'+copy('Latest Wellness','Останній Wellness')+'">'+esc(a.metricsAt?new Date(a.metricsAt).toLocaleDateString(getLang()):copy('No fresh data','Немає свіжих даних'))+'</td><td><div class="coach-inline-actions"><button type="button" class="ud-btn ud-btn--ghost" data-act="details" data-uid="'+esc(a.uid)+'">'+copy('Details','Деталі')+'</button><a class="ud-btn" href="weekly-individual.html?userId='+encodeURIComponent(a.uid)+'&'+ctx+'">'+tt('adjust')+'</a></div></td></tr>';
+    }).join('')+'</tbody></table>':'<p class="ud-mini">'+copy('No clients match this filter.','За цим фільтром клієнтів немає.')+'</p>';
+    document.getElementById('athletes-count').textContent=list.length+' / '+athletes.length+' '+tt('clientsCount');
   }
 
-  function trendObj(a) {
-    const tr = String(a.trend || "flat").toLowerCase();
-    if (tr === "up") return { text: "UP", cls: "up" };
-    if (tr === "down") return { text: "DOWN", cls: "down" };
-    return { text: "FLAT", cls: "flat" };
+  function renderTop(){
+    const s=Data.summary(athletes),active=athletes.filter(a=>Data.clientState(a)==='active'),today=active.filter(a=>a.lastSeen>Date.now()-86400000&&a.lastSeen<=Date.now()+300000).length,high=active.filter(a=>riskFrom(a)==='high').length;
+    document.getElementById('coach-summary-cards').innerHTML='<p class="ud-mini">'+copy('Active clients only. Test/inactive accounts are excluded.','Лише активні клієнти. Тестові й неактивні не враховуються.')+'</p>'+[
+      [copy('Active clients','Активні клієнти'),s.active,'all'],[tt('summaryActiveToday'),today+' / '+s.active,'active'],[tt('summaryAvgReadiness'),s.readiness==null?'—':s.readiness+'%','all'],[copy('Needs attention','Потребують уваги'),high,'risk']
+    ].map(([label,value,filter])=>'<button type="button" class="ud-btn ud-btn--ghost coach-summary-button" data-filter="'+filter+'"><span>'+label+'</span><b>'+value+'</b></button>').join('');
+    document.querySelectorAll('#coach-summary-cards [data-filter]').forEach(el=>el.onclick=()=>{currentFilter=el.dataset.filter;document.getElementById('coach-client-scope').value='active';renderTable();});
+    document.getElementById('coach-top-readiness').textContent=tt('topReadiness')+': '+(s.readiness==null?'—':s.readiness+'%');
+    document.getElementById('coach-top-next-session').textContent=copy('Fresh Wellness','Свіжий Wellness')+': '+s.known+' / '+s.active;
   }
 
-  function wellnessMini(a) {
-    const cell = (icon, val) => {
-      const has = Number.isFinite(Number(val));
-      return `<div style="display:flex;flex-direction:column;align-items:center;width:34px;padding:6px 0;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);"><span style="font-size:13px;">${icon}</span><b style="font-size:11px;color:${has ? "#fff" : "#666"};margin-top:2px;">${has ? Number(val) : "-"}</b></div>`;
-    };
-    return `<div style="display:flex;gap:6px;justify-content:center;">${cell("😴", a.sleep)}${cell("🧠", a.stress)}${cell("💪", a.soreness)}${cell("⚡", a.ready)}</div>`;
-  }
-
-  function riskBadge(risk, pain) {
-    const p = Number(pain);
-    if (risk === "high") return `<div style="display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #ff4d4d55;background:#ff4d4d18;color:#ff4d4d;font-weight:900;font-size:11px;">HIGH${Number.isFinite(p) ? ` (${p})` : ""}</div>`;
-    if (risk === "med") return `<div style="display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #FFC72C55;background:#FFC72C18;color:#FFC72C;font-weight:900;font-size:11px;">MED${Number.isFinite(p) ? ` (${p})` : ""}</div>`;
-    return `<div style="display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #00ff0055;background:#00ff0014;color:#00ff00;font-weight:900;font-size:11px;">LOW</div>`;
-  }
-
-  function filteredAthletes() {
-    const q = String(document.getElementById("coach-search-input")?.value || "").trim().toLowerCase();
-    return athletes
-      .filter((a) => {
-        if (currentFilter === "active") {
-          if (!(Number(a.lastSeen || 0) > (Date.now() - 24 * 60 * 60 * 1000))) return false;
-        }
-        if (currentFilter === "risk") {
-          if (riskFrom(a) !== "high") return false;
-        }
-        if (q) {
-          const name = String(a.displayName || `${a.firstName || ""} ${a.lastName || ""}`.trim() || "").toLowerCase();
-          const email = String(a.email || "").toLowerCase();
-          const uid = String(a.uid || "").toLowerCase();
-          if (!name.includes(q) && !email.includes(q) && !uid.includes(q)) return false;
-        }
-        return true;
-      })
-      .sort((a, b) => Number(b.lastSeen || 0) - Number(a.lastSeen || 0));
-  }
-
-  function renderTable() {
-    const host = document.getElementById("athletes-table");
-    if (!host) return;
-    const ctx = asAdmin ? "&fromAdmin=1" : "&fromCoach=1";
-    const list = filteredAthletes();
-
-    host.innerHTML = `
-      <table class="monitor-table">
-        <thead><tr><th class="sticky-col">${tt("tableClient")}</th><th>${tt("tableReadiness")}</th><th>${tt("tableTrend")}</th><th>${tt("tableAvg7")}</th><th>${tt("tableWellness")}</th><th>${tt("tableRisk")}</th><th>${tt("tableLastSeen")}</th><th style="text-align:right;">${tt("tableActions")}</th></tr></thead>
-        <tbody>
-          ${list.map((a) => {
-            const name = a.displayName || `${a.firstName || ""} ${a.lastName || ""}`.trim() || a.email || a.uid;
-            const photo = a.photoURL || "../assets/images/AK_logo.png";
-            const metaLine = athleteMetaLine(a);
-            const base = `userId=${encodeURIComponent(a.uid)}${ctx}`;
-            const readiness = Number.isFinite(Number(a.readinessPct)) ? Number(a.readinessPct) : 0;
-            const trend = trendObj(a);
-            const avg7 = Number.isFinite(Number(a.avg7)) ? Number(a.avg7).toFixed(0) : "-";
-            const risk = riskFrom(a);
-            return `
-              <tr>
-                <td class="sticky-col"><div style="display:flex;gap:10px;align-items:center;"><img src="${esc(photo)}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #444;" /><div style="min-width:0;"><div style="font-weight:900;color:#fff;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${esc(name)}</div><div style="font-size:11px;opacity:.82;color:#FFC72C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${esc(metaLine)}</div><div style="font-size:11px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${esc(a.email || a.uid)}</div></div></div></td>
-                <td style="text-align:center;"><b style="color:${readiness >= 75 ? "#00ff88" : readiness >= 55 ? "#FFC72C" : "#ff7a7a"}">${readiness}%</b></td>
-                <td style="text-align:center;"><span class="coach-pill ${trend.cls}">${trend.text}</span></td>
-                <td style="text-align:center;">${avg7}</td>
-                <td>${wellnessMini(a)}</td>
-                <td style="text-align:center;">${riskBadge(risk, a.pain)}</td>
-                <td style="text-align:center;font-size:12px;">${getTimeSince(Number(a.lastSeen || safeMillis(a.updatedAt)))}</td>
-                <td style="text-align:right;white-space:nowrap;"><a class="ud-btn ud-btn--ghost" style="text-decoration:none;padding:8px 10px;" href="weekly-individual.html?${base}">${tt("adjust")}</a> <a class="ud-btn ud-btn--ghost" href="load-season.html?${base}">Journal</a> <button class="ud-btn ud-btn--ghost" data-act="recovery" data-uid="${esc(a.uid)}" type="button">${tt("recovery")}</button> <button class="ud-btn ud-btn--ghost" data-act="message" data-uid="${esc(a.uid)}" type="button">${tt("message")}</button></td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    `;
-  }
-
-  function renderTop() {
-    const total = athletes.length;
-    const activeToday = athletes.filter((a) => Number(a.lastSeen || 0) > (Date.now() - 24 * 60 * 60 * 1000)).length;
-    const validReady = athletes.filter((a) => Number.isFinite(Number(a.readinessPct)));
-    const avgRead = validReady.length ? validReady.reduce((acc, a) => acc + Number(a.readinessPct), 0) / validReady.length : 0;
-    const highRisk = athletes.filter((a) => riskFrom(a) === "high").length;
-
-    const summary = document.getElementById("coach-summary-cards");
-    if (summary) {
-      summary.innerHTML = `
-        <div class="ud-progress-item" data-filter="all"><div class="ud-progress-top"><span class="ud-progress-name">${tt("summaryClients")}</span><span class="ud-progress-val">${total}</span></div></div>
-        <div class="ud-progress-item" data-filter="active"><div class="ud-progress-top"><span class="ud-progress-name">${tt("summaryActiveToday")}</span><span class="ud-progress-val">${total ? Math.round((activeToday / total) * 100) : 0}%</span></div><div class="ud-progress-track"><div class="ud-progress-bar" style="width:${total ? Math.round((activeToday / total) * 100) : 0}%"></div></div></div>
-        <div class="ud-progress-item" data-filter="all"><div class="ud-progress-top"><span class="ud-progress-name">${tt("summaryAvgReadiness")}</span><span class="ud-progress-val">${Math.round(avgRead)}%</span></div></div>
-        <div class="ud-progress-item" data-filter="risk"><div class="ud-progress-top"><span class="ud-progress-name">${tt("summaryHighRisk")}</span><span class="ud-progress-val">${highRisk}</span></div><div class="ud-progress-track"><div class="ud-progress-bar" style="width:${Math.min(100, highRisk * 20)}%"></div></div></div>
-      `;
-    }
-
-    document.querySelectorAll("#coach-summary-cards [data-filter]").forEach((el) => {
-      el.style.cursor = "pointer";
-      el.addEventListener("click", () => {
-        currentFilter = el.getAttribute("data-filter") || "all";
-        renderTable();
-      });
+  function renderAlertsAndActions(){
+    const active=athletes.filter(a=>Data.clientState(a)==='active'),items=active.map(a=>({a,risk:riskFrom(a)})).filter(x=>x.risk==='high'||x.risk==='med'||Data.num(x.a.readinessPct)==null).sort((x,y)=>(y.risk==='high')-(x.risk==='high'));
+    document.getElementById('coach-alerts-title').textContent=tt('attention')+' ('+items.length+')';
+    const host=document.getElementById('coach-alerts-list');
+    host.innerHTML=items.length?'<p class="ud-mini">'+copy('Review missing reports and recorded pain before changing a plan.','Переглянь відсутні звіти та записи болю перед зміною плану.')+'</p><button class="ud-btn" type="button" id="coach-open-alerts">'+copy('Review clients','Переглянути клієнтів')+' · '+items.length+'</button>':'<p class="ud-mini">'+tt('noAlerts')+'</p>';
+    document.getElementById('coach-open-alerts')?.addEventListener('click',()=>{
+      const dialog=coachDialog(tt('attention'));dialog.querySelector('[data-dialog-body]').innerHTML=items.map(({a,risk})=>'<button type="button" class="coach-alert-item '+(risk==='high'?'is-high':'is-med')+'" data-act="details" data-uid="'+esc(a.uid)+'"><b>'+esc(a.displayName||[a.firstName,a.lastName].filter(Boolean).join(' ')||a.email||a.uid)+'</b><span>'+copy(risk==='high'||risk==='med'?'Review recorded pain/load':'No fresh Wellness',risk==='high'||risk==='med'?'Переглянути записи болю / навантаження':'Немає свіжого Wellness')+'</span></button>').join('');
     });
-
-    const topRead = document.getElementById("coach-top-readiness");
-    if (topRead) topRead.textContent = `${tt("topReadiness")}: ${Math.round(avgRead)}%`;
-
-    const nextSession = document.getElementById("coach-top-next-session");
-    if (nextSession) {
-      const soon = athletes.slice().sort((a, b) => Number(a.lastSeen || 0) - Number(b.lastSeen || 0))[0];
-      nextSession.textContent = `${tt("topNextSession")}: ${soon ? (soon.displayName || soon.email || tt("nextClientFallback")) : "-"}`;
-    }
-
-    const count = document.getElementById("athletes-count");
-    if (count) count.textContent = `${athletes.length} ${tt("clientsCount")}`;
+    document.getElementById('coach-quick-actions-list').closest('.ud-card').hidden=true;
   }
 
-  function renderAlertsAndActions() {
-    const alertsHost = document.getElementById("coach-alerts-list");
-    const alertsTitle = document.getElementById("coach-alerts-title");
-    const actionsHost = document.getElementById("coach-quick-actions-list");
-
-    if (!alertsHost || !actionsHost) return;
-
-    const alerts = athletes.map((a) => {
-      const readiness = Number(a.readinessPct || 0);
-      const pain = Number(a.pain || 0);
-      const inactive = Number(a.lastSeen || 0) && (Date.now() - Number(a.lastSeen || 0) > 2 * 86400000);
-      let severity = 0;
-      let reason = "";
-      if (pain >= 7 || Number(a.acwr || 0) >= 1.5) { severity = 3; reason = tt("alertHighRisk"); }
-      else if (inactive) { severity = 2; reason = tt("alertNoData"); }
-      else if (readiness < 55) { severity = 1; reason = tt("alertFatigue"); }
-      return { a, severity, reason };
-    }).filter((x) => x.severity > 0).sort((x, y) => y.severity - x.severity).slice(0, 5);
-
-    alertsTitle.textContent = `${tt("attention")} (${alerts.length})`;
-    const alertCtx = asAdmin ? "fromAdmin=1" : "fromCoach=1";
-    alertsHost.innerHTML = alerts.length ? alerts.map(({ a, severity, reason }) => {
-      const name = a.displayName || `${a.firstName || ""} ${a.lastName || ""}`.trim() || a.email || a.uid;
-      const cls = severity >= 3 ? "is-high" : "is-med";
-      const href = `weekly-individual.html?userId=${encodeURIComponent(a.uid)}&${alertCtx}`;
-      return `<a class="coach-alert-item ${cls}" href="${href}" style="text-decoration:none;color:inherit;"><span><b>${esc(name)}</b> → ${esc(reason)}</span><span>${tt("readMore")}</span></a>`;
-    }).join("") : `<div class="ud-mini">${tt("noAlerts")}</div>`;
-
-    const actions = athletes.slice().sort((x, y) => Number(x.readinessPct || 0) - Number(y.readinessPct || 0)).slice(0, 3);
-    actionsHost.innerHTML = actions.length ? actions.map((a) => {
-      const name = a.displayName || `${a.firstName || ""} ${a.lastName || ""}`.trim() || a.email || a.uid;
-      const pain = Number(a.pain || 0);
-      const readiness = Number(a.readinessPct || 0);
-      const action = pain >= 7 ? tt("actionRecovery") : readiness < 60 ? tt("actionLight") : tt("actionFull");
-      return `<div class="coach-action-item"><span><b>${esc(name)}</b> → ${esc(action)}</span><div class="coach-inline-actions"><button class="ud-btn ud-btn--ghost" data-act="apply" data-uid="${esc(a.uid)}" type="button">${tt("apply")}</button><button class="ud-btn ud-btn--ghost" data-act="edit" data-uid="${esc(a.uid)}" type="button">${tt("edit")}</button></div></div>`;
-    }).join("") : `<div class="ud-mini">${tt("noActions")}</div>`;
+  async function renderEarnings(){
+    const host=document.getElementById('coach-earnings-cards');host.innerHTML='<p class="ud-mini">'+copy('Payout details for the current month.','Деталі нарахувань за поточний місяць.')+'</p><button type="button" class="ud-btn ud-btn--ghost" id="coach-open-earnings">'+copy('View payouts','Переглянути нарахування')+'</button>';
+    document.getElementById('coach-open-earnings').onclick=async()=>{
+      const dialog=coachDialog(copy('Coach earnings','Нарахування тренера')),body=dialog.querySelector('[data-dialog-body]');body.textContent=copy('Loading…','Завантаження…');
+      const date=new Date(),key=date.getFullYear()+'_'+String(date.getMonth()+1).padStart(2,'0');
+      try{const snap=await db.collection('coach_payouts').doc(coachUid+'_'+key).get(),p=snap.exists?snap.data():null;
+        if(!p||!Data.usable(p)){body.textContent=copy('No confirmed payout records for this month.','Підтверджених нарахувань за цей місяць немає.');return;}
+        body.innerHTML=[[tt('mrr'),p.mrrBase,'€'],[tt('myPercent'),Data.num(p.commissionPct)==null?null:(p.commissionPct<=1?p.commissionPct*100:p.commissionPct),'%'],[tt('expected'),p.expectedPayout,'€'],[tt('paid'),p.paidAmount,'€']].map(([label,value,unit])=>'<p>'+label+': <b>'+(Data.num(value)==null?'—':esc(Number(value).toFixed(2))+' '+unit)+'</b></p>').join('');
+      }catch(error){body.textContent=copy('Could not load payouts. Close and try again.','Не вдалося завантажити нарахування. Закрий і спробуй ще раз.');}
+    };
   }
 
-  async function renderEarnings() {
-    const host = document.getElementById("coach-earnings-cards");
-    if (!host || !coachUid) return;
+  function coachDialog(title){
+    let dialog=document.getElementById('coach-details-modal');if(!dialog){dialog=document.createElement('dialog');dialog.id='coach-details-modal';dialog.className='coach-details-dialog';document.body.append(dialog);}
+    if(dialog.open)dialog.close();dialog.setAttribute('aria-labelledby','coach-dialog-title');dialog.innerHTML='<header><h3 id="coach-dialog-title">'+esc(title)+'</h3><button type="button" aria-label="'+copy('Close','Закрити')+'">×</button></header><div data-dialog-body></div>';dialog.querySelector('button').onclick=()=>dialog.close();dialog.showModal();return dialog;
+  }
 
-    const monthKey = new Date().toISOString().slice(0, 7).replace("-", "_");
-    let payout = null;
-    try {
-      const snap = await db.collection("coach_payouts").doc(`${coachUid}_${monthKey}`).get();
-      payout = snap.exists ? (snap.data() || null) : null;
-    } catch {}
-
-    const mrr = Number(payout?.mrrBase ?? 0);
-    const pct = Number.isFinite(Number(payout?.commissionPct)) ? Number(payout.commissionPct) : 0.2;
-    const expected = Number(payout?.expectedPayout ?? (mrr * pct));
-    const paid = Number(payout?.paidAmount ?? 0);
-
-    host.innerHTML = `
-      <div class="ud-progress-item"><div class="ud-progress-top"><span class="ud-progress-name">${tt("mrr")}</span><span class="ud-progress-val">€${mrr.toFixed(0)}</span></div></div>
-      <div class="ud-progress-item"><div class="ud-progress-top"><span class="ud-progress-name">${tt("myPercent")}</span><span class="ud-progress-val">${Math.round(pct * 100)}%</span></div></div>
-      <div class="ud-progress-item"><div class="ud-progress-top"><span class="ud-progress-name">${tt("expected")}</span><span class="ud-progress-val">€${expected.toFixed(0)}</span></div></div>
-      <div class="ud-progress-item"><div class="ud-progress-top"><span class="ud-progress-name">${tt("paid")}</span><span class="ud-progress-val">€${paid.toFixed(0)}</span></div></div>
-    `;
+  async function openAthleteDetails(uid){
+    const a=athletes.find(row=>row.uid===uid);if(!a)return;const dialog=coachDialog(a.displayName||[a.firstName,a.lastName].filter(Boolean).join(' ')||a.email||uid),body=dialog.querySelector('[data-dialog-body]');body.textContent=copy('Loading…','Завантаження…');
+    try{Object.assign(a,await fetchLatestMetrics(uid));}catch(error){a.readError=true;}
+    const metric=(label,value,unit='',at=0)=>'<div class="coach-detail-metric"><span>'+label+(at?'<small style="display:block;color:#aaa;margin-top:3px">'+esc(new Date(at).toLocaleDateString(getLang()))+'</small>':'')+'</span><b>'+(Data.num(value)==null?'—':esc(value)+' '+unit)+'</b></div>',ctx=asAdmin?'fromAdmin=1':'fromCoach=1';
+    body.innerHTML='<p>'+copy('Account state','Стан акаунта')+': '+esc(Data.clientState(a)==='active'?copy('Active','Активний'):Data.clientState(a)==='test'?copy('Test account','Тестовий акаунт'):copy('Inactive','Неактивний'))+'</p><p>'+copy('Wellness is current for 48 hours. Missing data is not zero readiness.','Wellness актуальний протягом 48 годин. Відсутні дані не означають нульову готовність.')+'</p>'+(a.readError?'<p role="alert">'+copy('Some sources could not be loaded.','Частину джерел не вдалося завантажити.')+'</p>':'')+metric(tt('tableReadiness'),a.readinessPct,'%')+metric(copy('Recorded pain','Записаний біль'),a.pain,'/ 10')+metric(copy('Sleep','Сон'),a.sleep,'/ 10')+metric(copy('Stress','Стрес'),a.stress,'/ 10')+metric(copy('Last recorded weight','Остання записана вага'),a.weight,'kg',a.weightAt)+metric('CMJ',a.cmj,'cm',a.cmjAt)+'<p>'+copy('Wellness date','Дата Wellness')+': '+esc(a.metricsAt?new Date(a.metricsAt).toLocaleDateString(getLang()):'—')+'</p><div class="coach-inline-actions"><a class="ud-btn" href="weekly-individual.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+tt('adjust')+'</a><a class="ud-btn ud-btn--ghost" href="daily-individual.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">Daily</a><a class="ud-btn ud-btn--ghost" href="load-season.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+copy('Journal','Журнал')+'</a><a class="ud-btn ud-btn--ghost" href="injury.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+copy('Injury history','Історія травм')+'</a><button type="button" class="ud-btn ud-btn--ghost" data-act="message" data-uid="'+esc(uid)+'">'+tt('message')+'</button></div>';
   }
 
   async function loadCoachIdentity(uid) {
@@ -674,51 +491,22 @@
     coachInviteLink = code ? `https://proathletecare.com/j/${encodeURIComponent(code)}` : "";
 
     box.style.display = "block";
-    box.innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;"><div><b>${tt("coachLabel")}: ${esc(coachName)}</b></div><div style="text-align:right;"><div class="muted">${tt("inviteCode")}: <b style="color:#d4af37;">${esc(code || tt("inviteNotSet"))}</b></div><button class="ud-btn ud-btn--ghost" id="coach-copy-invite" type="button" style="margin-top:6px;">${tt("copyInviteLink")}</button></div></div>`;
-    document.getElementById("coach-copy-invite")?.addEventListener("click", copyInviteLink);
+    box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><b>${tt('coachLabel')}: ${esc(coachName)}</b><button class="ud-btn ud-btn--ghost" id="coach-open-invite" type="button">${copy('Invite athlete','Запросити атлета')}</button></div>`;
+    document.getElementById('coach-open-invite').onclick=()=>{const dialog=coachDialog(copy('Invite athlete','Запросити атлета'));dialog.querySelector('[data-dialog-body]').innerHTML='<p>'+tt('inviteCode')+': <b>'+esc(code||tt('inviteNotSet'))+'</b></p><button type="button" class="ud-btn" id="coach-copy-invite">'+tt('copyInviteLink')+'</button>';dialog.querySelector('#coach-copy-invite').onclick=copyInviteLink;};
   }
 
-  async function enrichAthletes() {
-    const top = athletes.slice().sort((a, b) => Number(b.lastSeen || 0) - Number(a.lastSeen || 0)).slice(0, ENRICH_LIMIT);
-    await Promise.all(top.map(async (a) => {
-      const m = await fetchLatestMetrics(a.uid).catch(() => null);
-      if (!m) return;
-      if (Number.isFinite(m.readinessPct)) a.readinessPct = m.readinessPct;
-      if (Number.isFinite(m.avg7)) a.avg7 = m.avg7;
-      if (m.trend) a.trend = m.trend;
-      if (m.riskLevel) a.riskLevel = m.riskLevel;
-      if (Number.isFinite(m.wellnessAvg)) a.wellnessAvg = m.wellnessAvg;
-      if (Number.isFinite(m.pain)) a.pain = m.pain;
-      if (Number.isFinite(m.acwr)) a.acwr = m.acwr;
-      if (Number.isFinite(m.cmj)) a.cmj = m.cmj;
-      if (Number.isFinite(m.weight)) a.weight = m.weight;
-      if (Number.isFinite(m.sleep)) a.sleep = m.sleep;
-      if (Number.isFinite(m.stress)) a.stress = m.stress;
-      if (Number.isFinite(m.soreness)) a.soreness = m.soreness;
-      if (Number.isFinite(m.ready)) a.ready = m.ready;
-    }));
+  async function enrichAthletes(){
+    const rows=athletes.filter(a=>Data.clientState(a)==='active');
+    for(let start=0;start<rows.length;start+=4)await Promise.all(rows.slice(start,start+4).map(async a=>{try{Object.assign(a,await fetchLatestMetrics(a.uid));}catch(error){a.readError=true;}}));
   }
 
-  async function loadCoachAthletes(uid) {
-    const host = document.getElementById("athletes-table");
-    if (!host || !uid) return;
-
-    try {
-      const snap = await db.collection("users").where("coachId", "==", uid).limit(200).get();
-      athletes = snap.docs.map((d) => ({ uid: d.id, ...(d.data() || {}) }));
-    } catch (e) {
-      host.innerHTML = `<div class="ud-mini" style="margin-top:8px;color:#ff9a9a;">${tt("cannotLoadClients")}: ${esc(e?.message || e)}</div>`;
-      return;
-    }
-
-    renderTop();
-    renderAlertsAndActions();
-    renderTable();
-    await enrichAthletes();
-    renderTop();
-    renderAlertsAndActions();
-    renderTable();
-    await renderEarnings();
+  async function loadCoachAthletes(uid){
+    const host=document.getElementById('athletes-table');if(!host||!uid)return;const generation=++loadGeneration,button=document.getElementById('btn-refresh');button.disabled=true;enrichCache.clear();document.getElementById('coach-details-modal')?.close();host.innerHTML='<p role="status">'+copy('Loading clients…','Завантаження клієнтів…')+'</p>';
+    try{const snap=await db.collection('users').where('coachId','==',uid).limit(200).get();if(generation!==loadGeneration)return;
+      athletes=snap.docs.map(d=>{const raw=d.data()||{};return{...raw,...Data.emptyMetrics(),uid:d.id,lastSeen:safeMillis(raw.lastSeenAt||raw.lastSeen)};}).filter(a=>!a.role||['athlete','client','user'].includes(String(a.role).toLowerCase()));
+      renderTop();renderAlertsAndActions();renderTable();await enrichAthletes();if(generation!==loadGeneration)return;renderTop();renderAlertsAndActions();renderTable();await renderEarnings();
+    }catch(error){if(generation!==loadGeneration)return;athletes=[];renderTop();renderAlertsAndActions();host.innerHTML='<p role="alert">'+tt('cannotLoadClients')+'. '+copy('Press Refresh to retry.','Натисни «Оновити», щоб повторити.')+'</p>';}
+    finally{if(generation===loadGeneration)button.disabled=false;}
   }
 
   async function start(targetUid) {
@@ -750,6 +538,7 @@
     applyPageI18n();
 
     document.getElementById("btn-refresh")?.addEventListener("click", () => start(targetUid).catch(console.error));
+    document.getElementById('coach-client-scope')?.addEventListener('change',()=>{currentFilter='all';renderTable();});
     document.getElementById("coach-search-input")?.addEventListener("input", () => renderTable());
     document.getElementById("btn-open-current")?.addEventListener("click", () => {
       const weekId = mondayId();
@@ -765,7 +554,7 @@
       const act = btn.getAttribute("data-act");
       const ctx = asAdmin ? "fromAdmin=1" : "fromCoach=1";
       if (!uid || !act) return;
-      if (act === "apply") alert(tt("applied"));
+      if (act === "details") openAthleteDetails(uid).catch(console.error);
       if (act === "edit") window.location.href = `weekly-individual.html?userId=${encodeURIComponent(uid)}&${ctx}`;
       if (act === "recovery") window.location.href = `injury.html?userId=${encodeURIComponent(uid)}&${ctx}`;
       if (act === "message") openComposeForAthlete(uid);

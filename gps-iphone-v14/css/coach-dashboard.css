@@ -1,0 +1,26 @@
+#coach-client-scope{min-height:44px;max-width:100%;padding:8px 12px;border:1px solid #655221;border-radius:10px;background:#111;color:#eee;font:inherit}
+.main-content [hidden]{display:none!important}
+#coach-decisions-section{grid-template-columns:1fr}
+#athletes-table .monitor-table{min-width:0;width:100%;table-layout:auto}
+#athletes-table .monitor-table td{white-space:normal;overflow-wrap:anywhere}
+.coach-summary-button{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;text-align:left}
+.coach-alert-item{width:100%;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.coach-details-dialog{width:min(680px,calc(100vw - 24px));max-height:85dvh;overflow:auto;box-sizing:border-box;border:1px solid #665329;border-radius:16px;padding:18px;background:#111;color:#eee}
+.coach-details-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
+.coach-details-dialog>header{position:static;display:flex;justify-content:space-between;align-items:center;gap:16px;width:auto;padding:0 0 12px;background:none;border-bottom:1px solid #39301c}
+.coach-details-dialog h3{margin:0;color:#ffd147;font-size:1.1rem;overflow-wrap:anywhere}
+.coach-details-dialog>header button{min-width:44px;min-height:44px;border:1px solid #555;border-radius:50%;background:#1b1b1b;color:#fff;font-size:1.5rem;cursor:pointer}
+.coach-detail-metric{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #292929}
+.coach-details-dialog .coach-inline-actions{margin-top:16px}
+.coach-inline-actions .ud-btn{min-height:40px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}
+@media(max-width:700px){
+ #athletes-table{overflow:visible}
+ #athletes-table .monitor-table,#athletes-table tbody{display:block;width:100%}
+ #athletes-table thead{display:none}
+ #athletes-table tr{display:grid;gap:8px;margin:10px 0;padding:12px;border:1px solid #383124;border-radius:12px;background:#101010}
+ #athletes-table .monitor-table td{display:flex;justify-content:space-between;align-items:center;gap:12px;width:auto;padding:6px 0;border:0;text-align:left}
+ #athletes-table td:first-child{display:block}
+ #athletes-table td[data-label]::before{content:attr(data-label);color:#aaa;font-size:.8rem}
+ .coach-title{font-size:23px}
+ .coach-actions .ud-btn{min-height:44px}
+}

@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-meal-button-size-v1",
-  "builtAt": "2026-11-13T13:39:30.981Z",
+  "build": "daily-phone-20261113-meal-button-size-v1+coach-performance-preview-2",
+  "builtAt": "2026-11-13T13:40:32.431Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -692,8 +692,8 @@
     },
     {
       "file": "css/coach-performance.css",
-      "bytes": 6841,
-      "sha256": "d7f1f572e335fc6a5e63492f7fe3daa7f0ba10129992e7479b665174dd6acbab"
+      "bytes": 8237,
+      "sha256": "8732e9514cad057c9dbb282cd91ddb63ff201ec63c46ab2932a2333fa287a7e8"
     },
     {
       "file": "css/daily-execution.css",
@@ -967,8 +967,8 @@
     },
     {
       "file": "js/coach-performance-preview.js",
-      "bytes": 9477,
-      "sha256": "48a7d256b927bf0c91dfb710f72d3889a9658674ddfbccf7ca36a711666d3b4f"
+      "bytes": 12882,
+      "sha256": "854627af26061b80e07dab920e42db38e9b940c004001c5313a742de53e9f11c"
     },
     {
       "file": "js/coach-week-editor.js",
@@ -1318,7 +1318,7 @@
     {
       "file": "pages/coach-dashboard.html",
       "bytes": 8143,
-      "sha256": "6a9ad7c0bec4b5bb24ce3ccff3b48309ecf77b97589e026ef0ec74536503a7c0"
+      "sha256": "623122fd8e5e10c4fb56508911f2fd05fd82d832d46c024960a513b813e8cc57"
     },
     {
       "file": "pages/coach-date-plan.html",
@@ -1327,8 +1327,8 @@
     },
     {
       "file": "pages/coach-performance.html",
-      "bytes": 6902,
-      "sha256": "cca5426bd844c0abf6351fd2bd31ed9447fa872bafa69d4ed22323dfbcdeb1ce"
+      "bytes": 8814,
+      "sha256": "ed8e38f5f8f646ca08b47f231b254d49d4ab6c780eea0bd0bec929938f68c1a1"
     },
     {
       "file": "pages/coach-week-editor.html",
@@ -1499,10 +1499,15 @@
       "file": "vendor/leaflet/leaflet.js",
       "bytes": 147552,
       "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
+    },
+    {
+      "file": "js/coach-load-cycle.js",
+      "bytes": 1816,
+      "sha256": "070481f6bc0884f3c455a71f08c4d458fd7f9a49b46c3ae7fb93f0be864d42f7"
     }
   ],
   "coachPerformancePreview": {
-    "version": 1,
+    "version": 2,
     "path": "pages/coach-performance.html",
     "data": "synthetic-only",
     "realImport": false,

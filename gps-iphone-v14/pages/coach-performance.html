@@ -5,7 +5,7 @@
   <title>Database · Coach | ProAthleteCare</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/navigation-mobile.css">
-  <link rel="stylesheet" href="../css/coach-performance.css?v=preview-1">
+  <link rel="stylesheet" href="../css/coach-performance.css?v=preview-2">
 </head>
 <body class="performance-preview">
 <header>
@@ -30,15 +30,19 @@
       <label>Команда<strong>U19 · DEMO TEAM</strong></label>
       <label>Сезон<strong>2026 / 27 · демо</strong></label>
       <label>Гравець<select id="cp-player"><option value="team">Уся команда · 8 гравців</option></select></label>
-      <label>Період<select id="cp-range"><option value="all">Усі 10 тижнів</option><option value="4">Останні 4 тижні</option></select></label>
+      <label>Період<select id="cp-range"><option value="all">Усі 12 тижнів</option><option value="4">Останні 4 тижні</option></select></label>
     </section>
     <div class="cp-section-heading"><div><p class="cp-eyebrow" id="cp-scope">TEAM OVERVIEW</p><h3 id="cp-title">Огляд команди</h3></div><span id="cp-coverage" class="cp-tag"></span></div>
     <section id="cp-metrics" class="cp-metrics" aria-label="Підсумки вибраного періоду"></section>
     <section class="cp-card cp-season">
       <div class="cp-card-heading"><div><p class="cp-eyebrow">SEASON TREND</p><h3 id="cp-chart-title">Дистанція за тижнями</h3></div><label class="cp-inline-label">Показник<select id="cp-metric"><option value="distance">Дистанція</option><option value="load">Player Load</option><option value="hsr">HSR</option><option value="sprint">Sprint</option><option value="acc">Прискорення</option><option value="dec">Гальмування</option></select></label></div>
-      <div class="cp-chart-key"><span><i class="cp-line-key"></i>Фактичний підсумок демонстраційних записів</span><span>Натисніть тиждень → деталі</span></div>
+      <div class="cp-chart-key cp-cycle-legend"><span class="cp-green">● Зниження</span><span class="cp-yellow">● Нарощування</span><span class="cp-red">● Пік за планом / вище плану &gt;10%</span><span>┄ План 3↑ / 1↓</span></div>
+      <p class="cp-note">Свічки й кольорова лінія — фактичні демо-значення. Пунктир — окремий план тренера. Натисніть тиждень для аналізу.</p>
       <div id="cp-season-chart" class="cp-chart"></div>
       <div id="cp-week-detail" class="cp-week-detail" aria-live="polite"></div>
+      <div id="cp-load-analysis" class="cp-analysis" aria-live="polite"></div>
+      <details class="cp-plan"><summary>Керувати хвилею · 3 тижні вгору / 1 вниз</summary><p class="cp-note">Приклад твоєї методики, не рекомендовані норми. Налаштування змінюють лише пунктирний план поточного гравця/команди та показника. Фактичні значення не змінюються. У макеті план діє до перезавантаження.</p><form id="cp-plan-form" class="cp-plan-controls"><label id="cp-base-label">База W01<input id="cp-plan-base" type="number" min="0.001" step="any" required></label><label>Крок вгору, %<input id="cp-plan-step" type="number" min="0" max="50" step="any" value="12" required></label><label>Приріст нового циклу, %<input id="cp-plan-cycle" type="number" min="0" max="50" step="any" value="8" required></label><label>Розвантаження, % від піку<input id="cp-plan-unload" type="number" min="10" max="100" step="any" value="65" required></label><button class="cp-button cp-primary" type="submit">Оновити план</button></form><p id="cp-plan-status" class="cp-note" role="status"></p></details>
+      <p class="cp-note">Кольори описують динаміку та порівняння з планом. Червоний не є діагнозом перевантаження; допуск 10% — умовний поріг цього макета.</p>
     </section>
     <div class="cp-chart-grid">
       <section class="cp-card"><div class="cp-card-heading"><div><p class="cp-eyebrow">EXTERNAL LOAD</p><h3>Player Load</h3></div><span class="cp-tag">a.u. · джерело датчика</span></div><div id="cp-load-chart" class="cp-chart cp-chart-small"></div><p class="cp-note">Окремий показник датчика. Не прирівнюється до Session-RPE.</p></section>
@@ -49,5 +53,6 @@
   </main>
 </div>
 <dialog id="cp-import-dialog" aria-labelledby="cp-dialog-title"><h2 id="cp-dialog-title">Імпорт Excel / CSV</h2><p>Зараз погоджуємо вигляд дашборда тренера. На наступному етапі тут буде завантаження файлу, перевірка показників та відповідності гравців.</p><p>Цей макет нічого не завантажує та не зберігає в базі.</p><button id="cp-dialog-close" class="cp-button cp-primary">Зрозуміло</button></dialog>
-<script src="../js/coach-performance-preview.js?v=preview-1"></script>
+<script src="../js/coach-load-cycle.js?v=preview-2"></script>
+<script src="../js/coach-performance-preview.js?v=preview-2"></script>
 </body></html>

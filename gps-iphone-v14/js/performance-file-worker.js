@@ -1,0 +1,4 @@
+/* Local-only XLSX parsing, isolated from the page so large files do not freeze controls. */
+importScripts('../vendor/sheetjs/xlsx.full.min.js');
+let book=null;
+self.onmessage=event=>{try{const m=event.data;if(m.type==='open'){if(m.buffer.byteLength>30*1024*1024)throw Error('Файл перевищує 30 МБ. Розділіть експорт.');book=XLSX.read(m.buffer,{type:'array',cellDates:true,cellHTML:false,cellFormula:false,sheetRows:5001});self.postMessage({id:m.id,sheets:book.SheetNames});}else if(m.type==='sheet'){if(!book||!book.Sheets[m.name])throw Error('Аркуш недоступний');const sheet=book.Sheets[m.name],range=XLSX.utils.decode_range(sheet['!ref']||'A1');if(range.e.r>4999||range.e.c>399)throw Error('Аркуш завеликий: максимум 5000 рядків і 400 колонок.');const rows=XLSX.utils.sheet_to_json(sheet,{range:{s:{r:0,c:0},e:range.e},header:1,raw:true,defval:null,blankrows:true});self.postMessage({id:m.id,rows});}}catch(error){self.postMessage({id:event.data.id,error:error.message})}};

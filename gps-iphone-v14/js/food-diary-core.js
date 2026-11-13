@@ -30,7 +30,7 @@
   function normal(s){return String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').trim();}
   // Native-language query aliases; original USDA descriptions remain available as source text.
   const terms=[
-    ['beer','пиво','bier','cerveza','cerveja'],['nonalcoholic beer','безалкогольне пиво','безалкогольное пиво','alkoholfreies bier','cerveza sin alcohol','cerveja sem alcool'],['wine','вино','wein','vino','vinho'],['vodka','горілка','водка','wodka'],['whiskey','віскі','виски','whisky'],
+    ['beer','бір','бир','пиво','bier','cerveza','cerveja'],['nonalcoholic beer','безалкогольне пиво','безалкогольное пиво','alkoholfreies bier','cerveza sin alcohol','cerveja sem alcool'],['wine','вино','wein','vino','vinho'],['vodka','горілка','водка','wodka'],['whiskey','віскі','виски','whisky'],
     ['gyro','донер','дьонер','шаурма','шаверма','döner','doner','kebab','gyros'],['mcdonald','макдональдс','макдональд','mcdonalds'],['big mac','біг мак','биг мак'],
     ['pizza','піца','пицца'],['cheeseburger','чізбургер','чизбургер','käseburger'],['hamburger','гамбургер'],['french fries','картопля фрі','картофель фри','pommes','patatas fritas','batatas fritas'],
     ['cottage cheese','творог','кисломолочний сир','quark','requesón'],['cheese','сир','сыр','käse','queso','queijo'],['chicken','курка','курица','hähnchen','pollo','frango'],['turkey','індичка','индейка','pute','pavo','peru'],

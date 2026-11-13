@@ -74,7 +74,22 @@
    try{host.append(el('p',t('loading')));foods=tab==='recent'?recent:tab==='favorites'?favorites:await library();}catch{host.replaceChildren(el('p',t('catalogError')));return;}
    if(!dialog||ctx?.uid!==owner||host!==dialog.querySelector('[data-results]'))return;
    const query=dialog.querySelector('[data-query]').value;const found=C.search(foods,query,lang());host.replaceChildren();if(!found.length)host.append(el('p',t('noResults')));
-   for(const f of found){const button=el('button',undefined,'food-search-result');button.type='button';button.append(el('strong',name(f)),el('span',`≈ ${Math.round(f.kcal*10)/10} kcal / ${f.basis==='portion'?t('portion'):'100 '+t('g')}${f.country?' · '+f.country:''}`));button.onclick=()=>choose(f,editing);host.append(button);}
+   for(const f of found){
+     if(!replacementTarget){const b=el('button',name(f),'food-search-result');b.type='button';b.onclick=()=>choose(f,editing);host.append(b);continue;}
+     const row=el('div',undefined,'food-quick-row'),body=el('div'),title=el('strong',name(f)),detail=el('span');body.append(title,detail);
+     const current=replacementFor(replacementTarget.id),matching=current?.food.id===f.id;
+     let unit=f.basis==='portion'?'portion':f.density>0?'ml':f.portions?.length?'portion':'g',portion=Math.max(0,(f.portions||[]).findIndex(p=>p.name.toLowerCase().includes(f.name.replace(/ \(.*$/, '').toLowerCase()))),step=unit==='ml'?(/^Beer\b/i.test(f.name)?500:/^Wine\b/i.test(f.name)?150:250):unit==='g'?100:1;
+     if(matching){unit=current.unit;portion=current.portion||0;if(current.quickStep>0)step=current.quickStep;else if(unit==='g')step=100;}
+     let amount=matching&&current.consumed!==false?current.amount:0;
+     const controls=el('div',undefined,'food-quick-controls'),minus=el('button','−'),count=el('output'),plus=el('button','+');minus.type=plus.type='button';minus.setAttribute('aria-label',t('decrease')+' '+name(f));plus.setAttribute('aria-label',t('increase')+' '+name(f));
+     const portionLabel=()=>unit==='ml'?(step>=1000?step/1000+' '+t('litre'):step+' '+t('ml')):unit==='g'?step+' '+t('g'):f.portions?.[portion]?.g?Math.round(f.portions[portion].g)+' '+t('g')+' / '+t('portion'):t('portion');
+     let size;const update=()=>{const value=C.calculate(f,Math.max(amount,step),unit,portion);detail.textContent=portionLabel()+' · ≈ '+Math.round(C.calculate(f,step,unit,portion).kcal)+' kcal';count.textContent=unit==='ml'?(amount>=1000?Number((amount/1000).toFixed(2))+' '+t('litre'):amount+' '+t('ml')):unit==='g'?amount+' '+t('g'):Number(amount.toFixed(2))+' ×';minus.disabled=amount<=0;row.dataset.amount=amount;};
+     if(unit==='ml'||unit==='portion'&&f.portions?.length>1){size=el('select');size.className='food-quick-size';size.setAttribute('aria-label',t('portion')+' '+name(f));const sizes=unit==='ml'?[250,330,500,1000]:f.portions.map((_,i)=>i);if(unit==='ml'&&!sizes.includes(step))sizes.push(step);for(const v of sizes){const o=el('option',unit==='ml'?(v>=1000?v/1000+' '+t('litre'):v+' '+t('ml')):f.portions[v].name+' · '+Math.round(f.portions[v].g)+' '+t('g'));o.value=v;size.append(o);}size.value=unit==='ml'?step:portion;size.onchange=()=>{if(unit==='ml')step=Number(size.value);else portion=Number(size.value);amount=0;update();};body.append(size);}
+     const change=async delta=>{if(saving||locked())return;const next=Math.max(0,Number((amount+delta*step).toFixed(2))),target={...replacementTarget},owner=ctx.uid,date=ctx.date,previous=replacementFor(target.id);for(const b of dialog.querySelectorAll('button'))b.disabled=true;status(t('loading'));
+       try{const value={...C.entry({id:target.entryId,userId:owner,date,food:f,amount:next||step,unit,portion,slot:target.slot,createdAt:previous?.createdAt}),kind:'replacement',plannedMealId:target.id,consumed:next>0,quickStep:step};if(!await persist(value.id,value))return;if(ctx?.uid!==owner||ctx?.date!==date)return;recent=[value.food,...recent.filter(x=>x.id!==f.id)].slice(0,25);persistPersonal();status('');await results();}
+       catch{status(t('saveError'));}finally{if(dialog){for(const b of dialog.querySelectorAll('button'))b.disabled=false;await results();}} 
+     };minus.onclick=()=>change(-1);plus.onclick=()=>change(1);controls.append(minus,count,plus);update();row.append(body,controls);host.append(row);
+   }
  }
  function open(entry,target=null){
    replacementTarget=target;
@@ -83,9 +98,9 @@
    const heading=el('div',undefined,'food-diary-heading'),h=el('h3',target?t('own'):entry?t('edit'):t('add'));h.id='food-diary-dialog-title';const close=el('button',t('close'));close.type='button';close.onclick=()=>dialog.close();heading.append(h,close);dialog.append(heading);
    const searchLabel=el('label',t('search'));searchLabel.dataset.searchControls='';searchLabel.htmlFor='food-diary-query';const query=el('input');query.id='food-diary-query';query.dataset.searchControls='';query.dataset.query='';query.type='search';query.placeholder=t('hint');query.oninput=()=>results();dialog.append(searchLabel,query);
    const tabs=el('div',undefined,'food-diary-tabs');tabs.dataset.searchControls='';for(const key of ['library','recent','favorites','manual']){const b=el('button',t(key));b.type='button';b.dataset.foodTab=key;b.onclick=()=>{tab=key;dialog.querySelector('[data-selection]').replaceChildren();results();};tabs.append(b);}dialog.append(tabs);
-   const result=el('div',undefined,'food-search-results');result.dataset.results='';const selection=el('div');selection.dataset.selection='';const message=el('p');message.dataset.status='';message.setAttribute('aria-live','polite');dialog.append(result,selection,message,el('p',t('sourceNote'),'food-diary-note'));
-   const attribution=el('a','USDA FoodData Central · CC0');attribution.href='https://fdc.nal.usda.gov/download-datasets/';attribution.target='_blank';attribution.rel='noopener noreferrer';dialog.append(attribution);
-   dialog.addEventListener('cancel',e=>{if(saving)e.preventDefault();});document.body.append(dialog);dialog.showModal();if(entry){result.hidden=true;choose(entry.food,entry);}else results();
+   const result=el('div',undefined,'food-search-results');result.dataset.results='';const selection=el('div');selection.dataset.selection='';const message=el('p');message.dataset.status='';message.setAttribute('aria-live','polite');dialog.append(result,selection,message);const sourceDetails=el('details',undefined,'food-source-details'),sourceSummary=el('summary',t('source'));sourceDetails.append(sourceSummary,el('p',t('sourceNote'),'food-diary-note'));dialog.append(sourceDetails);
+   const attribution=el('a','USDA FoodData Central · CC0');attribution.href='https://fdc.nal.usda.gov/download-datasets/';attribution.target='_blank';attribution.rel='noopener noreferrer';sourceDetails.append(attribution);
+   dialog.addEventListener('cancel',e=>{if(saving)e.preventDefault();});document.body.append(dialog);dialog.showModal();if(entry&&!target){result.hidden=true;choose(entry.food,entry);}else{if(entry)query.value=name(entry.food);results();}
  }
  async function persist(id,value){
    if(locked()||!ready||saving)throw Error('read-only');const owner=ctx.uid,date=ctx.date,version=generation;

@@ -1,6 +1,9 @@
 (function(){
 const langs=['uk','en','de','es','ru','pt'];
 const rows={
+ increase:['Додати','Add','Hinzufügen','Añadir','Добавить','Adicionar'],
+ decrease:['Зменшити','Decrease','Verringern','Reducir','Уменьшить','Diminuir'],
+ litre:['л','L','l','l','л','l'],
  eaten:['З’їв','Eaten','Gegessen','Comido','Съел','Comido'],
  own:['З’їв інше','Ate something else','Etwas anderes gegessen','Comí otra cosa','Съел другое','Comi outra coisa'],
  restore:['Повернути страву плану','Restore planned dish','Geplantes Gericht wiederherstellen','Restaurar plato previsto','Вернуть блюдо плана','Restaurar prato planejado'],

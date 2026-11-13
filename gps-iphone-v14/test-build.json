@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-food-inline-v1",
-  "builtAt": "2026-11-13T13:15:45.450Z",
+  "build": "daily-phone-20261113-food-quick-v1",
+  "builtAt": "2026-11-13T13:22:41.510Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -727,8 +727,8 @@
     },
     {
       "file": "css/food-diary.css",
-      "bytes": 3659,
-      "sha256": "1a6b656372de53d8bdb83c525e40e66601a353dbbfd5c46567b84296ba51ab24"
+      "bytes": 4960,
+      "sha256": "a1bc7f0e7a299a9e35a07fe9d75d823c08aab6c020a92fee82aa55145d6f67e0"
     },
     {
       "file": "css/index.css",
@@ -1072,18 +1072,18 @@
     },
     {
       "file": "js/food-diary-core.js",
-      "bytes": 8757,
-      "sha256": "f8411b7b50cf2c1256e91a9e7c6f4e462bd8ca6781c689e7529af89b0f35bb7a"
+      "bytes": 8775,
+      "sha256": "ca248cddc207bfea3a2a0d7909898775f1bf0a4cf04b8f8fed11fd9fff488a81"
     },
     {
       "file": "js/food-diary-i18n.js",
-      "bytes": 12000,
-      "sha256": "54c45377b68eda602b4d086b4a2102237ede5bb96d4fa85da569e1d62c6cca16"
+      "bytes": 12223,
+      "sha256": "172a225c1882831668a0a1cbf4902ac1f01a5ee810174e8a923552feb984f289"
     },
     {
       "file": "js/food-diary.js",
-      "bytes": 22130,
-      "sha256": "57d53dfa0e003547183b30c56523aa5516d5dbfce63f6aaf21c459c46d4a8721"
+      "bytes": 25560,
+      "sha256": "e862840999c61d5372c5fd0ade088a3333d037703c875ce2c9ca8af50d250634"
     },
     {
       "file": "js/injury.js",
@@ -1412,8 +1412,8 @@
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 16175,
-      "sha256": "a6eec617c3f5d081ed50197722fad00c5c0e4d657aa83672c0e38ea160376264"
+      "bytes": 16159,
+      "sha256": "28f33a722c495b4019f6910e436060570059455ab532d87e7eb1c25bb162801e"
     },
     {
       "file": "pages/wellness.html",
@@ -1452,8 +1452,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3392,
-      "sha256": "642acd4054fb8417f5668566ef0fdf17650aaa96683d65c0f022f396c0174f4a"
+      "bytes": 3391,
+      "sha256": "632a683bd0bec721c100a121c8af72d31b86501b097b95346a07ca7f472b3e33"
     },
     {
       "file": "styles.css",

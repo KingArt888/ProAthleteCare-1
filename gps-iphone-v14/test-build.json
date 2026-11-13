@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-food-fixed-controls-v1+coach-performance-preview-3",
-  "builtAt": "2026-11-13T13:53:11.460Z",
+  "build": "daily-phone-20261113-meal-short-actions-v1",
+  "builtAt": "2026-11-13T13:55:12.100Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -692,8 +692,8 @@
     },
     {
       "file": "css/coach-performance.css",
-      "bytes": 9951,
-      "sha256": "b261806260858ab05241907a0cb8b3e5c8005a9430a7cac76b331d85bba5045c"
+      "bytes": 9987,
+      "sha256": "c60c703cda7327104dcbdf41b12c239c432559674e9f31d46e91cbf7cfe0b395"
     },
     {
       "file": "css/daily-execution.css",
@@ -727,8 +727,8 @@
     },
     {
       "file": "css/food-diary.css",
-      "bytes": 7257,
-      "sha256": "ccfffa65d540d02aaf50a22c913208101a942d8cda7af5e849ff1d986178b737"
+      "bytes": 7636,
+      "sha256": "47085a871a3902109b9fb3dbe4c8cb4a794108339f2e39c55c70fd4011799225"
     },
     {
       "file": "css/index.css",
@@ -962,8 +962,8 @@
     },
     {
       "file": "js/coach-load-cycle.js",
-      "bytes": 1816,
-      "sha256": "070481f6bc0884f3c455a71f08c4d458fd7f9a49b46c3ae7fb93f0be864d42f7"
+      "bytes": 1833,
+      "sha256": "54ec48384859207c89776f9dbfb696a64e030b6462d68500aa81250f948594bb"
     },
     {
       "file": "js/coach-monitor.js",
@@ -971,9 +971,19 @@
       "sha256": "641e3e5ad749f7504c236db06853c26df7ddab851d3633ff2e047127f2c239af"
     },
     {
+      "file": "js/coach-performance-detail.js",
+      "bytes": 7324,
+      "sha256": "eda152984a3366c89c99412aefa5a44ac942f1b9e867a87e890dfecc2b2447c5"
+    },
+    {
       "file": "js/coach-performance-preview.js",
-      "bytes": 13338,
-      "sha256": "7104678ece116c79d60c0d6faf411052ffc81a70d35dd45130e80a4a143ff0b9"
+      "bytes": 13416,
+      "sha256": "747fda9ff7d1cb291c9cb0a07b7f895d8a33ffc18aa618fedede82f55ca5d485"
+    },
+    {
+      "file": "js/coach-performance-series.js",
+      "bytes": 1998,
+      "sha256": "5d6c884041563fec6174ae5c9ccd47e3f9022bd194a6a31ffb55e657565e0bd3"
     },
     {
       "file": "js/coach-week-editor.js",
@@ -1287,8 +1297,8 @@
     },
     {
       "file": "js/weight.js",
-      "bytes": 135480,
-      "sha256": "aef994faf318107d72aa34971036353ba48514e8d2fbb7b1c38bf82a2aeeec9c"
+      "bytes": 135818,
+      "sha256": "d8ee939a5a3835b1e3aa7a3fd9f8287c6b314cef48139e3a1a29302d5391dbb3"
     },
     {
       "file": "js/wellness.js",
@@ -1332,8 +1342,8 @@
     },
     {
       "file": "pages/coach-performance.html",
-      "bytes": 11709,
-      "sha256": "404eb1fe9c71337bc65bedc96c38999634b797345b0835366318ff9176a3518e"
+      "bytes": 11780,
+      "sha256": "1610193c7d7d13071c595054e4d6ba6e42889b455f78086538462dd414c0421a"
     },
     {
       "file": "pages/coach-week-editor.html",
@@ -1417,8 +1427,8 @@
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 16333,
-      "sha256": "fd3dcfefd7997f159052f60baa1d9d0d86263bf0ac71e3077381443590c2d131"
+      "bytes": 16317,
+      "sha256": "a2eb05e5d806d631ff6eb9882a0fbe84f1a96a8371e21265ab0e79f32393795c"
     },
     {
       "file": "pages/wellness.html",
@@ -1457,8 +1467,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3400,
-      "sha256": "789a0b996d9b7b8be740a97ac85bebff8b71bf88602f4384b86cb0fa113b866b"
+      "bytes": 3399,
+      "sha256": "fa2fbfc7bbde6c34d98d28854706d78b825a0fe4f8bcbd9f352c24ce2d70a907"
     },
     {
       "file": "styles.css",
@@ -1504,16 +1514,6 @@
       "file": "vendor/leaflet/leaflet.js",
       "bytes": 147552,
       "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
-    },
-    {
-      "file": "js/coach-performance-series.js",
-      "bytes": 1989,
-      "sha256": "3ba7cf3663de3ca6252b1c9ebd26eca6b3a0cc31ae744528692ed7839b01c374"
-    },
-    {
-      "file": "js/coach-performance-detail.js",
-      "bytes": 7290,
-      "sha256": "06fc996362eb0021ff52f64eecf438fcd67625246b5290333b2a5e8778f53744"
     }
   ],
   "coachPerformancePreview": {

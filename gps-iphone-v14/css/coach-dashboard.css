@@ -5,8 +5,8 @@
 #coach-summary-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 #coach-summary-cards .coach-summary-button{display:flex;flex-direction:column;align-items:flex-start;background:linear-gradient(145deg,#252116,#141414);border-color:#534728;padding:20px;white-space:normal}
 #coach-summary-cards .coach-summary-button b{font-size:32px;line-height:1.2;color:#ffd147}
-section[aria-label="Coach summary"]{grid-template-columns:minmax(0,3fr) minmax(220px,1fr)}
-@media(max-width:900px){section[aria-label="Coach summary"]{grid-template-columns:1fr}}
+section[data-coach-summary]{grid-template-columns:minmax(0,3fr) minmax(220px,1fr)}
+@media(max-width:900px){section[data-coach-summary]{grid-template-columns:1fr}}
 @media(max-width:500px){#coach-summary-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#coach-summary-cards .coach-summary-button{flex-direction:column;align-items:flex-start;padding:10px;font-size:11px;min-width:0}#coach-summary-cards .coach-summary-button b{font-size:24px}}
 .main-content [hidden]{display:none!important}
 #coach-decisions-section{grid-template-columns:1fr}

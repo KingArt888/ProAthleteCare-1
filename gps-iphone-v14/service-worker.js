@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_VERSION = 'daily-phone-20261113-meal-button-size-v1';
+const CACHE_VERSION = 'daily-phone-20261113-food-fixed-controls-v1';
 const STATIC_CACHE = `pac-daily-phone-static-${CACHE_VERSION}`;
 const OFFLINE_URL = "/ProAthleteCare-1/gps-iphone-v14/offline.html";
 

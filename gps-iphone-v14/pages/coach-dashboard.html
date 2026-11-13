@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ProAthleteCare | Coach Workspace</title>
 
-  <link rel="stylesheet" href="../css/style.css?v=coach-original-20261113-v1" />
-  <link rel="stylesheet" href="../css/admin.css?v=coach-original-20261113-v1" />
-  <link rel="stylesheet" href="../css/navigation-mobile.css?v=coach-original-20261113-v1" />
-  <link rel="stylesheet" href="../css/dashboard_user.css?v=coach-original-20261113-v1" />
-  <link rel="stylesheet" href="../css/coach-dashboard.css?v=coach-original-20261113-v1" />
+  <link rel="stylesheet" href="../css/style.css?v=coach-confirmed-20261113-v1" />
+  <link rel="stylesheet" href="../css/admin.css?v=coach-confirmed-20261113-v1" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css?v=coach-confirmed-20261113-v1" />
+  <link rel="stylesheet" href="../css/dashboard_user.css?v=coach-confirmed-20261113-v1" />
+  <link rel="stylesheet" href="../css/coach-dashboard.css?v=coach-confirmed-20261113-v1" />
   <style>
     .main-content .ud-card{opacity:1;transform:none}
     .coach-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -103,15 +103,14 @@
           <div class="ud-mini" id="athletes-count">0 clients</div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <select id="coach-client-scope" aria-label="Клієнти за станом"><option value="active">Активні</option><option value="inactive">Неактивні</option><option value="test">Тестові</option><option value="all">Усі</option></select>
-          <input id="coach-search-input" type="search" aria-label="Пошук клієнта" placeholder="Search (name / email / uid)"
-                 style="min-width:0;width:min(260px,100%);padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.35);color:#fff;" />
+          <input id="coach-search-input" type="text" placeholder="Search (name / email / uid)"
+                 style="min-width:260px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.35);color:#fff;" />
         </div>
       </div>
       <div id="athletes-table" class="sticky-table-container" style="margin-top:12px;"></div>
     </section>
 
-    <section class="ud-card" hidden>
+    <section class="ud-card">
       <div class="ud-kicker" id="coach-kicker-notes">COACH NOTES</div>
       <div class="ud-mini" id="coach-notes-box">No notes yet.</div>
     </section>
@@ -126,13 +125,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="../config/firebase-config.js?v=coach-original-20261113-v1"></script>
-<script src="../js/auth-guard.js?v=coach-original-20261113-v1"></script>
-<script src="../js/navigation-common.js?v=coach-original-20261113-v1"></script>
-<script src="../js/coach-dashboard-i18n.js?v=coach-original-20261113-v1"></script>
-<script src="../js/coach-dashboard-data.js?v=coach-original-20261113-v1"></script>
-<script src="../js/coach-monitor.js?v=coach-original-20261113-v1"></script>
-<script src="../js/coach-dashboard.js?v=coach-original-20261113-v1"></script>
+<script src="../config/firebase-config.js?v=coach-confirmed-20261113-v1"></script>
+<script src="../js/auth-guard.js?v=coach-confirmed-20261113-v1"></script>
+<script src="../js/navigation-common.js?v=coach-confirmed-20261113-v1"></script>
+<script src="../js/coach-dashboard-i18n.js?v=coach-confirmed-20261113-v1"></script>
+<script src="../js/coach-dashboard-data.js?v=coach-confirmed-20261113-v1"></script>
+<script src="../js/coach-monitor.js?v=coach-confirmed-20261113-v1"></script>
+<script src="../js/coach-dashboard.js?v=coach-confirmed-20261113-v1"></script>
 </body>
 </html>
 

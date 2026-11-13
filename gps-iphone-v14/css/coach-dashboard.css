@@ -1,10 +1,24 @@
-#coach-client-scope{min-height:44px;max-width:100%;padding:8px 12px;border:1px solid #655221;border-radius:10px;background:#111;color:#eee;font:inherit}
-.main-content [hidden]{display:none!important}
-#coach-decisions-section{grid-template-columns:1fr}
-#athletes-table .monitor-table{min-width:0;width:100%;table-layout:auto}
-#athletes-table .monitor-table td{white-space:normal;overflow-wrap:anywhere}
-.coach-summary-button{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;text-align:left}
-.coach-alert-item{width:100%;color:inherit;text-align:left;font:inherit;cursor:pointer}
+/* Historical coach layout A. Preserve desktop composition and horizontal table. */
+.coach-monitor-status{grid-column:1/-1;font-size:11px;opacity:.65;margin:4px 0}
+.coach-wellness-mini{display:flex;gap:6px;justify-content:center}
+.coach-wellness-mini>span{display:flex;flex-direction:column;align-items:center;width:34px;padding:6px 0;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);font-size:13px}
+.coach-wellness-mini b{font-size:11px;margin-top:2px}
+.coach-review-badge{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #555;background:#ffffff0d;color:#aaa;font-weight:900;font-size:11px}
+.coach-review-badge.is-high{border-color:#ff4d4d55;background:#ff4d4d18;color:#ff7a7a}
+.coach-review-badge.is-med{border-color:#FFC72C55;background:#FFC72C18;color:#FFC72C}
+.coach-review-badge.is-low{border-color:#00ff0055;background:#00ff0014;color:#00dd77}
+.coach-client-identity{display:flex;gap:10px;align-items:center}
+.coach-client-identity img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #444}
+.coach-client-identity b{font-size:13px;display:block;color:#fff}
+.coach-client-identity small{display:block;font-size:11px;line-height:1.5;color:#FFC72C}
+.coach-client-identity small:last-child{color:#aaa}
+#athletes-table{max-width:100%;overflow-x:auto}
+#athletes-table .monitor-table{min-width:1450px}
+#athletes-table .monitor-table td:last-child{min-width:430px}
+#athletes-table .coach-inline-actions{flex-wrap:nowrap;white-space:nowrap}
+.coach-progress-filter .ud-progress-track{display:block;margin-top:4px}
+#coach-search-input{min-width:0!important;width:min(285px,100%)}
+.coach-progress-filter{font:inherit;color:inherit;text-align:left;cursor:pointer}
 .coach-details-dialog{width:min(680px,calc(100vw - 24px));max-height:85dvh;overflow:auto;box-sizing:border-box;border:1px solid #665329;border-radius:16px;padding:18px;background:#111;color:#eee}
 .coach-details-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
 .coach-details-dialog>header{position:static;display:flex;justify-content:space-between;align-items:center;gap:16px;width:auto;padding:0 0 12px;background:none;border-bottom:1px solid #39301c}
@@ -12,25 +26,4 @@
 .coach-details-dialog>header button{min-width:44px;min-height:44px;border:1px solid #555;border-radius:50%;background:#1b1b1b;color:#fff;font-size:1.5rem;cursor:pointer}
 .coach-detail-metric{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #292929}
 .coach-details-dialog .coach-inline-actions{margin-top:16px}
-.coach-inline-actions .ud-btn{min-height:40px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}
-@media(max-width:700px){
- #athletes-table{overflow:visible}
- #athletes-table .monitor-table,#athletes-table tbody{display:block;width:100%}
- #athletes-table thead{display:none}
- #athletes-table tr{display:grid;gap:8px;margin:10px 0;padding:12px;border:1px solid #383124;border-radius:12px;background:#101010}
- #athletes-table .monitor-table td{display:flex;justify-content:space-between;align-items:center;gap:12px;width:auto;padding:6px 0;border:0;text-align:left}
- #athletes-table td:first-child{display:block}
- #athletes-table td[data-label]::before{content:attr(data-label);color:#aaa;font-size:.8rem}
- .coach-title{font-size:23px}
- .coach-actions .ud-btn{min-height:44px}
-}
-
-/* Restore the original compact layout and the site's gold action buttons. */
-.main-content .ud-btn,.coach-details-dialog .ud-btn{background:#FFC72C;border-color:#FFC72C;color:#111;text-decoration:none}
-.main-content .ud-btn:hover,.coach-details-dialog .ud-btn:hover{background:#ffda69;border-color:#ffda69}
-.main-content .ud-btn:focus-visible,.coach-details-dialog .ud-btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
-#coach-summary-cards .ud-mini{grid-column:1/-1;margin:0}
-#coach-alerts-list{display:block}
-#coach-alerts-list .ud-btn{margin-top:8px}
-.coach-details-dialog .coach-alert-item{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0;padding:12px;border:1px solid #665329;border-radius:10px;background:#FFC72C;border-color:#FFC72C;color:#111;text-align:left}
-.coach-alert-item small{color:#3b2a00;text-align:right}
+@media(max-width:700px){.coach-title{font-size:23px}.coach-actions .ud-btn{min-height:44px}.coach-inline-actions{flex-wrap:wrap}.coach-action-item{flex-wrap:wrap}.coach-action-item .ud-btn{min-height:40px}}

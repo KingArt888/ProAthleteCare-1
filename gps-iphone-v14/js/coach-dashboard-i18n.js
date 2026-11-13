@@ -48,6 +48,128 @@
   "accessDenied": "Access denied."
 };
  const messages={
+
+  "Trend": {
+    "en": "Trend",
+    "uk": "Тренд",
+    "de": "Trend",
+    "es": "Tendencia",
+    "ru": "Тренд",
+    "pt": "Tendência"
+  },
+  "7-day average": {
+    "en": "7-day average",
+    "uk": "Середнє за 7 днів",
+    "de": "7-Tage-Mittel",
+    "es": "Media de 7 días",
+    "ru": "Среднее за 7 дней",
+    "pt": "Média de 7 dias"
+  },
+  "Risk": {
+    "en": "Risk",
+    "uk": "Ризик",
+    "de": "Risiko",
+    "es": "Riesgo",
+    "ru": "Риск",
+    "pt": "Risco"
+  },
+  "Last activity": {
+    "en": "Last activity",
+    "uk": "Остання активність",
+    "de": "Letzte Aktivität",
+    "es": "Última actividad",
+    "ru": "Последняя активность",
+    "pt": "Última atividade"
+  },
+  "High": {
+    "en": "High",
+    "uk": "Високий",
+    "de": "Hoch",
+    "es": "Alto",
+    "ru": "Высокий",
+    "pt": "Elevado"
+  },
+  "Moderate": {
+    "en": "Moderate",
+    "uk": "Помірний",
+    "de": "Mittel",
+    "es": "Moderado",
+    "ru": "Умеренный",
+    "pt": "Moderado"
+  },
+  "Low": {
+    "en": "Low",
+    "uk": "Низький",
+    "de": "Niedrig",
+    "es": "Bajo",
+    "ru": "Низкий",
+    "pt": "Baixo"
+  },
+  "Up": {
+    "en": "Up",
+    "uk": "Зростає",
+    "de": "Steigend",
+    "es": "Sube",
+    "ru": "Растёт",
+    "pt": "A subir"
+  },
+  "Down": {
+    "en": "Down",
+    "uk": "Знижується",
+    "de": "Sinkend",
+    "es": "Baja",
+    "ru": "Снижается",
+    "pt": "A descer"
+  },
+  "Stable": {
+    "en": "Stable",
+    "uk": "Без змін",
+    "de": "Stabil",
+    "es": "Estable",
+    "ru": "Без изменений",
+    "pt": "Estável"
+  },
+  "Open": {
+    "en": "Open",
+    "uk": "Відкрити",
+    "de": "Öffnen",
+    "es": "Abrir",
+    "ru": "Открыть",
+    "pt": "Abrir"
+  },
+  "Average readiness": {
+    "en": "Average readiness",
+    "uk": "Сер. готовність",
+    "de": "Mittlere Bereitschaft",
+    "es": "Preparación media",
+    "ru": "Средняя готовность",
+    "pt": "Prontidão média"
+  },
+  "Active today": {
+    "en": "Active today",
+    "uk": "Активні сьогодні",
+    "de": "Heute aktiv",
+    "es": "Activos hoy",
+    "ru": "Активные сегодня",
+    "pt": "Ativos hoje"
+  },
+  "No alerts in reviewed data": {
+    "en": "No alerts in reviewed data",
+    "uk": "У переглянутих даних немає сигналів",
+    "de": "Keine Hinweise in geprüften Daten",
+    "es": "Sin avisos en los datos revisados",
+    "ru": "В просмотренных данных нет сигналов",
+    "pt": "Sem avisos nos dados analisados"
+  },
+  "No actions available": {
+    "en": "No actions available",
+    "uk": "Немає дій для перегляду",
+    "de": "Keine Aufgaben verfügbar",
+    "es": "No hay acciones disponibles",
+    "ru": "Нет действий для просмотра",
+    "pt": "Sem ações disponíveis"
+  }
+,
   "Attention": {"en":"Attention","uk":"Увага","de":"Aufmerksamkeit","es":"Atención","ru":"Внимание","pt":"Atenção"},
   "Futsal": {"en":"Futsal","uk":"Футзал","de":"Futsal","es":"Fútbol sala","ru":"Футзал","pt":"Futsal"},
   "ProAthleteCare | Coach Workspace": {

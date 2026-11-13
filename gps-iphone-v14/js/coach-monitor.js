@@ -6,6 +6,12 @@
  function progressPath(uid,date){const d=new Date(date+'T12:00:00'),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return uid+'_'+D.localDate(d)+'_'+day;}
  function assess(input={},now=Date.now()){
   const m=D.metrics(input,now),signals=[],add=(key,level,text,en,page,evidence)=>signals.push({key,level,text,en,page,evidence});
+  // Historical table columns use observed daily readings, never profile aggregates.
+  const daily=new Map();
+  for(const row of input.wellness||[]){const ready=D.num(row.scores?.ready??row.ready);if(!D.usable(row)||ready==null||ready<1||ready>10||!days(now,7).includes(row.date)||D.sourceTime(row)>now+300000)continue;const previous=daily.get(row.date);if(!previous||D.sourceTime(row)>D.sourceTime(previous))daily.set(row.date,row);}
+  const readings=days(now,7).map(date=>daily.get(date));
+  if(readings.every(Boolean))m.avg7=Math.round(readings.reduce((sum,row)=>sum+Number(row.scores?.ready??row.ready)*10,0)/7);
+  if(readings[0]&&readings[1]){const difference=Number(readings[0].scores?.ready??readings[0].ready)-Number(readings[1].scores?.ready??readings[1].ready);m.trend=difference>0?'up':difference<0?'down':'flat';}
   if(m.pain>=4)add('pain',m.pain>=7?'priority':'review','Переглянути біль та адаптацію програми','Review pain and programme adaptation','injury.html',m.pain+' / 10');
   if(m.readinessPct!=null&&m.readinessPct<=40)add('readiness','review','Уточнити самопочуття перед наступним заняттям','Check wellbeing before the next session','wellness.html',m.readinessPct+'%');
   if(m.sleep!=null&&m.sleep<=3)add('sleep','review','Обговорити сон і відновлення','Discuss sleep and recovery','wellness.html',m.sleep+' / 10');
@@ -37,7 +43,7 @@
  }
  async function read(db,uid,now=Date.now()){
   const dates=days(now,7),sources=[
-   ['wellness',()=>db.collection('wellness_reports').where('userId','==',uid).where('date','>=',days(now,3)[2]).orderBy('date','desc').limit(LIMITS.wellness).get()],
+   ['wellness',()=>db.collection('wellness_reports').where('userId','==',uid).where('date','>=',dates[6]).orderBy('date','desc').limit(LIMITS.wellness).get()],
    ['injuries',()=>db.collection('injuries').where('userId','==',uid).orderBy('date','desc').limit(LIMITS.injuries).get()],
    ['sessions',()=>db.collection('load_season_reports').where('userId','==',uid).where('date','>=',dates[6]).orderBy('date','desc').limit(LIMITS.sessions).get()]
   ];

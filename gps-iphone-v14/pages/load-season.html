@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/navigation-mobile.css?v=daily-phone-nutrition-library-v2">
 
     
-    </head>
+    <link rel="stylesheet" href="../css/performance-database.css?v=20261113-platform-1"></head>
 <body>
     <header>
     <a href="../platform.html" class="logo-link">
@@ -47,12 +47,23 @@
         
         <main class="main-content">
             <h2 id="load-page-title" style="color: #FFD700;"> Load Season: Контроль тренувального навантаження</h2>
-            <p><a id="load-performance-database" href="performance-database.html?v=20261113-performance-v1" style="color:#ffd66b">Performance Database · Мої імпортовані результати та графіки</a></p>
 <div class="pac-sensitive-disclaimer" data-pac-disclaimer="load" role="note" style="background:#000;border:1px solid rgba(255,199,44,0.45);border-radius:10px;color:#FFC72C;font-size:12px;line-height:1.45;padding:10px 12px;margin:0 0 14px 0;">
                 Load Season provides training load and performance insights only. It does not diagnose, treat, or prevent injuries.
             </div>
             
-            <div class="dashboard-container">
+            <details id="performance-panel" class="form-card"><summary>Команда та гравці · імпорт Excel і сезонні графіки</summary><p class="pd-muted">Результати датчиків у Load Season. Виберіть команду та гравця для перегляду історії.</p><span id="pd-mode"></span><button id="pd-cloud" type="button">Оновити підключення акаунта</button><button id="pd-local" hidden type="button"></button><p id="pd-status" role="status" aria-live="polite"></p>
+<section class="pd-toolbar"><label>Команда<select id="pd-team"><option value="">Виберіть команду</option></select></label><label>Сезон<select id="pd-season"><option value="">Усі сезони</option></select></label><label>Пошук гравця<input id="pd-search" type="search" placeholder="Ім’я або прізвище"></label><button id="pd-refresh" type="button">Оновити</button></section>
+<section id="pd-team-create" hidden class="pd-toolbar"><label>Нова команда / група<input id="pd-team-name" maxlength="100" placeholder="Наприклад, U19 або Мої клієнти"></label><button id="pd-create-team" type="button">Створити команду</button></section>
+<details id="pd-import" hidden><summary>Імпортувати Excel / CSV</summary><p class="pd-muted">Оригінал залишається на пристрої. Формули не виконуються: читаються збережені значення. Якщо файл змінювався — спочатку перерахуйте й збережіть його в Excel.</p>
+<div class="pd-toolbar"><label>Файл, до 30 МБ<input id="pd-file" type="file" accept=".xlsx,.csv"></label><label>Аркуш<select id="pd-sheet" disabled></select></label><label>Формат<select id="pd-format"><option value="auto">Розпізнати</option><option value="table">Звичайна таблиця</option><option value="pafos-weekly">Pafos · гравці за тижнями</option><option value="pafos-team">Pafos · командний сезон</option></select></label><label>Сезон імпорту<input id="pd-import-season" maxlength="60" placeholder="Наприклад, 2023/24"></label></div>
+<label class="pd-definition">Визначення зон для звичайної таблиці (якщо відомі)<input id="pd-definition" maxlength="160" placeholder="Наприклад, HSR 19.8–25.2 км/год; Sprint >25.2"></label>
+<div class="pd-buttons"><button id="pd-preview" type="button" disabled>Розпізнати та перевірити</button><button id="pd-template" type="button">Шаблон CSV</button></div><p id="pd-import-status" role="status"></p><div id="pd-preview-body"></div>
+<label id="pd-confirm-label" hidden class="pd-confirm"><input id="pd-confirm" type="checkbox">Я перевірив сезон, джерело та відповідність гравців акаунтам. Неприв’язані гравці залишаться приватними для тренера.</label><button id="pd-save" class="pd-primary" type="button" disabled>Додати до бази</button></details>
+<section class="pd-workspace"><aside><div class="pd-list-head"><h2>Гравці</h2><button id="pd-all" type="button">Уся команда</button></div><div id="pd-roster"></div></aside><div class="pd-main"><div class="pd-section-head"><div><p class="pd-kicker">LOAD / SEASON</p><h2 id="pd-athlete-title">Оберіть команду</h2><p id="pd-athlete-note" class="pd-muted"></p></div><div id="pd-link-player" hidden><label>Акаунт гравця<select id="pd-link-user"></select></label><button id="pd-link-save" type="button">Прив’язати історію</button></div></div>
+<div id="pd-cards" class="pd-cards"></div><section class="pd-chart-panel"><div class="pd-toolbar"><label>Показник<select id="pd-metric"></select></label><label>Джерело / визначення<select id="pd-series"></select></label><label>Групування<select id="pd-group"><option value="source">Періоди файлу / дні</option><option value="week">Тижні (коли є дати)</option></select></label></div><p id="pd-chart-note" class="pd-muted"></p><div id="pd-chart"></div></section>
+<section id="pd-period"><h3>Деталі періоду</h3><p class="pd-muted">Натисніть точку графіка або рядок нижче.</p></section><div id="pd-history"></div></div></section>
+<p class="pd-muted">Імпортовані вимірювання зберігають джерело й визначення. GPS Player Load та тривалість × RPE — різні показники. Ця база не змінює призначення Daily автоматично.</p></details>
+<div class="dashboard-container">
                 
                 <div class="form-card form-container">
                     <h3 id="load-form-title">Щоденне тренування (Session-RPE)</h3>
@@ -312,7 +323,7 @@
 </div>
 
 
-</body>
+<script src="../js/performance-import-core.js?v=20261113-platform-1"></script><script src="../js/performance-database.js?v=20261113-platform-1"></script><script src="../js/performance-database-page.js?v=20261113-platform-1"></script></body>
 
 </html>
 

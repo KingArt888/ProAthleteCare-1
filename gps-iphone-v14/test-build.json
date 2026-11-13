@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261113-power-qa-v1+performance-db-v1",
-  "builtAt": "2026-11-13T07:21:42.001Z",
+  "builtAt": "2026-11-13T07:35:22.057Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -897,8 +897,8 @@
     },
     {
       "file": "index.html",
-      "bytes": 13750,
-      "sha256": "8f33d40683424d90afefa3dfa01a0b2ff8a53e0a8a0e9e173baeb1f2cb449eaa"
+      "bytes": 13594,
+      "sha256": "664a48c5b5482857a10451a0db81c2e81238f5fd45f6477ee600d343737d86c9"
     },
     {
       "file": "js/admin.js",
@@ -1307,8 +1307,8 @@
     },
     {
       "file": "pages/coach-dashboard.html",
-      "bytes": 9264,
-      "sha256": "bd23ee18a64f649c2679a7e8f863e297302d934871e16899e4f99b586caee8bd"
+      "bytes": 9183,
+      "sha256": "5aaea2ece7bf1610da098e8901314f4662def215692e4e5e13d6502a1f9fef5d"
     },
     {
       "file": "pages/coach-date-plan.html",
@@ -1367,8 +1367,8 @@
     },
     {
       "file": "pages/load-season.html",
-      "bytes": 16218,
-      "sha256": "62e92ab75b443e0dbec14f4f4f664c9d42ebc85aa976bfffbf7c64b66f1ea082"
+      "bytes": 21227,
+      "sha256": "b3897162e6a59394bba0f43ce7f058e48d6dac562078aca132287f3d835f9720"
     },
     {
       "file": "pages/power-hub.html",
@@ -1487,13 +1487,13 @@
     },
     {
       "file": "pages/performance-database.html",
-      "bytes": 5828,
-      "sha256": "516dd345be5c3f20f30d7aa87a83a1fc381e15d265ebe134d2c4501c2cd09dfe"
+      "bytes": 625,
+      "sha256": "255ae40b4292dfa9d291860ec7ac4537ab3c298be484ac38bbd6e8945ee006cf"
     },
     {
       "file": "css/performance-database.css",
-      "bytes": 4617,
-      "sha256": "294c1463fc1308c99f8ff23262bebae59df84fecec6095c0c516aa51e8a1d718"
+      "bytes": 7362,
+      "sha256": "492a0c3643f1705ed491b08245115b5933cd4decaa9fdedddd523237c47e0b30"
     },
     {
       "file": "js/performance-cloud-bootstrap.js",
@@ -1512,8 +1512,8 @@
     },
     {
       "file": "js/performance-database-page.js",
-      "bytes": 21039,
-      "sha256": "d8e9b6a71b78397ac3647fe6b4ba7bdada9d57c1875a6dd4b65180385a530826"
+      "bytes": 21363,
+      "sha256": "fab5256ce2d2c97067ecd82468c6a0fd1375024e55419ce4ecb22dde3390b576"
     },
     {
       "file": "js/performance-file-worker.js",
@@ -1533,8 +1533,8 @@
   ],
   "previousBuild": "daily-phone-20261113-power-qa-v1",
   "performanceDatabase": {
-    "build": "20261113-performance-v1",
-    "path": "pages/performance-database.html",
+    "build": "20261113-platform-1",
+    "path": "pages/load-season.html?view=performance",
     "privateSourceFilesIncluded": false,
     "firebaseRules": "prepared-not-deployed"
   }

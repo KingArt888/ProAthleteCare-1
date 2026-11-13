@@ -48,6 +48,7 @@
   "accessDenied": "Access denied."
 };
  const messages={
+  "Attention": {"en":"Attention","uk":"Увага","de":"Aufmerksamkeit","es":"Atención","ru":"Внимание","pt":"Atenção"},
   "Futsal": {"en":"Futsal","uk":"Футзал","de":"Futsal","es":"Fútbol sala","ru":"Футзал","pt":"Futsal"},
   "ProAthleteCare | Coach Workspace": {
     "en": "ProAthleteCare | Coach Workspace",

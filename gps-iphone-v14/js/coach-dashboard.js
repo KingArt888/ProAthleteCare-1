@@ -90,7 +90,7 @@
     set("coach-kicker-notes", tt("kickerNotes"));
     set("coach-activity-note", copy('Visits are separate from wellbeing and training completion. Registration is not a visit.', 'Візити показані окремо від здоров’я та виконання тренувань. Реєстрація не є візитом.'));
 
-    const scope=document.getElementById('coach-client-scope');if(scope){const value=scope.value;scope.innerHTML=[['active',copy('Active · 7 days','Активні · 7 днів')],['all',copy('Users · all','Користувачі · усі')],['inactive',copy('Without recent visits','Без недавніх візитів')],['test',copy('Test','Тестові')]].map(([v,t])=>'<option value="'+v+'">'+t+'</option>').join('');scope.value=value;scope.setAttribute('aria-label',copy('Client account state','Стан акаунта клієнта'));}
+    const scope=document.getElementById('coach-client-scope');if(scope){const value=scope.value;scope.innerHTML=[['active',copy('Active','Активний')],['inactive',copy('Inactive','Неактивний')],['test',copy('Test','Тестові')],['all',copy('Users · all','Користувачі · усі')]].map(([v,t])=>'<option value="'+v+'">'+t+'</option>').join('');scope.value=value;scope.setAttribute('aria-label',copy('Client account state','Стан акаунта клієнта'));}
     const search = document.getElementById("coach-search-input");
     if (search) search.placeholder = tt("searchPlaceholder");
 
@@ -269,10 +269,9 @@
     renderAlertsAndActions();
     try{for(let i=0;i<rows.length;i+=2){await Promise.all(rows.slice(i,i+2).map(async a=>{
       const data=await fetchLatestMetrics(a.uid);if(generation===monitorGeneration){Object.assign(a,data);a.monitor=data;}
-    }));if(generation!==monitorGeneration)return;renderAlertsAndActions();renderTop();}}
-    finally{if(generation===monitorGeneration){monitorBusy=false;renderAlertsAndActions();renderTop();}}
+    }));if(generation!==monitorGeneration)return;renderAlertsAndActions();renderTop();renderTable();}}
+    finally{if(generation===monitorGeneration){monitorBusy=false;renderAlertsAndActions();renderTop();renderTable();}}
   }
-  function openUsers(scope,filter){currentFilter=filter;document.getElementById('coach-client-scope').value=scope;renderTable();document.getElementById('coach-users-dialog').showModal();}
   function riskFrom(a){
     const pain=Data.num(a.pain),acwr=Data.num(a.acwr);
     if(pain==null&&acwr==null)return 'unknown';
@@ -281,41 +280,40 @@
 
   function filteredAthletes(){
     const q=String(document.getElementById('coach-search-input')?.value||'').trim().toLowerCase(),scope=document.getElementById('coach-client-scope')?.value||'active';
-    return athletes.filter(a=>(scope==='all'||scope==='active'&&Data.recentlyActive(a)||scope==='inactive'&&!Data.recentlyActive(a)&&Data.clientState(a)!=='test'||scope==='test'&&Data.clientState(a)==='test')&&(currentFilter!=='active'||Data.recentlyActive(a,Date.now(),1))&&(!q||[a.displayName,a.firstName,a.lastName,a.email,a.uid].join(' ').toLowerCase().includes(q))).sort((a,b)=>Data.visitTime(b)-Data.visitTime(a));
+    return athletes.filter(a=>(scope==='all'||Data.clientState(a)===scope)&&(currentFilter!=='risk'||a.monitor?.signals.some(s=>s.level==='priority'||s.level==='review'))&&(currentFilter!=='active'||Data.recentlyActive(a,Date.now(),1))&&(!q||[a.displayName,a.firstName,a.lastName,a.email,a.uid].join(' ').toLowerCase().includes(q))).sort((a,b)=>Data.visitTime(b)-Data.visitTime(a));
   }
   function renderTable(){
-    const host=document.getElementById('athletes-table');if(!host)return;
-    const list=filteredAthletes(),ctx=asAdmin?'fromAdmin=1':'fromCoach=1';
-    host.innerHTML=list.length?'<table class="monitor-table"><thead><tr><th>'+copy('Client','Клієнт')+'</th><th>'+copy('Activity','Активність')+'</th><th>'+copy('Last visit','Останній візит')+'</th><th>'+tt('tableActions')+'</th></tr></thead><tbody>'+list.map(a=>{
-      const name=a.displayName||[a.firstName,a.lastName].filter(Boolean).join(' ')||a.email||a.uid,t=Data.visitTime(a),active=Data.recentlyActive(a);
-      const label=Data.clientState(a)==='test'?copy('Test account','Тестовий акаунт'):Data.clientState(a)==='inactive'?copy('Account disabled','Акаунт неактивний'):active?copy('Visited within 7 days','Заходив за 7 днів'):t?copy('No recent visits','Давно не заходив'):copy('No confirmed visit','Візит не підтверджено');
-      return '<tr><td><b>'+esc(name)+'</b><div class="ud-mini">'+esc(athleteMetaLine(a))+'</div></td><td data-label="'+copy('Activity','Активність')+'"><span class="coach-pill '+(active?'up':'flat')+'">'+label+'</span></td><td data-label="'+copy('Last visit','Останній візит')+'">'+esc(t?new Date(t).toLocaleString(getLang()):'—')+'</td><td><div class="coach-inline-actions"><button type="button" class="ud-btn ud-btn--ghost" data-act="details" data-uid="'+esc(a.uid)+'">'+copy('Details','Деталі')+'</button><a class="ud-btn" href="weekly-individual.html?userId='+encodeURIComponent(a.uid)+'&'+ctx+'">'+tt('adjust')+'</a></div></td></tr>';
-    }).join('')+'</tbody></table>':'<div class="coach-empty"><b>'+copy('No clients here yet','Тут поки немає клієнтів')+'</b><p>'+copy('Other accounts are available under Users. Activity appears after a workspace visit.','Решта акаунтів доступні в «Користувачах». Активність з’явиться після відвідування кабінету.')+'</p></div>';
-    document.getElementById('athletes-count').textContent=list.length+' / '+athletes.length+' '+tt('clientsCount')+(athletes.length===200?' · '+copy('First 200 accounts','Перші 200 акаунтів'):'');
+    const host=document.getElementById('athletes-table');if(!host)return;const list=filteredAthletes(),ctx=asAdmin?'fromAdmin=1':'fromCoach=1';
+    host.innerHTML=list.length?'<table class="monitor-table"><thead><tr><th>'+copy('Client','Клієнт')+'</th><th>'+tt('tableReadiness')+'</th><th>'+copy('Fresh Wellness','Свіжий Wellness')+'</th><th>'+tt('tableActions')+'</th></tr></thead><tbody>'+list.map(a=>{
+      const name=a.displayName||[a.firstName,a.lastName].filter(Boolean).join(' ')||a.email||a.uid,state=Data.clientState(a),ready=Data.num(a.readinessPct);
+      return '<tr><td><b>'+esc(name)+'</b><div class="ud-mini">'+esc(athleteMetaLine(a))+'</div>'+(state!=='active'?'<span class="coach-pill flat">'+copy(state==='test'?'Test account':'Inactive',null)+'</span>':'')+'</td><td data-label="'+esc(tt('tableReadiness'))+'">'+(ready==null?'—':ready+'%')+'</td><td data-label="'+copy('Fresh Wellness','Свіжий Wellness')+'">'+esc(a.metricsAt?new Date(a.metricsAt).toLocaleDateString(getLang()):copy('No recent report','Немає свіжого звіту'))+'</td><td><div class="coach-inline-actions"><button type="button" class="ud-btn" data-act="details" data-uid="'+esc(a.uid)+'">'+copy('Details','Деталі')+'</button><a class="ud-btn" href="weekly-individual.html?userId='+encodeURIComponent(a.uid)+'&'+ctx+'">'+tt('adjust')+'</a></div></td></tr>';
+    }).join('')+'</tbody></table>':'<p class="ud-mini">'+copy('No clients here yet','Тут поки немає клієнтів')+'</p>';
+    document.getElementById('athletes-count').textContent=list.length+' / '+athletes.length+' '+tt('clientsCount');
   }
   function renderTop(){
-    const active=athletes.filter(a=>Data.recentlyActive(a)),today=active.filter(a=>Data.recentlyActive(a,Date.now(),1)).length;
-    document.getElementById('coach-summary-cards').innerHTML=[
-      [copy('Active · 7 days','Активні · 7 днів'),active.length,'active','all'],[copy('Visited · 24 hours','Заходили · 24 години'),today,'active','active'],[copy('Users · all accounts','Користувачі · усі акаунти'),athletes.length,'all','all']
-    ].map(([label,value,scope,filter])=>'<button type="button" class="ud-btn ud-btn--ghost coach-summary-button" data-scope="'+scope+'" data-filter="'+filter+'"><span>'+label+'</span><b>'+value+'</b></button>').join('');
-    document.querySelectorAll('#coach-summary-cards [data-scope]').forEach(el=>el.onclick=()=>openUsers(el.dataset.scope,el.dataset.filter));
-    const reviewed=athletes.filter(a=>a.monitor),known=reviewed.filter(a=>a.metricsAt);document.getElementById('coach-top-readiness').textContent=copy('Fresh Wellness','Свіжий Wellness')+': '+known.length+' / '+reviewed.length;
-    document.getElementById('coach-top-next-session').textContent=copy('Reviewed clients','Переглянуто клієнтів')+': '+athletes.filter(a=>a.monitor).length+' / '+athletes.filter(a=>Data.clientState(a)==='active').length;
+    const clients=athletes.filter(a=>Data.clientState(a)==='active'),known=clients.filter(a=>Data.num(a.readinessPct)!=null),reviewed=clients.filter(a=>a.monitor),today=clients.filter(a=>Data.recentlyActive(a,Date.now(),1)).length,attention=reviewed.filter(a=>a.monitor.signals.some(s=>s.level==='priority'||s.level==='review')).length;
+    const readiness=known.length?Math.round(known.reduce((sum,a)=>sum+a.readinessPct,0)/known.length):null;
+    document.getElementById('coach-summary-cards').innerHTML='<p class="ud-mini">'+copy('Reviewed clients','Переглянуто клієнтів')+': '+reviewed.length+' / '+clients.length+'</p>'+[
+      [copy('Clients','Клієнти'),clients.length,'all'],[copy('Visited · 24 hours','Заходили · 24 години'),today,'active'],[tt('tableReadiness'),readiness==null?'—':readiness+'%','all'],[copy('Review needed','Потрібен перегляд'),attention,'risk']
+    ].map(([label,value,filter])=>'<button type="button" class="ud-btn coach-summary-button" data-filter="'+filter+'"><span>'+label+'</span><b>'+value+'</b></button>').join('');
+    document.querySelectorAll('#coach-summary-cards [data-filter]').forEach(el=>el.onclick=()=>{currentFilter=el.dataset.filter;document.getElementById('coach-client-scope').value='active';renderTable();document.getElementById('athletes-table').scrollIntoView({block:'nearest',behavior:'smooth'});});
+    document.getElementById('coach-top-readiness').textContent=tt('tableReadiness')+': '+(readiness==null?'—':readiness+'%');
+    document.getElementById('coach-top-next-session').textContent=copy('Fresh Wellness','Свіжий Wellness')+': '+known.length+' / '+clients.length;
+  }
+  function alertItems(){return athletes.filter(a=>Data.clientState(a)==='active'&&a.monitor&&a.monitor.signals.length).sort((a,b)=>(b.monitor.signals.some(s=>s.level==='priority')?1:0)-(a.monitor.signals.some(s=>s.level==='priority')?1:0));}
+  function renderAlertDialog(){
+    dialogState={type:'alerts'};const dialog=coachDialog(tt('kickerAlerts'));
+    const labels={pain:copy('Recorded pain','Записаний біль'),readiness:tt('tableReadiness'),sleep:copy('Sleep','Сон'),recovery:copy('Soreness','Крепатура'),execution:copy('Execution','Виконання'),effort:'RPE',gps:'GPS',error:copy('Incomplete data','Неповні дані'),missing:copy('No recent report','Немає свіжого звіту'),coverage:copy('Incomplete data','Неповні дані')};
+    dialog.querySelector('[data-dialog-body]').innerHTML=alertItems().map(a=>'<button type="button" class="coach-alert-item" data-act="details" data-uid="'+esc(a.uid)+'"><b>'+esc(a.displayName||a.email||a.uid)+'</b><small>'+esc([...new Set(a.monitor.signals.map(signal=>labels[signal.key]||copy('Review needed','Потрібен перегляд')))].join(' · '))+'</small></button>').join('')||'<p>'+copy('No clients here yet','Тут поки немає клієнтів')+'</p>';
   }
   function renderAlertsAndActions(){
-    const section=document.getElementById('coach-decisions-section');section.hidden=false;
-    if(clientsReadError){document.getElementById('coach-alerts-title').textContent=copy('Could not load clients','Не вдалося завантажити клієнтів');document.getElementById('coach-alerts-list').innerHTML='<p role="alert">'+copy('Press Refresh to retry. Health status is unknown.','Натисни «Оновити», щоб повторити. Стан спортсменів невідомий.')+'</p>';document.getElementById('coach-quick-actions-list').textContent='—';return;}
-    const clients=athletes.filter(a=>Data.clientState(a)==='active'),reviewed=clients.filter(a=>a.monitor),remaining=clients.length-reviewed.length;
-    const ordered=reviewed.slice().sort((a,b)=>priority(b)-priority(a));
-    function priority(a){return a.monitor.signals.some(s=>s.level==='priority')?3:a.monitor.signals.some(s=>s.level==='review')?2:1;}
-    document.getElementById('coach-alerts-title').textContent=copy('Who needs attention','Кому потрібна увага');
-    const host=document.getElementById('coach-alerts-list');
-    host.innerHTML='<p class="ud-mini">'+copy('Review prompts from recorded data. These are not diagnoses or automatic programme changes.','Сигнали для перегляду за записами спортсмена. Не діагноз і не автоматична зміна програми.')+'</p>'+(ordered.length?ordered.map(a=>{
-      const m=a.monitor,signals=m.signals,ctx=asAdmin?'fromAdmin=1':'fromCoach=1';
-      return '<article class="coach-health-card"><div class="coach-health-heading"><b>'+esc(a.displayName||a.email||a.uid)+'</b><span class="coach-pill '+(signals.some(s=>s.level==='priority')?'down':'flat')+'">'+copy(signals.some(s=>s.level==='review'||s.level==='priority')?'Review needed':signals.some(s=>s.level==='unknown')?'Incomplete data':'No flags in reviewed data',signals.some(s=>s.level==='review'||s.level==='priority')?'Потрібен перегляд':signals.some(s=>s.level==='unknown')?'Неповні дані':'У переглянутих даних без сигналів')+'</span></div><div class="coach-health-metrics"><span>'+copy('Wellness','Самопочуття')+' <b>'+(m.readinessPct==null?'—':m.readinessPct+'%')+'</b><small>'+esc(m.metricsAt?new Date(m.metricsAt).toLocaleString(getLang()):copy('No recent report','Немає свіжого звіту'))+'</small></span><span>'+copy('Recorded pain','Записаний біль')+' <b>'+(m.pain==null?'—':m.pain+' / 10')+'</b><small>'+esc(m.painAt?new Date(m.painAt).toLocaleDateString(getLang()):copy('No dated pain record','Немає датованого запису болю'))+'</small></span><span>'+copy('Execution','Виконання')+' <b>'+(m.completion?m.completion.done+' / '+m.completion.total:'—')+'</b><small>'+esc((m.completion?dateLabel(m.completion.date):null)||copy('No completion report','Немає звіту про виконання'))+'</small></span></div>'+(signals.length?'<ul class="coach-signal-list">'+signals.map(s=>'<li class="is-'+s.level+'"><a href="'+s.page+'?userId='+encodeURIComponent(a.uid)+'&'+ctx+'">'+esc(copy(s.en,s.text))+'</a>'+(s.evidence?' <small>'+esc(signalEvidence(s,m))+'</small>':'')+'</li>').join(''):'<p class="ud-mini">'+copy('No threshold flags in the available records. This does not confirm full health or plan completion.','У доступних записах немає порогових сигналів. Це не підтверджує повне здоров’я чи виконання всього плану.')+'</p>')+'<div class="coach-inline-actions"><button class="ud-btn ud-btn--ghost" type="button" data-act="details" data-uid="'+esc(a.uid)+'">'+copy('Latest data','Останні показники')+'</button><a class="ud-btn" href="weekly-individual.html?userId='+encodeURIComponent(a.uid)+'&'+ctx+'">'+copy('Review programme','Переглянути програму')+'</a></div></article>';
-    }).join(''):'<p class="ud-mini" role="status">'+copy(monitorBusy?'Loading latest reports…':'No clients available for review.',monitorBusy?'Завантажую останні звіти…':'Немає клієнтів для огляду.')+'</p>');
-    document.getElementById('coach-title-actions').textContent=copy('Review coverage','Охоплення огляду');
-    document.getElementById('coach-quick-actions-list').innerHTML='<p><b>'+reviewed.length+' / '+clients.length+'</b> '+copy('clients reviewed','клієнтів переглянуто')+'</p><p class="ud-mini">'+copy('Account visits do not mean that training was completed. Missing reports remain unknown.','Відвідування не означає виконання тренування. Відсутні звіти залишаються невідомими.')+'</p><p class="ud-mini">'+copy('Latest Wellness: 48 hours. Execution and sessions: 7 days. GPS flags require a recorded plan and accepted GPS distance; local phone routes are not read.','Wellness: 48 годин. Виконання та заняття: 7 днів. GPS-сигнали потребують записаного плану й прийнятної GPS-дистанції; локальні маршрути телефона не читаються.')+'</p><details class="coach-thresholds"><summary>'+copy('Signal criteria','Критерії сигналів')+'</summary><p class="ud-mini">'+copy('Review thresholds: pain ≥4/10 (priority ≥7), readiness ≤40%, sleep ≤3/10, stress ≥8/10, soreness ≥7/10, RPE ≥8/10; GPS distance >120% of plan. These are review rules, not injury predictions.','Пороги огляду: біль ≥4/10 (пріоритет ≥7), готовність ≤40%, сон ≤3/10, стрес ≥8/10, крепатура ≥7/10, RPE ≥8/10; GPS-дистанція >120% плану. Це правила огляду, не прогноз травми.')+'</p></details>'+(remaining?'<button id="coach-monitor-more" type="button" class="ud-btn" '+(monitorBusy?'disabled':'')+'>'+copy(monitorBusy?'Loading…':'Review next {count}',null,{count:Math.min(remaining,Monitor.LIMITS.batch)})+'</button>':'');
+    document.getElementById('coach-decisions-section').hidden=false;
+    document.getElementById('coach-quick-actions-list').closest('.ud-card').hidden=true;
+    const host=document.getElementById('coach-alerts-list');document.getElementById('coach-alerts-title').textContent=copy('Attention','Увага');
+    if(clientsReadError){host.innerHTML='<p role="alert">'+copy('Could not load clients','Не вдалося завантажити клієнтів')+'</p>';return;}
+    const clients=athletes.filter(a=>Data.clientState(a)==='active'),reviewed=clients.filter(a=>a.monitor),remaining=clients.length-reviewed.length,items=alertItems();
+    host.innerHTML='<p class="ud-mini">'+copy('Reviewed clients','Переглянуто клієнтів')+': '+reviewed.length+' / '+clients.length+'</p>'+(items.length?'<button class="ud-btn" type="button" id="coach-open-alerts">'+copy('Clients','Клієнти')+' · '+items.length+'</button>':'')+(remaining?' <button class="ud-btn" type="button" id="coach-monitor-more" '+(monitorBusy?'disabled':'')+'>'+copy(monitorBusy?'Loading…':'Review next {count}',null,{count:Math.min(remaining,Monitor.LIMITS.batch)})+'</button>':'');
+    document.getElementById('coach-open-alerts')?.addEventListener('click',renderAlertDialog);
     document.getElementById('coach-monitor-more')?.addEventListener('click',()=>loadMonitorBatch().catch(console.error));
   }
 
@@ -348,7 +346,7 @@
   async function openAthleteDetails(uid,renderOnly=false){
     dialogState={type:'details',uid};
     const a=athletes.find(row=>row.uid===uid);if(!a)return;const dialog=coachDialog(a.displayName||[a.firstName,a.lastName].filter(Boolean).join(' ')||a.email||uid),body=dialog.querySelector('[data-dialog-body]');body.textContent=copy('Loading…','Завантаження…');
-    if(!renderOnly){try{const data=await fetchLatestMetrics(uid);Object.assign(a,data);a.monitor=data;renderAlertsAndActions();renderTop();}catch(error){a.readError=true;}}
+    if(!renderOnly){try{const data=await fetchLatestMetrics(uid);Object.assign(a,data);a.monitor=data;renderAlertsAndActions();renderTop();renderTable();}catch(error){a.readError=true;}}
     const metric=(label,value,unit='',at=0)=>'<div class="coach-detail-metric"><span>'+label+(at?'<small style="display:block;color:#aaa;margin-top:3px">'+esc(new Date(at).toLocaleDateString(getLang()))+'</small>':'')+'</span><b>'+(Data.num(value)==null?'—':esc(value)+' '+unit)+'</b></div>',ctx=asAdmin?'fromAdmin=1':'fromCoach=1';
     body.innerHTML='<p>'+copy('Account state','Стан акаунта')+': '+esc(Data.clientState(a)==='active'?copy('Active','Активний'):Data.clientState(a)==='test'?copy('Test account','Тестовий акаунт'):copy('Inactive','Неактивний'))+'</p><p>'+copy('Wellness is current for 48 hours. Missing data is not zero readiness.','Wellness актуальний протягом 48 годин. Відсутні дані не означають нульову готовність.')+'</p>'+(a.readError?'<p role="alert">'+copy('Some sources could not be loaded.','Частину джерел не вдалося завантажити.')+'</p>':'')+metric(tt('tableReadiness'),a.readinessPct,'%')+metric(copy('Recorded pain','Записаний біль'),a.pain,'/ 10')+metric(copy('Sleep','Сон'),a.sleep,'/ 10')+metric(copy('Stress','Стрес'),a.stress,'/ 10')+(a.monitor?.completion?metric(copy('Recorded exercise completion','Зафіксоване виконання вправ'),a.monitor.completion.done,'/ '+a.monitor.completion.total):'<p class="ud-mini">'+copy('No execution report in the reviewed seven days.','Немає звіту про виконання за переглянуті 7 днів.')+'</p>')+'<p>'+copy('Wellness date','Дата Wellness')+': '+esc(a.metricsAt?new Date(a.metricsAt).toLocaleDateString(getLang()):'—')+'</p><div class="coach-inline-actions"><a class="ud-btn" href="weekly-individual.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+tt('adjust')+'</a><a class="ud-btn ud-btn--ghost" href="daily-individual.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+copy('Daily plan','План на день')+'</a><a class="ud-btn ud-btn--ghost" href="load-season.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+copy('Journal','Журнал')+'</a><a class="ud-btn ud-btn--ghost" href="profile.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+copy('Athlete data','Дані атлета')+'</a><a class="ud-btn ud-btn--ghost" href="injury.html?userId='+encodeURIComponent(uid)+'&'+ctx+'">'+copy('Injury history','Історія травм')+'</a><button type="button" class="ud-btn ud-btn--ghost" data-act="message" data-uid="'+esc(uid)+'">'+tt('message')+'</button></div>';
   }
@@ -458,6 +456,7 @@
     renderCoachIdentity();
     if(document.getElementById('coach-details-modal')?.open&&dialogState){
       if(dialogState.type==='details')openAthleteDetails(dialogState.uid,true).catch(console.error);
+      else if(dialogState.type==='alerts')renderAlertDialog();
       else if(dialogState.type==='invite')openInviteDialog();
       else if(dialogState.type==='earnings')renderPayoutDialog();
     }

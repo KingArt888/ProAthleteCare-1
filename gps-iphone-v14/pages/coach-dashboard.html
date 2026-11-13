@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ProAthleteCare | Coach Workspace</title>
 
-  <link rel="stylesheet" href="../css/style.css?v=coach-languages-20261113-v1" />
-  <link rel="stylesheet" href="../css/admin.css?v=coach-languages-20261113-v1" />
-  <link rel="stylesheet" href="../css/navigation-mobile.css?v=coach-languages-20261113-v1" />
-  <link rel="stylesheet" href="../css/dashboard_user.css?v=coach-languages-20261113-v1" />
-  <link rel="stylesheet" href="../css/coach-dashboard.css?v=coach-languages-20261113-v1" />
+  <link rel="stylesheet" href="../css/style.css?v=coach-original-20261113-v1" />
+  <link rel="stylesheet" href="../css/admin.css?v=coach-original-20261113-v1" />
+  <link rel="stylesheet" href="../css/navigation-mobile.css?v=coach-original-20261113-v1" />
+  <link rel="stylesheet" href="../css/dashboard_user.css?v=coach-original-20261113-v1" />
+  <link rel="stylesheet" href="../css/coach-dashboard.css?v=coach-original-20261113-v1" />
   <style>
     .main-content .ud-card{opacity:1;transform:none}
     .coach-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -72,17 +72,6 @@
 
     <section id="coach-context" class="ud-card ud-card--accent" style="display:none;"></section>
 
-    <section class="ud-launch" data-coach-summary aria-label="Coach summary">
-      <div class="ud-card">
-        <div class="ud-kicker" id="coach-kicker-team">TEAM STATUS</div>
-        <div class="ud-progress-list" id="coach-summary-cards"></div>
-      </div>
-      <div class="ud-card">
-        <div class="ud-kicker" id="coach-kicker-earnings">COACH EARNINGS</div>
-        <div class="ud-progress-list" id="coach-earnings-cards"></div>
-      </div>
-    </section>
-
     <section class="ud-launch" id="coach-decisions-section" aria-label="Coach decisions">
       <div class="ud-card">
         <div class="ud-kicker" id="coach-kicker-alerts">ALERTS</div>
@@ -96,22 +85,31 @@
       </div>
     </section>
 
-    <dialog id="coach-users-dialog" class="coach-details-dialog coach-users-dialog" aria-labelledby="coach-users-title"><header><h3 id="coach-users-title">Клієнти / Users</h3><button id="coach-users-close" type="button" aria-label="Закрити">×</button></header><section>
+    <section class="ud-launch" data-coach-summary aria-label="Coach summary">
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-team">TEAM STATUS</div>
+        <div class="ud-progress-list" id="coach-summary-cards"></div>
+      </div>
+      <div class="ud-card">
+        <div class="ud-kicker" id="coach-kicker-earnings">COACH EARNINGS</div>
+        <div class="ud-progress-list" id="coach-earnings-cards"></div>
+      </div>
+    </section>
+
+    <section class="ud-card">
       <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
         <div>
           <div class="ud-kicker" id="coach-kicker-clients">MY CLIENTS</div>
           <div class="ud-mini" id="athletes-count">0 clients</div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <select id="coach-client-scope" aria-label="Активність клієнтів"><option value="active">Активні · 7 днів</option><option value="all">Користувачі · усі</option><option value="inactive">Без недавніх візитів</option><option value="test">Тестові</option></select>
+          <select id="coach-client-scope" aria-label="Клієнти за станом"><option value="active">Активні</option><option value="inactive">Неактивні</option><option value="test">Тестові</option><option value="all">Усі</option></select>
           <input id="coach-search-input" type="search" aria-label="Пошук клієнта" placeholder="Search (name / email / uid)"
                  style="min-width:0;width:min(260px,100%);padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.35);color:#fff;" />
         </div>
       </div>
-      <p class="ud-mini coach-activity-note" id="coach-activity-note">Активні — підтверджений візит за останні 7 днів. Дата реєстрації не вважається відвідуванням. Дані спортсмена завантажуються після натискання «Деталі».</p>
-      <p><a id="coach-performance-database" href="performance-database.html" style="display:inline-block;padding:10px 14px;border:1px solid #d4af37;border-radius:10px;color:#ffd66b">Performance Database · Імпорт та сезонні графіки</a></p>
       <div id="athletes-table" class="sticky-table-container" style="margin-top:12px;"></div>
-    </section></dialog>
+    </section>
 
     <section class="ud-card" hidden>
       <div class="ud-kicker" id="coach-kicker-notes">COACH NOTES</div>
@@ -128,13 +126,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="../config/firebase-config.js?v=coach-languages-20261113-v1"></script>
-<script src="../js/auth-guard.js?v=coach-languages-20261113-v1"></script>
-<script src="../js/navigation-common.js?v=coach-languages-20261113-v1"></script>
-<script src="../js/coach-dashboard-i18n.js?v=coach-languages-20261113-v1"></script>
-<script src="../js/coach-dashboard-data.js?v=coach-languages-20261113-v1"></script>
-<script src="../js/coach-monitor.js?v=coach-languages-20261113-v1"></script>
-<script src="../js/coach-dashboard.js?v=coach-languages-20261113-v1"></script>
+<script src="../config/firebase-config.js?v=coach-original-20261113-v1"></script>
+<script src="../js/auth-guard.js?v=coach-original-20261113-v1"></script>
+<script src="../js/navigation-common.js?v=coach-original-20261113-v1"></script>
+<script src="../js/coach-dashboard-i18n.js?v=coach-original-20261113-v1"></script>
+<script src="../js/coach-dashboard-data.js?v=coach-original-20261113-v1"></script>
+<script src="../js/coach-monitor.js?v=coach-original-20261113-v1"></script>
+<script src="../js/coach-dashboard.js?v=coach-original-20261113-v1"></script>
 </body>
 </html>
 

@@ -1,34 +1,6 @@
 #coach-client-scope{min-height:44px;max-width:100%;padding:8px 12px;border:1px solid #655221;border-radius:10px;background:#111;color:#eee;font:inherit}
-.coach-activity-note{max-width:760px;line-height:1.6;margin:16px 0;color:#aaa}
-.coach-empty{padding:32px 16px;border:1px dashed #4a4029;border-radius:14px;text-align:center;color:#ccc}
-.coach-empty p{max-width:540px;margin:10px auto;line-height:1.6;color:#999}
-#coach-summary-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-#coach-summary-cards .coach-summary-button{display:flex;flex-direction:column;align-items:flex-start;background:linear-gradient(145deg,#252116,#141414);border-color:#534728;padding:20px;white-space:normal}
-#coach-summary-cards .coach-summary-button b{font-size:32px;line-height:1.2;color:#ffd147}
-section[data-coach-summary]{grid-template-columns:minmax(0,3fr) minmax(220px,1fr)}
-@media(max-width:900px){section[data-coach-summary]{grid-template-columns:1fr}}
-@media(max-width:500px){#coach-summary-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#coach-summary-cards .coach-summary-button{flex-direction:column;align-items:flex-start;padding:10px;font-size:11px;min-width:0}#coach-summary-cards .coach-summary-button b{font-size:24px}}
 .main-content [hidden]{display:none!important}
 #coach-decisions-section{grid-template-columns:1fr}
-#coach-decisions-section{grid-template-columns:minmax(0,2fr) minmax(240px,1fr);align-items:start}
-#coach-quick-actions-list{display:block;line-height:1.6}
-#coach-alerts-list{display:block}
-.coach-thresholds{margin:16px 0;color:#aaa;font-size:12px}
-.coach-thresholds summary{cursor:pointer;color:#ddd}
-.coach-health-card{padding:18px;margin-top:14px;border:1px solid #403923;border-radius:14px;background:#141412}
-.coach-health-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;overflow-wrap:anywhere}
-.coach-health-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0;color:#bbb;font-size:13px}
-.coach-health-metrics b{display:block;color:#fff;font-size:22px;margin:5px 0}
-.coach-health-metrics small{display:block;font-size:11px;line-height:1.5;color:#999}
-.coach-signal-list{padding-left:20px;line-height:1.6}
-.coach-signal-list li{margin:10px 0;color:#e7bb4d}
-.coach-signal-list a{color:inherit;text-decoration:underline;text-underline-offset:3px}
-.coach-signal-list .is-priority{color:#ff9292}
-.coach-signal-list .is-unknown{color:#b8b8b8}
-.coach-signal-list small{display:block;color:#aaa;overflow-wrap:anywhere}
-.coach-users-dialog{width:min(980px,calc(100vw - 24px))}
-@media(max-width:1000px){#coach-decisions-section{grid-template-columns:1fr}}
-@media(max-width:450px){.coach-health-metrics{grid-template-columns:1fr 1fr}.coach-health-card{padding:12px}}
 #athletes-table .monitor-table{min-width:0;width:100%;table-layout:auto}
 #athletes-table .monitor-table td{white-space:normal;overflow-wrap:anywhere}
 .coach-summary-button{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;text-align:left}
@@ -52,3 +24,13 @@ section[data-coach-summary]{grid-template-columns:minmax(0,3fr) minmax(220px,1fr
  .coach-title{font-size:23px}
  .coach-actions .ud-btn{min-height:44px}
 }
+
+/* Restore the original compact layout and the site's gold action buttons. */
+.main-content .ud-btn,.coach-details-dialog .ud-btn{background:#FFC72C;border-color:#FFC72C;color:#111;text-decoration:none}
+.main-content .ud-btn:hover,.coach-details-dialog .ud-btn:hover{background:#ffda69;border-color:#ffda69}
+.main-content .ud-btn:focus-visible,.coach-details-dialog .ud-btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#coach-summary-cards .ud-mini{grid-column:1/-1;margin:0}
+#coach-alerts-list{display:block}
+#coach-alerts-list .ud-btn{margin-top:8px}
+.coach-details-dialog .coach-alert-item{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0;padding:12px;border:1px solid #665329;border-radius:10px;background:#FFC72C;border-color:#FFC72C;color:#111;text-align:left}
+.coach-alert-item small{color:#3b2a00;text-align:right}

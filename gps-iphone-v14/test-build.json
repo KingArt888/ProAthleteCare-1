@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-food-fixed-controls-v1",
-  "builtAt": "2026-11-13T13:42:14.252Z",
+  "build": "daily-phone-20261113-food-fixed-controls-v1+coach-performance-preview-3",
+  "builtAt": "2026-11-13T13:53:11.460Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -692,8 +692,8 @@
     },
     {
       "file": "css/coach-performance.css",
-      "bytes": 8266,
-      "sha256": "ec6dbc816e858728ccc9178720c635162bb343870e75862578cd919faa0c82d0"
+      "bytes": 9951,
+      "sha256": "b261806260858ab05241907a0cb8b3e5c8005a9430a7cac76b331d85bba5045c"
     },
     {
       "file": "css/daily-execution.css",
@@ -962,8 +962,8 @@
     },
     {
       "file": "js/coach-load-cycle.js",
-      "bytes": 1833,
-      "sha256": "54ec48384859207c89776f9dbfb696a64e030b6462d68500aa81250f948594bb"
+      "bytes": 1816,
+      "sha256": "070481f6bc0884f3c455a71f08c4d458fd7f9a49b46c3ae7fb93f0be864d42f7"
     },
     {
       "file": "js/coach-monitor.js",
@@ -972,8 +972,8 @@
     },
     {
       "file": "js/coach-performance-preview.js",
-      "bytes": 12957,
-      "sha256": "9c7566cde7292870ac5cd13d942a387102e64758101bd08833a413920ac5fb3c"
+      "bytes": 13338,
+      "sha256": "7104678ece116c79d60c0d6faf411052ffc81a70d35dd45130e80a4a143ff0b9"
     },
     {
       "file": "js/coach-week-editor.js",
@@ -1323,7 +1323,7 @@
     {
       "file": "pages/coach-dashboard.html",
       "bytes": 8143,
-      "sha256": "623122fd8e5e10c4fb56508911f2fd05fd82d832d46c024960a513b813e8cc57"
+      "sha256": "056a86763cbb4a0a4bda3d0daa7b41613e60f26e3782494c99c5f012729d5433"
     },
     {
       "file": "pages/coach-date-plan.html",
@@ -1332,8 +1332,8 @@
     },
     {
       "file": "pages/coach-performance.html",
-      "bytes": 8872,
-      "sha256": "5beeb0a8bd36b94c13fff08ce238e4b30a9a7f13e6da3b6f74fe1650c52fed3e"
+      "bytes": 11709,
+      "sha256": "404eb1fe9c71337bc65bedc96c38999634b797345b0835366318ff9176a3518e"
     },
     {
       "file": "pages/coach-week-editor.html",
@@ -1504,10 +1504,20 @@
       "file": "vendor/leaflet/leaflet.js",
       "bytes": 147552,
       "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
+    },
+    {
+      "file": "js/coach-performance-series.js",
+      "bytes": 1989,
+      "sha256": "3ba7cf3663de3ca6252b1c9ebd26eca6b3a0cc31ae744528692ed7839b01c374"
+    },
+    {
+      "file": "js/coach-performance-detail.js",
+      "bytes": 7290,
+      "sha256": "06fc996362eb0021ff52f64eecf438fcd67625246b5290333b2a5e8778f53744"
     }
   ],
   "coachPerformancePreview": {
-    "version": 2,
+    "version": 3,
     "path": "pages/coach-performance.html",
     "data": "synthetic-only",
     "realImport": false,

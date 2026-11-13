@@ -5,7 +5,7 @@
   <title>Database · Coach | ProAthleteCare</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/navigation-mobile.css">
-  <link rel="stylesheet" href="../css/coach-performance.css?v=preview-2">
+  <link rel="stylesheet" href="../css/coach-performance.css?v=preview-3">
 </head>
 <body class="performance-preview">
 <header>
@@ -32,6 +32,16 @@
       <label>Гравець<select id="cp-player"><option value="team">Уся команда · 8 гравців</option></select></label>
       <label>Період<select id="cp-range"><option value="all">Усі 12 тижнів</option><option value="4">Останні 4 тижні</option></select></label>
     </section>
+    <section id="cp-detail" hidden aria-labelledby="cp-detail-title">
+      <a href="coach-performance.html?v=preview-3" id="cp-detail-back" class="cp-back">← До огляду</a>
+      <div class="cp-section-heading"><div><p class="cp-eyebrow">METRIC EXPLORER · МІКРО → МАКРО</p><h3 id="cp-detail-title"></h3></div><span class="cp-tag" id="cp-detail-owner"></span></div>
+      <section class="cp-card"><div class="cp-detail-controls"><label>Період<select id="cp-detail-range"><option value="7">7 днів</option><option value="14">2 тижні</option><option value="21">3 тижні</option><option value="30">30 днів</option><option value="all">Увесь демо-сезон</option><option value="custom">Власні дати</option></select></label><label>Показувати<select id="cp-detail-group"><option value="day">По днях</option><option value="week">По тижнях</option><option value="month">По місяцях</option></select></label><label>Від<input id="cp-detail-start" type="date" min="2026-08-03" max="2026-10-25"></label><label>До<input id="cp-detail-end" type="date" min="2026-08-03" max="2026-10-25"></label><label>Показник<select id="cp-detail-metric"></select></label></div><p class="cp-note">Пресети рахуються до 25.10.2026 — кінця демо-даних. День / тиждень / календарний місяць — спосіб групування, а не призначений тренером цикл.</p></section>
+      <p id="cp-detail-error" role="alert" class="cp-red"></p>
+      <div id="cp-detail-summary" class="cp-detail-summary"></div>
+      <section class="cp-card"><div class="cp-card-heading"><h3 id="cp-detail-chart-title"></h3><span class="cp-tag">Демонстраційні денні записи</span></div><div id="cp-detail-chart" class="cp-chart"></div><p id="cp-detail-point" class="cp-week-detail" aria-live="polite">Натисніть точку графіка для деталей.</p><p class="cp-note">Денні записи в макеті синтетичні. Під час справжнього імпорту тижневий підсумок не розбиватиметься на вигадані дні. Неповні тижні та місяці містять лише вибрані дати.</p></section>
+      <section class="cp-card"><h3>Деталі періодів</h3><div class="cp-table-wrap"><table><thead><tr><th>Період</th><th id="cp-detail-value-head">Значення</th><th>Днів із даними</th><th>Демо-записів</th></tr></thead><tbody id="cp-detail-rows"></tbody></table></div></section>
+    </section>
+    <div id="cp-overview">
     <div class="cp-section-heading"><div><p class="cp-eyebrow" id="cp-scope">TEAM OVERVIEW</p><h3 id="cp-title">Огляд команди</h3></div><span id="cp-coverage" class="cp-tag"></span></div>
     <section id="cp-metrics" class="cp-metrics" aria-label="Підсумки вибраного періоду"></section>
     <section class="cp-card cp-season">
@@ -49,10 +59,13 @@
       <section class="cp-card"><div class="cp-card-heading"><div><p class="cp-eyebrow">HIGH INTENSITY</p><h3>HSR & Sprint</h3></div><div class="cp-legend"><span class="hsr">● HSR</span><span class="sprint">● Sprint</span></div></div><div id="cp-speed-chart" class="cp-chart cp-chart-small"></div><p class="cp-note">Демо-профіль: HSR 19–&lt;25 км/год · Sprint ≥25 км/год. Зони не перекриваються.</p></section>
     </div>
     <section class="cp-card cp-roster"><div class="cp-card-heading"><div><p class="cp-eyebrow">ATHLETE DATABASE</p><h3>Гравці та результати</h3></div><label class="cp-search">Пошук гравця<input type="search" id="cp-search" placeholder="Ім’я або прізвище"></label></div><p class="cp-note">Натисніть ім’я, щоб відкрити особисту динаміку. Таблиця — підсумок за вибраний період.</p><div class="cp-table-wrap"><table><thead><tr><th scope="col">Гравець</th><th scope="col">Дистанція, км</th><th scope="col">Player Load, a.u.</th><th scope="col">HSR, м</th><th scope="col">Sprint, м</th><th scope="col">ACC</th><th scope="col">DEC</th><th scope="col">Max, км/год</th></tr></thead><tbody id="cp-roster-body"></tbody></table></div><p id="cp-search-status" class="cp-note" role="status"></p></section>
-    <p class="cp-footer">ProAthleteCare · Coach Performance Intelligence <span>DESIGN PREVIEW 01 · Демонстраційні дані</span></p>
+    </div>
+    <p class="cp-footer">ProAthleteCare · Coach Performance Intelligence <span>DESIGN PREVIEW 03 · Демонстраційні дані</span></p>
   </main>
 </div>
 <dialog id="cp-import-dialog" aria-labelledby="cp-dialog-title"><h2 id="cp-dialog-title">Імпорт Excel / CSV</h2><p>Зараз погоджуємо вигляд дашборда тренера. На наступному етапі тут буде завантаження файлу, перевірка показників та відповідності гравців.</p><p>Цей макет нічого не завантажує та не зберігає в базі.</p><button id="cp-dialog-close" class="cp-button cp-primary">Зрозуміло</button></dialog>
 <script src="../js/coach-load-cycle.js?v=preview-2"></script>
-<script src="../js/coach-performance-preview.js?v=preview-2"></script>
+<script src="../js/coach-performance-series.js?v=preview-3"></script>
+<script src="../js/coach-performance-detail.js?v=preview-3"></script>
+<script src="../js/coach-performance-preview.js?v=preview-3"></script>
 </body></html>

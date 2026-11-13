@@ -9,7 +9,7 @@
  const metrics={distance:{label:'Дистанція',unit:'км',color:'#FFC72C',divide:1000},load:{label:'Player Load',unit:'a.u.',color:'#FFC72C',divide:1},hsr:{label:'HSR',unit:'м',color:'#65ccb7',divide:1},sprint:{label:'Sprint',unit:'м',color:'#FFC72C',divide:1},acc:{label:'Прискорення',unit:'подій',color:'#FFC72C',divide:1},dec:{label:'Гальмування',unit:'подій',color:'#65ccb7',divide:1}};
  const format=(n,digits=0)=>new Intl.NumberFormat('uk-UA',{maximumFractionDigits:digits}).format(n);
  const Cycle=window.PACCoachLoadCycle,plans=new Map();
- let selected='team',range='all',metric='distance',week=11;
+ let selected='team',range='all',metric='distance',week=11,explorer=null;
  const weekLabel=i=>'W'+String(i+1).padStart(2,'0');
  const weekDates=i=>{const d=new Date(Date.UTC(2026,7,3+i*7)),end=new Date(+d+6*86400000);const f=x=>x.toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',timeZone:'UTC'});return f(d)+'–'+f(end)};
  function indices(){return Array.from({length:range==='4'?4:12},(_,i)=>i+(range==='4'?8:0))}
@@ -50,7 +50,7 @@
   $('cp-title').textContent=selected==='team'?'Огляд команди':list[0].name;
   $('cp-scope').textContent=selected==='team'?'TEAM OVERVIEW':'ATHLETE OVERVIEW · '+list[0].position.toUpperCase();
   $('cp-coverage').textContent=list.length+' '+(list.length===1?'гравець':'гравців')+' · '+ids.length+' тижнів · '+list.length*ids.length+' демо-записів';
-  $('cp-metrics').replaceChildren();for(const key of ['distance','load','hsr','sprint','acc','dec']){const def=metrics[key],card=make('article',null,'cp-stat');card.append(make('small',def.label+' · '+def.unit),make('strong',format(sum(list,ids,key)/def.divide,key==='distance'?1:0)),make('span','За вибраний період'));$('cp-metrics').append(card)}
+  $('cp-metrics').replaceChildren();for(const key of ['distance','load','hsr','sprint','acc','dec']){const def=metrics[key],card=make('a',null,'cp-stat cp-stat-link');card.href=explorer.link(key);card.onclick=explorer.activate;card.setAttribute('aria-label','Детально: '+def.label);card.append(make('small',def.label+' · '+def.unit),make('strong',format(sum(list,ids,key)/def.divide,key==='distance'?1:0)),make('span','Дні · тижні · місяці ↗'));$('cp-metrics').append(card)}
   $('cp-chart-title').textContent=metrics[metric].label+' за тижнями';chart('cp-season-chart',metric);chart('cp-load-chart','load',{bars:true,compact:true});chart('cp-speed-chart','hsr',{bars:true,dual:true,compact:true});
   $('cp-week-detail').replaceChildren(make('b',weekLabel(week)+' · '+weekDates(week)),make('span',format(sum(list,[week],'distance')/1000,1)+' км'),make('span',format(sum(list,[week],'load'))+' a.u.'),make('span','HSR '+format(sum(list,[week],'hsr'))+' м'),make('span','Sprint '+format(sum(list,[week],'sprint'))+' м'));
   const def=metrics[metric],plan=targetPlan(metric),value=sum(list,[week],metric)/def.divide,previous=week?sum(list,[week-1],metric)/def.divide:null,state=Cycle.classify({value,previous,target:plan[week].target,phase:plan[week].phase});
@@ -61,6 +61,7 @@
   const cycleIndex=Math.floor(week/4);if(cycleIndex>0){const peak=c=>Math.max(...[0,1,2].map(s=>sum(list,[c*4+s],metric)/def.divide)),low=c=>sum(list,[c*4+3],metric)/def.divide;analysis.append(make('p','Порівняння циклів '+cycleIndex+' → '+(cycleIndex+1)+': пік '+signed(Cycle.percent(peak(cycleIndex),peak(cycleIndex-1)))+'; тиждень розвантаження '+signed(Cycle.percent(low(cycleIndex),low(cycleIndex-1)))+'. Це динаміка демо-значень, а не оцінка відновлення.'))}
   const config=settings(metric);$('cp-base-label').firstChild.nodeValue='База W01, '+def.unit+' ';$('cp-plan-base').value=String(Math.round(config.base*1000)/1000);$('cp-plan-step').value=config.stepPct;$('cp-plan-cycle').value=config.cyclePct;$('cp-plan-unload').value=config.unloadPct;
   renderRoster();
+  explorer.sync();
  }
  function renderRoster(){const query=$('cp-search').value.trim().toLocaleLowerCase('uk-UA'),list=players.filter(p=>p.name.toLocaleLowerCase('uk-UA').includes(query)),ids=indices();$('cp-roster-body').replaceChildren();for(const p of list){const row=make('tr');row.setAttribute('aria-selected',String(p.id===selected));const td=make('td'),button=make('button',null,'cp-player-link'),text=make('span',p.name);button.type='button';button.setAttribute('aria-label','Відкрити гравця '+p.name);text.append(make('small',p.position+' · демо'));button.append(make('span',p.name.split(' ').map(s=>s[0]).join(''),'cp-avatar'),text);button.onclick=()=>{choose(p.id);$('cp-title').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})};td.append(button);row.append(td);for(const k of ['distance','load','hsr','sprint','acc','dec'])row.append(make('td',format(sum([p],ids,k)/(k==='distance'?1000:1),k==='distance'?1:0)));row.append(make('td',format(Math.max(...ids.map(i=>p.weeks[i].max)),1)));$('cp-roster-body').append(row)}$('cp-search-status').textContent=list.length?'Показано '+list.length+' із 8 демонстраційних гравців.':'Гравців не знайдено. Змініть пошуковий запит.';}
  for(const p of players)$('cp-player').add(new Option(p.name,p.id));
@@ -71,5 +72,7 @@
  let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(render,120)});
  $('menu-toggle-button').onclick=()=>{const open=$('main-sidebar').classList.toggle('active');$('menu-toggle-button').classList.toggle('is-open',open);$('menu-toggle-button').setAttribute('aria-expanded',String(open))};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('main-sidebar').classList.remove('active');$('menu-toggle-button').classList.remove('is-open');$('menu-toggle-button').setAttribute('aria-expanded','false')}});
+ explorer=window.PACCoachPerformanceDetail.create({players,metrics,getSelected:()=>selected});
+ window.addEventListener('popstate',()=>{const id=new URL(location.href).searchParams.get('demoPlayer');selected=players.some(p=>p.id===id)?id:'team';$('cp-player').value=selected;render()});
  render();
 })();

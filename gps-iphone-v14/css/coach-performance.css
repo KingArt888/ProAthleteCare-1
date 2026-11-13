@@ -6,6 +6,13 @@
 .cp-page .cp-plan input{appearance:textfield}.cp-page .cp-plan input::-webkit-inner-spin-button,.cp-page .cp-plan input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .cp-cycle-legend{margin-top:14px!important}.cp-green{color:#48cf91}.cp-yellow{color:#FFC72C}.cp-red{color:#ff6464}
 .cp-analysis{margin-top:16px;padding:14px 16px;background:#131313;border:1px solid #2b2b2b;border-left:3px solid #FFC72C;border-radius:6px;font-size:12px;line-height:1.7}.cp-analysis strong{color:#eee}.cp-analysis p{margin:6px 0 0;color:#aaa}
+.performance-preview [hidden]{display:none!important}
+.cp-stat-link{display:block;text-decoration:none;transition:border-color .2s,box-shadow .2s,transform .2s;position:relative;overflow:hidden}.cp-stat-link:hover{border-color:#ac892c;box-shadow:0 8px 26px #ffc72c14;transform:translateY(-3px)}.cp-stat-link:focus-visible{outline:2px solid #FFC72C;outline-offset:3px}.cp-stat-link:hover strong{color:#FFC72C}.cp-chart g[role=button]:hover circle{fill:#fff;filter:drop-shadow(0 0 5px #ffc72c88)}.cp-candle{animation:cp-candle-enter .6s ease-out both}.cp-chart svg{animation:cp-chart-enter .4s ease-out both}.cp-chart line[data-trend]{filter:drop-shadow(0 0 2px #ffffff19)}
+.cp-back{display:inline-block;color:#aaa;font-size:12px;text-decoration:none;margin-bottom:24px;min-height:30px}.cp-back:hover{color:#FFC72C}.cp-detail-controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.cp-detail-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}.cp-table-link{background:none;border:0;color:#FFC72C;cursor:pointer;padding:6px 0;font:inherit}.cp-table-link:hover{text-decoration:underline}#cp-detail{scroll-margin-top:90px}#cp-detail-chart svg{min-width:0}
+@keyframes cp-chart-enter{from{opacity:.5}to{opacity:1}}@keyframes cp-candle-enter{from{opacity:0}to{opacity:1}}
+@media(max-width:1100px){.cp-detail-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.cp-detail-controls,.cp-detail-summary{grid-template-columns:1fr 1fr}.cp-detail-summary .cp-stat strong{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.cp-candle,.cp-chart svg{animation:none}.cp-stat-link{transition:none}.cp-stat-link:hover{transform:none}}
 .cp-plan{margin-top:18px;border-top:1px solid #333;padding-top:16px}.cp-plan summary{color:#FFC72C;cursor:pointer;font-size:12px;font-weight:700}.cp-plan-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px;align-items:end}.cp-plan-controls button{grid-column:1/-1;justify-self:start}
 .performance-preview .cp-page{min-width:0;max-width:1800px;padding:30px;overflow:hidden}
 .cp-page *,.performance-preview dialog{box-sizing:border-box}

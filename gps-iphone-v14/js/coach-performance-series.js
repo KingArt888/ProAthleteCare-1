@@ -1,0 +1,9 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.PACPerformanceSeries=api})(typeof window==='object'?window:globalThis,function(){
+ 'use strict';const DAY=86400000;
+ function date(v){const n=typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)?Date.parse(v+'T00:00:00Z'):NaN;if(!Number.isFinite(n)||new Date(n).toISOString().slice(0,10)!==v)throw Error('Некоректна дата');return n}
+ function iso(n){return new Date(n).toISOString().slice(0,10)}
+ function aggregate(rows,{start,end,metric,player='team',group='day'}){const a=date(start),b=date(end);if(a>b||!['day','week','month'].includes(group))throw Error('Перевірте діапазон дат і групування');const buckets=new Map();for(const row of rows){if(player!=='team'&&row.player!==player)continue;const t=date(row.date),value=row.metrics[metric];if(t<a||t>b||!Number.isFinite(value)||value<0)continue;const d=new Date(t),key=group==='month'?row.date.slice(0,7):group==='week'?iso(t-((d.getUTCDay()+6)%7)*DAY):row.date;let bucket=buckets.get(key);if(!bucket){bucket={key,value:0,dates:new Set(),records:0};buckets.set(key,bucket)}bucket.value+=value;bucket.dates.add(row.date);bucket.records++}return[...buckets.values()].sort((x,y)=>x.key.localeCompare(y.key)).map(x=>({...x,days:x.dates.size,dates:[...x.dates].sort()}))}
+ // Explicit synthetic daily fixtures only; never use to infer daily measurements from imported weekly totals.
+ function demoDays(players){const shares=[12,20,18,16,15,14,5],rows=[];for(const p of players)p.weeks.forEach((week,w)=>{let cumulative=0;shares.forEach((share,d)=>{const prior=cumulative;cumulative+=share;const metrics={};for(const k of ['distance','load','hsr','sprint','acc','dec'])metrics[k]=Math.round(week[k]*cumulative/100)-Math.round(week[k]*prior/100);rows.push({player:p.id,date:iso(Date.UTC(2026,7,3)+(w*7+d)*DAY),metrics})})});return rows}
+ return{aggregate,demoDays,date,iso,DAY};
+});

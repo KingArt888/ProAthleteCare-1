@@ -1,6 +1,7 @@
 ﻿(function () {
 
   "use strict";
+const PowerData=window.PACPowerData,pt=key=>window.PACPowerText(key);
 let UI_LOCK = false;
 
   // =========================
@@ -251,7 +252,7 @@ function usePageTargets() {
 
 function syncStartAvailability() {
   if (!btnStart) return;
-  btnStart.disabled = !Boolean(briefConfirm?.checked);
+  btnStart.disabled = !Boolean(briefConfirm?.checked)||!libsOk||!pose||!navigator.mediaDevices?.getUserMedia||!POWER_READY||POWER_READ_ONLY||powerSaving||UI_LOCK||Boolean(stream)||Boolean(pendingTest);
   if (!briefConfirm?.checked) {
     btnStart.classList.add("cta-pulse");
     briefBox?.classList.add("is-pulsing");
@@ -271,10 +272,11 @@ function updateMotionState() {
 
 
 camClose?.addEventListener("click", () => {
-  hardStopCamera();
+  hardStopCamera();resetFlowVars();
   camModal.classList.add("hidden");
   usePageTargets();
   UI_LOCK = false;
+  setPowerReadOnlyUi(POWER_READ_ONLY);
 });
 
 const btnShare = document.getElementById("btnShare");
@@ -363,7 +365,6 @@ let selectedTestIndex = null;
   setPill(qLib, libsOk, libsOk ? "Libs: OK" : "Libs: FAIL");
   if (!libsOk) {
     btnStart && (btnStart.disabled = true);
-    return;
   }
 
   // =========================
@@ -393,15 +394,16 @@ const HISTORY_LIMIT = 50;
 let POWER_HISTORY = []; // newest first
 let POWER_UID = null;
 let POWER_READ_ONLY = false;
+let POWER_AUTH_UID=null,POWER_READY=false,POWER_VERSION=0,CAMERA_VERSION=0,powerSaving=false,pendingTest=null,pendingWriteId=null;
 
 function canWritePowerData({ notify = true } = {}) {
-  if (!POWER_READ_ONLY) return true;
+  if (!POWER_READ_ONLY&&POWER_READY&&POWER_UID&&POWER_UID===POWER_AUTH_UID&&firebase.auth().currentUser?.uid===POWER_AUTH_UID) return true;
   if (notify) alert(ti("readOnlyDelegated", "Read-only mode: viewing delegated athlete."));
   return false;
 }
 
 function setPowerReadOnlyUi(readOnly) {
-  const isLocked = Boolean(readOnly);
+  const isLocked = Boolean(readOnly)||!POWER_READY||powerSaving;
   const startBtn = document.getElementById("jlStartCam");
   const resetBtn = document.getElementById("jlReset");
   if (startBtn) {
@@ -414,15 +416,14 @@ function setPowerReadOnlyUi(readOnly) {
     resetBtn.style.opacity = isLocked ? "0.6" : "";
     resetBtn.style.cursor = isLocked ? "not-allowed" : "";
   }
+  for(const input of document.querySelectorAll('#power-manual input,#power-manual button'))input.disabled=isLocked||UI_LOCK||Boolean(stream)||pendingTest?.source==='camera';
+  if(briefConfirm)briefConfirm.disabled=isLocked;
+  for(const button of attemptsEl?.querySelectorAll('button')||[])button.disabled=!POWER_READY||powerSaving||UI_LOCK||Boolean(stream);
+  syncStartAvailability();
 }
 
 function getUid() {
-  const delegatedUid = String(window.pacDelegatedContext?.effectiveUserId || "").trim();
-  if (delegatedUid) return delegatedUid;
-  const globalUid = String(window.currentUserId || "").trim();
-  if (globalUid) return globalUid;
-  const authUid = String(firebase.auth().currentUser?.uid || "").trim();
-  return authUid || null;
+  return POWER_UID;
 
 }
 
@@ -432,12 +433,14 @@ function powerCol(uid) {
 
 
 async function loadPowerHistoryFromFS(uid) {
+  const version=POWER_VERSION;
   const snap = await powerCol(uid)
     .orderBy("createdAtMs", "desc")
-    .limit(HISTORY_LIMIT)
+    .limit(200)
     .get();
 
-  POWER_HISTORY = snap.docs.map(d => ({ _id: d.id, ...d.data() })); // newest first
+  if(version!==POWER_VERSION||uid!==POWER_UID)return [];
+  POWER_HISTORY = snap.docs.map(d => ({ _id: d.id, ...d.data() })).filter(PowerData.usable).sort((a,b)=>PowerData.stamp(b)-PowerData.stamp(a)).slice(0,HISTORY_LIMIT);
   return POWER_HISTORY;
 }
 
@@ -445,46 +448,39 @@ async function loadPowerHistoryFromFS(uid) {
 function getHistory() {
   return POWER_HISTORY || [];
 }
+function powerStatus(text,error=false){const node=document.getElementById('power-record-status');if(node){node.textContent=text;node.setAttribute('role',error?'alert':'status');}const retry=document.getElementById('power-retry-save');if(retry){retry.hidden=!pendingTest;retry.disabled=powerSaving||!POWER_READY||POWER_READ_ONLY;}}
+function showPowerVerdict(s){if(verdictEl){verdictEl.classList.remove('ok','warn','bad');verdictEl.textContent=s?.trend_ok?pt('trend'):pt('pending');}if(verdictWhyEl)verdictWhyEl.textContent=s?.trend_ok?`${s.improve_pct>0?'+':'−'}${s.improve_pct||s.fatigue_pct||0}%`:pt('trendMissing');}
+async function persistPendingTest(){
+ if(!pendingTest||powerSaving||!canWritePowerData({notify:false}))return null;const owner=POWER_UID,version=POWER_VERSION;powerSaving=true;setPowerReadOnlyUi(POWER_READ_ONLY);powerStatus(pt('saving'));
+ try{const saved=await addPowerTestToFS(pendingTest);if(!saved||owner!==POWER_UID||version!==POWER_VERSION)return null;pendingTest=null;powerStatus(pt('saved'));setKPI({jumps:saved.count,best:saved.best_cm,avg:saved.avg_cm});renderHistory(getHistory());if(saved.source==='manual')document.getElementById('power-manual-height').value='';return saved;}
+ catch(e){if(owner===POWER_UID&&version===POWER_VERSION)powerStatus(pt('saveError'),true);return null;}
+ finally{if(version===POWER_VERSION){powerSaving=false;setPowerReadOnlyUi(POWER_READ_ONLY);powerStatus(document.getElementById('power-record-status')?.textContent||'');}}
+}
 function sanitizePowerEntry(entry) {
-  const cleanSeries = (Array.isArray(entry.series) ? entry.series : []).map(p => ({
-    t_s: Number(p?.t_s || 0),
-    flight_s: Number(p?.flight_s || 0),
-    height_cm: Number(p?.height_cm || 0),
-    snapshot: (typeof p?.snapshot === "string" ? p.snapshot : null)
-  }));
-
-  return {
-    date: String(entry?.date || ""),
-    createdAtMs: Number(entry?.createdAtMs || Date.now()),
-    count: Number(entry?.count || cleanSeries.length || 0),
-    best_cm: (entry?.best_cm == null ? null : Number(entry.best_cm)),
-    avg_cm: (entry?.avg_cm == null ? null : Number(entry.avg_cm)),
-    fatigue_pct: Number(entry?.fatigue_pct || 0),
-    improve_pct: Number(entry?.improve_pct || 0),
-    final_snapshot: (typeof entry?.final_snapshot === "string" ? entry.final_snapshot : null),
-    series: cleanSeries
-  };
+  return PowerData.sanitize(entry,POWER_UID);
 }
 
 async function addPowerTestToFS(entry) {
   if (!canWritePowerData()) throw new Error("READ_ONLY");
   const uid = getUid();
   if (!uid) throw new Error("NO_AUTH");
+  const version=POWER_VERSION;
 
   const payload = sanitizePowerEntry({
     ...entry,
     userId: uid,
-    source: "manual",
     createdAtMs: entry.createdAtMs || Date.now()
   });
 
-  const ref = await powerCol(uid).add(payload);
+  const ref = powerCol(uid).doc(entry._writeId||crypto.randomUUID());
+  await ref.set(payload);
+  if(version!==POWER_VERSION||uid!==POWER_UID||firebase.auth().currentUser?.uid!==uid)return null;
   const saved = { _id: ref.id, ...payload };
 
-  POWER_HISTORY.unshift(saved);
+  POWER_HISTORY=POWER_HISTORY.filter(row=>row._id!==saved._id);POWER_HISTORY.unshift(saved);
   POWER_HISTORY = POWER_HISTORY.slice(0, HISTORY_LIMIT);
 
-  return saved;
+  window.dispatchEvent(new CustomEvent('pac:power-updated',{detail:{userId:uid}}));return saved;
 }
 
 
@@ -492,7 +488,10 @@ async function patchPowerTest(docId, patch) {
   if (!canWritePowerData({ notify: false })) return;
   const uid = getUid();
   if (!uid || !docId) return;
-  await powerCol(uid).doc(docId).set(patch, { merge: true });
+  const image=PowerData.snapshot(patch.final_snapshot);if(!image)return;
+  const current=POWER_HISTORY.find(row=>row._id===docId);if(!current||JSON.stringify({...current,final_snapshot:image}).length>800000)return;
+  const version=POWER_VERSION;patch={final_snapshot:image};await powerCol(uid).doc(docId).set(patch, { merge: true });
+  if(version!==POWER_VERSION||uid!==POWER_UID)return;
 
   const i = POWER_HISTORY.findIndex(x => x._id === docId);
   if (i >= 0) POWER_HISTORY[i] = { ...POWER_HISTORY[i], ...patch };
@@ -505,9 +504,12 @@ async function deletePowerTestAt(index) {
 
   const item = POWER_HISTORY[index];
   if (!item?._id) return;
+  const version=POWER_VERSION;
 
   await powerCol(uid).doc(item._id).delete();
-  POWER_HISTORY.splice(index, 1);
+  if(version!==POWER_VERSION||uid!==POWER_UID)return false;
+  POWER_HISTORY=POWER_HISTORY.filter(row=>row._id!==item._id);
+  window.dispatchEvent(new CustomEvent('pac:power-updated',{detail:{userId:uid}}));return true;
 }
 
 async function clearPowerHistoryFS() {
@@ -639,24 +641,24 @@ function renderHistory(hist) {
 
   attemptsEl.innerHTML = items.map((t, idx) => {
     const testIndex = idx;
-    const date = escapeHtml(t.date || "—");
+    const date = escapeHtml(PowerData.stamp(t)?new Date(PowerData.stamp(t)).toLocaleString(localStorage.getItem('pac_lang')||'uk'):t.date||'—');
 
-    const s = computeSummary(Array.isArray(t.series) ? t.series : []);
+    const s = {...computeSummary(Array.isArray(t.series) ? t.series : []),...PowerData.summary(t)};
     const jumps = Number.isFinite(s.count) ? s.count : Number(t.count || 0);
 
-    const best = Number.isFinite(s.best) ? s.best : Number(t.best_cm || 0);
-    const avg  = Number.isFinite(s.avg)  ? s.avg  : Number(t.avg_cm || 0);
+    const best = PowerData.num(s.best);
+    const avg  = PowerData.num(s.avg);
 
     const fat = Number.isFinite(s.fatigue_pct) ? s.fatigue_pct : 0;
     const imp = Number.isFinite(s.improve_pct) ? s.improve_pct : 0;
     
     
 // prev test (older)
-const prev = hist[testIndex - 1];
+const prev = hist.slice(testIndex+1).find(p=>(p.testType||p.source||'legacy')===(t.testType||t.source||'legacy'));
 let vsPrev = null;
 
 if (prev) {
-  const ps = computeSummary(Array.isArray(prev.series) ? prev.series : []);
+  const ps = PowerData.summary(prev);
   if (Number.isFinite(ps.avg) && Number.isFinite(s.avg)) {
     const diff = s.avg - ps.avg; // cm
     const pct = ps.avg > 0 ? (diff / ps.avg) * 100 : 0;
@@ -675,13 +677,8 @@ if (vsPrev && Number.isFinite(vsPrev.diff)) {
 
 
 
-    const trendLabel =
-      (jumps < 4) ? "TREND N/A" :
-      (imp > 0) ? `IMPROVE +${imp}%` : `FATIGUE ${fat}%`;
-
-    const trendClass =
-      (jumps < 4) ? "ok" :
-      (fat >= 20) ? "bad" : (fat >= 10 ? "warn" : "ok");
+    const trendLabel = !s.trend_ok?'—':`Δ ${imp>0?'+':'−'}${imp||fat||0}%`;
+    const trendClass = '';
 
     const deleteCompact = POWER_READ_ONLY ? "" : `
   <button class="test-delete"
@@ -705,11 +702,12 @@ if (vsPrev && Number.isFinite(vsPrev.diff)) {
 
             <div class="ts-title">Test #${hist.length - idx}</div>
             <div class="ts-date">${date}</div>
+            <div class="ts-date">${escapeHtml(pt(t.schemaVersion>=2&&t.source==='camera'?'camera':t.schemaVersion>=2&&t.source==='manual'?'reported':'legacy'))}</div>
           </div>
           <div class="ts-right">
             <span class="chip">${jumps} jumps</span>
-            <span class="chip">best ${best.toFixed(1)}cm</span>
-            <span class="chip">avg ${avg.toFixed(1)}cm</span>
+            <span class="chip">best ${best==null?'—':best.toFixed(1)+' cm'}</span>
+            <span class="chip">avg ${avg==null?'—':avg.toFixed(1)+' cm'}</span>
              ${vsPrevChip}
             <span class="chip ${trendClass}">${trendLabel}</span>
           </div>
@@ -717,8 +715,8 @@ if (vsPrev && Number.isFinite(vsPrev.diff)) {
 
         <div class="test-body">
           <div class="test-row">
-            <div class="kv"><div class="k">First avg</div><div class="v">${Number(s.first_avg||0).toFixed(1)} cm</div></div>
-            <div class="kv"><div class="k">Last avg</div><div class="v">${Number(s.last_avg||0).toFixed(1)} cm</div></div>
+            <div class="kv"><div class="k">First avg</div><div class="v">${s.first_avg==null?'—':Number(s.first_avg).toFixed(1)+' cm'}</div></div>
+            <div class="kv"><div class="k">Last avg</div><div class="v">${s.last_avg==null?'—':Number(s.last_avg).toFixed(1)+' cm'}</div></div>
             <div class="kv"><div class="k">Trend</div><div class="v">${trendLabel}</div></div>
           </div>
 
@@ -755,15 +753,16 @@ if (vsPrev && Number.isFinite(vsPrev.diff)) {
   }
 }
 async function finishTest() {
-
+  const owner=POWER_UID,version=POWER_VERSION;
   testing = false;
   setState("FINISHED");
 
   const sum = computeSummary(series);
+  if(!sum.count){powerStatus(pt('emptyTest'),true);hardStopCamera();return;}
   window.__lastSeries = series.slice();
 
   const entry = {
-    date: new Date().toISOString().slice(0,19).replace("T"," "),
+    date: new Date().toISOString(),source:'camera',trackingLosses,
     createdAtMs: Date.now(),
     count: sum.count || 0,
     best_cm: sum.best ?? null,
@@ -778,18 +777,20 @@ async function finishTest() {
   let saved = null;
   try {
     
-    saved = await addPowerTestToFS(entry);
+    pendingTest={...entry,_writeId:crypto.randomUUID()};saved = await persistPendingTest();
     window.__lastSavedPowerId = saved?._id || null;
 
   } catch (e) {
     console.warn("Save power test failed:", e);
   }
+  if(owner!==POWER_UID||version!==POWER_VERSION)return;
 
 
   // 2) UI
   setKPI({ jumps: entry.count, best: entry.best_cm, avg: entry.avg_cm });
   renderHistory(getHistory());
   if (entry.series?.length) renderChart(entry.series);
+  showPowerVerdict(sum);
 
   // 3) make final story shot
   let bestFlightS = 0;
@@ -816,6 +817,7 @@ async function finishTest() {
       console.warn("Patch final_snapshot failed:", e);
     }
   }
+  if(shot&&pendingTest)pendingTest.final_snapshot=shot;
 
   // 5) show shot
   const box = document.getElementById("jlShots");
@@ -837,12 +839,14 @@ async function finishTest() {
     }
   }
 
-  setCountdown(ti("cdownFinished", "✅ Test finished. Check chart and history ✅"));
+  hardStopCamera();camModal?.classList.add('hidden');usePageTargets();
+  setCountdown(saved?pt('saved'):pt('saveError'),Boolean(saved));
 }
 
 
 // load selected test into chart
 window.pacPowerOpenTest = function (index) {
+  if(stream||UI_LOCK)return;
   try {
     const hist = getHistory();
 
@@ -859,13 +863,8 @@ window.pacPowerOpenTest = function (index) {
 
 
     // ✅ якщо немає серії — все одно покажемо що є (best/avg з entry), але графік не малюємо
-    const s = series.length ? computeSummary(series) : {
-      count: Number(t?.count || 0),
-      best: Number(t?.best_cm ?? t?.best ?? 0) || null,
-      avg:  Number(t?.avg_cm  ?? t?.avg  ?? 0) || null,
-      fatigue_pct: Number(t?.fatigue_pct ?? 0),
-      improve_pct: Number(t?.improve_pct ?? 0)
-    };
+    if(!t)return;
+    const s = {...computeSummary(series),...PowerData.summary(t)};
 
     // KPI
     setKPI({ jumps: s.count || 0, best: s.best, avg: s.avg });
@@ -882,24 +881,7 @@ setTimeout(() => {
 
 
 
-    // Verdict
-    const fat = Number(s.fatigue_pct || 0);
-    const imp = Number(s.improve_pct || 0);
-
-    if (verdictEl) {
-      verdictEl.classList.remove("ok","warn","bad");
-      if (fat >= 20) { verdictEl.classList.add("bad"); verdictEl.textContent = "RED • FATIGUE"; }
-      else if (fat >= 10) { verdictEl.classList.add("warn"); verdictEl.textContent = "YELLOW • CAUTION"; }
-      else { verdictEl.classList.add("ok"); verdictEl.textContent = imp > 0 ? "GREEN • IMPROVING" : "GREEN • STABLE"; }
-    }
-    if (verdictWhyEl) {
-      verdictWhyEl.textContent =
-        (fat >= 20) ? "Strong drop at the end of the test." :
-        (fat >= 10) ? "Moderate drop — dose intensity carefully." :
-        (imp > 0)   ? "Improved during test (activation effect)." :
-                      "Stable power output.";
-    }
-
+    showPowerVerdict(s);
     // Chart
     if (series.length) {
       renderChart(series);
@@ -908,7 +890,7 @@ setTimeout(() => {
       if (chart) { try { chart.destroy(); } catch {} chart = null; }
       console.warn("OPEN_TEST_NO_SERIES", { index: i, entry: t });
     }
-const shots = series.map(p => p.snapshot).filter(Boolean);
+const shots = series.map(p => PowerData.snapshot(p.snapshot)).filter(Boolean);
 const box = document.getElementById("jlShots");
 if (box) {
   box.innerHTML = shots.length
@@ -921,12 +903,14 @@ if (box) {
   }
 };
 window.pacPowerDeleteTest = async function (index) {
+  if(stream||UI_LOCK||powerSaving)return;
   if (!canWritePowerData()) return;
   try {
     const i = Number(index);
     if (!Number.isFinite(i)) return;
 
-    await deletePowerTestAt(i);
+    if(!confirm(ti('deleteTest','Delete test')+'?'))return;
+    const version=POWER_VERSION;if(!await deletePowerTestAt(i)||version!==POWER_VERSION)return;
 
     if (selectedTestIndex === i) {
       selectedTestIndex = null;
@@ -943,6 +927,7 @@ window.pacPowerDeleteTest = async function (index) {
     renderHistory(getHistory());
   } catch (e) {
     console.error("pacPowerDeleteTest error", e);
+    powerStatus(pt('deleteError'),true);
   }
 };
 
@@ -1267,6 +1252,7 @@ function makeFinalVerticalStoryShot({ imageSource, sum, bestFlightS }) {
   let testStartMs = 0;
   let testEndMs = 0;
   let series = [];
+  let trackingLostAt=null,trackingLosses=0;
 
   const heightMA = new MovingAverage(6);
   let stableBuf = [];
@@ -1282,13 +1268,14 @@ let peakFrameImage = null;    // results.image (кадр) на піку
   // =========================
   // Pose init
   // =========================
-  const pose = new Pose({
+  let pose=null;
+  try {pose = libsOk ? new Pose({
     locateFile: (file) => `../js/libs/pose/${file}`
-  });
+  }) : null;
 
   // Selfie on (front-like). For integrated camera on laptop it's ok.
   // If you prefer non-mirrored drawing, set selfieMode:false.
-  pose.setOptions({
+  pose?.setOptions({
   modelComplexity: isMobile ? 0 : 1,   // 0 = швидше
   smoothLandmarks: true,
   selfieMode: true,
@@ -1297,7 +1284,8 @@ let peakFrameImage = null;    // results.image (кадр) на піку
 });
 
 
-  pose.onResults(onResults);
+  pose?.onResults(onResults);
+  }catch{pose=null;setPill(qLib,false,'Libs: unavailable');}
 
   // =========================
   // UI reset
@@ -1317,6 +1305,7 @@ let peakFrameImage = null;    // results.image (кадр) на піку
     showPlaceholder(true);
 
     renderHistory(getHistory());
+    showPowerVerdict(null);
 
 
     if (chart) { try { chart.destroy(); } catch {} chart = null; }
@@ -1373,15 +1362,18 @@ const last = h[0]; // newest first
   }
 
   function hardStopCamera() {
+    CAMERA_VERSION++;
     stopLoop();
 
     if (stream) {
       try { stream.getTracks().forEach(t => t.stop()); } catch {}
     }
     stream = null;
+    for(const v of [video,videoModal])if(v){try{v.pause();}catch{}v.srcObject=null;}
 
     showPlaceholder(true);
     setPill(qCam, false, "Camera: —");
+    setPowerReadOnlyUi(POWER_READ_ONLY);
   }
 
   async function waitForVideoSize(timeoutMs = 4000) {
@@ -1398,126 +1390,39 @@ const last = h[0]; // newest first
     tick();
   });
 }
-async function getStreamWithFallback(primaryConstraints) {
-  try {
-    return await navigator.mediaDevices.getUserMedia(primaryConstraints);
-  } catch (e1) {
-    console.warn("getUserMedia primary failed:", e1?.name, e1?.message);
 
-    // 1) якщо впав exact deviceId або aspectRatio — пробуємо простіше
-    const fallback1 = { audio: false, video: { width: { ideal: 1280 }, height: { ideal: 720 } } };
-    try {
-      return await navigator.mediaDevices.getUserMedia(fallback1);
-    } catch (e2) {
-      console.warn("getUserMedia fallback1 failed:", e2?.name, e2?.message);
-
-      // 2) останній шанс: взагалі будь-яка камера
-      const fallback2 = { audio: false, video: true };
-      return await navigator.mediaDevices.getUserMedia(fallback2);
-    }
-  }
+async function getStreamWithFallback(constraints,valid){
+ try{return await navigator.mediaDevices.getUserMedia(constraints);}catch(error){if(!valid()||!['OverconstrainedError','ConstraintNotSatisfiedError'].includes(error.name))throw error;return navigator.mediaDevices.getUserMedia({audio:false,video:true});}
 }
-
-
-  async function startCameraIntegrated() {
-  setCountdown("[CAM] REQUESTING CAMERA…", true, true);
-
-  setPill(qCam, false, "Camera: requesting…");
-
-  hardStopCamera();
-
-  const v = activeVideo || video;
-  v.setAttribute("playsinline", "true");
-  v.muted = true;
-
-  // 1) request any camera first to unlock permission & labels
-  let firstStream = null;
-  try {
-    firstStream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: { width: { ideal: 1280 }, height: { ideal: 720 } }
-    });
-  } catch (e) {
-    console.error("CAMERA_PERMISSION_ERROR:", e);
-    const name = e?.name || "Error";
-    const msg  = e?.message || "";
-    setCountdown(ti("cameraError", `❌ Camera: ${name}${msg ? " — " + msg : ""}`, { name, msg: msg ? ` — ${msg}` : "" }), false);
-    setPill(qCam, false, `Camera: ${name}`);
-    return false;
-  }
-
-  // stop it immediately; we re-open exact integrated deviceId
-  try { firstStream.getTracks().forEach(t => t.stop()); } catch {}
-
-  const deviceId = await pickIntegratedCameraId();
-
-  const videoBase = {
-    width:  { ideal: isMobile ? 1280 : 1920 },
-    height: { ideal: isMobile ? 720  : 1080 },
-    frameRate: { ideal: 30, max: isMobile ? 30 : 60 }
-  };
-
-  const constraints = {
-    audio: false,
-    video: deviceId
-      ? { ...videoBase, deviceId: { exact: deviceId } }
-      : videoBase
-  };
-
-  try {
-    stream = await getStreamWithFallback(constraints);
-
-    const c = activeCanvas || canvas;
-
-    // 1) attach stream
-    v.srcObject = stream;
-
-    // 2) wait metadata
-    await new Promise((resolve) => {
-      const t = setTimeout(resolve, 2500);
-      v.onloadedmetadata = () => { clearTimeout(t); resolve(); };
-    });
-
-    // 3) play
-    await v.play();
-
-    // 4) wait size
-    const ok = await waitForVideoSize(4000);
-    if (!ok) throw new Error("Video size 0x0");
-
-    // 5) set canvas size AFTER video size exists
-    const maxW = (isMobile ? 960 : 1280);
-    const vw = v.videoWidth || maxW;
-    const vh = v.videoHeight || Math.round(maxW * 9/16);
-
-    const scale = Math.min(1, maxW / vw);
-    c.width  = Math.round(vw * scale);
-    c.height = Math.round(vh * scale);
-
-    setPill(qCam, true, `Camera: OK (${c.width}x${c.height})`);
-    showPlaceholder(false);
-
-    stopLoop();
-    rafId = requestAnimationFrame(loop);
-
-    return true;
-  } catch (e) {
-    console.error("startCameraIntegrated error:", e);
-    const name = e?.name || "Error";
-    const msg  = e?.message || "";
-    setCountdown(`❌ Camera error: ${name}${msg ? " — " + msg : ""}`, false);
-    setPill(qCam, false, `Camera: ${name}`);
-    hardStopCamera();
-    return false;
-  }
+async function startCameraIntegrated(){
+ hardStopCamera();const request=CAMERA_VERSION,owner=POWER_UID,version=POWER_VERSION;
+ const valid=()=>request===CAMERA_VERSION&&version===POWER_VERSION&&owner===POWER_UID&&canWritePowerData({notify:false})&&!document.hidden;
+ const v=activeVideo||video;v.setAttribute('playsinline','true');v.muted=true;
+ let acquired=null;setCountdown(pt('saving'),false);setPill(qCam,false,'Camera: requesting…');
+ try{
+  if(!navigator.mediaDevices?.getUserMedia)throw Error('Camera unavailable');
+  acquired=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720},...(isMobile?{facingMode:'user'}:{})}});
+  if(!valid()){acquired.getTracks().forEach(t=>t.stop());return false;}
+  const deviceId=isMobile?'':await pickIntegratedCameraId();
+  if(!valid()){acquired.getTracks().forEach(t=>t.stop());return false;}
+  const firstDevice=acquired.getVideoTracks?.()[0]?.getSettings?.().deviceId;
+  if(deviceId&&deviceId!==firstDevice){acquired.getTracks().forEach(t=>t.stop());acquired=await getStreamWithFallback({audio:false,video:{deviceId:{exact:deviceId},width:{ideal:isMobile?1280:1920},height:{ideal:isMobile?720:1080},frameRate:{ideal:30}}},valid);}
+  if(!valid()){acquired.getTracks().forEach(t=>t.stop());return false;}
+  stream=acquired;v.srcObject=acquired;
+  await new Promise(resolve=>{if(v.videoWidth>2){resolve();return;}const timeout=setTimeout(resolve,2500);v.onloadedmetadata=()=>{clearTimeout(timeout);resolve();};});
+  if(!valid())return false;await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Video playback timeout')),6000);Promise.resolve(v.play()).then(()=>{clearTimeout(timeout);resolve();},error=>{clearTimeout(timeout);reject(error);});});
+  if(!await waitForVideoSize(4000))throw Error('Video size unavailable');
+  if(!valid())return false;
+  const c=activeCanvas||canvas,vw=v.videoWidth,vh=v.videoHeight,scale=Math.min(1,(isMobile?960:1280)/vw);c.width=Math.round(vw*scale);c.height=Math.round(vh*scale);
+  setPill(qCam,true,'Camera: OK');showPlaceholder(false);stopLoop();rafId=requestAnimationFrame(loop);return true;
+ }catch(error){if(acquired)try{acquired.getTracks().forEach(t=>t.stop());}catch{}if(!valid())return false;stream=null;v.srcObject=null;showPlaceholder(true);setPill(qCam,false,'Camera: unavailable');setCountdown(pt('cameraUnavailable'),false);powerStatus(pt('cameraUnavailable'),true);return false;}
 }
-
-
 
   // =========================
   // Video loop -> pose.send
   // =========================
   let sending = false;
+  let poseFrameVersion=0;
 
 function loop() {
   if (!stream) return;
@@ -1528,10 +1433,12 @@ function loop() {
 
   if (w > 2 && h > 2 && !sending) {
     sending = true;
+    poseFrameVersion=CAMERA_VERSION;
     pose.send({ image: v })
       .catch((e) => {
         console.error("pose.send error:", e);
         setPill(qPose, false, "Pose: ERROR");
+        if(poseFrameVersion===CAMERA_VERSION){hardStopCamera();UI_LOCK=false;resetFlowVars();camModal?.classList.add('hidden');usePageTargets();powerStatus(pt('modelError'),true);}
       })
       .finally(() => {
         sending = false;
@@ -1566,6 +1473,7 @@ function loop() {
 
     testStartMs = 0;
     testEndMs = 0;
+    trackingLostAt=null;trackingLosses=0;
 
     series = [];
     jumpCount = 0;
@@ -1629,12 +1537,15 @@ setState("IDLE"); // ✅ додай тут
   // =========================
   
 btnStart?.addEventListener("click", async () => {
+  if(!canWritePowerData({notify:false})||!libsOk||!pose||powerSaving)return;
+  if(pendingTest){powerStatus(pt('saveError'),true);return;}
   if (!briefConfirm?.checked) {
     setCountdown(ti("briefRequired", "Please read instructions and confirm before starting the test."), false);
     return;
   }
   if (UI_LOCK) return;
   UI_LOCK = true;
+  setPowerReadOnlyUi(POWER_READ_ONLY);
 
   if (isMobile) {
     camModal.classList.remove("hidden");
@@ -1651,14 +1562,17 @@ btnStart?.addEventListener("click", async () => {
 
   if (chart) { chart.destroy(); chart = null; }
 
+  const startVersion=POWER_VERSION,expectedCamera=CAMERA_VERSION+1;
   const ok = await startCameraIntegrated();
-  if (!ok) { UI_LOCK = false; return; }
+  if(startVersion!==POWER_VERSION||expectedCamera!==CAMERA_VERSION)return;
+  if (!ok) { UI_LOCK = false;camModal?.classList.add('hidden');usePageTargets();setPowerReadOnlyUi(POWER_READ_ONLY);return; }
 
   setState("READY_SCAN");
   
   setCountdown(ti("moveBackDistance", "Step back ~2–3 meters (3–4 steps) so your full body and headroom are visible ✅"));
 
   UI_LOCK = false;
+  setPowerReadOnlyUi(POWER_READ_ONLY);
 });
 
 briefConfirm?.addEventListener("change", syncStartAvailability);
@@ -1668,6 +1582,8 @@ updateMotionState();
 
 
   btnReset?.addEventListener("click", () => {
+    if(!canWritePowerData({notify:false})||powerSaving)return;
+    pendingTest=null;UI_LOCK=false;powerStatus('');
     hardStopCamera();
     resetFlowVars();
     uiReset();
@@ -1677,7 +1593,7 @@ updateMotionState();
   // Safety: stop camera when leaving tab
   document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    hardStopCamera();
+    hardStopCamera();UI_LOCK=false;armed=false;testing=false;setState('IDLE');powerStatus(pt('interrupted'));setPowerReadOnlyUi(POWER_READ_ONLY);
     // НЕ робимо uiReset() тут, бо воно затирає KPI/графік
     // resetFlowVars(); теж краще не чіпати, якщо хочеш зберегти відкритий тест
   }
@@ -1693,7 +1609,14 @@ updateMotionState();
   // =========================
   // onResults
   // =========================
+  function handleTrackingLoss(){
+    if(!testing)return;
+    const now=performance.now();if(trackingLostAt===null){trackingLostAt=now;trackingLosses++;}
+    if(now-trackingLostAt<600)return;
+    hardStopCamera();UI_LOCK=false;resetFlowVars();camModal?.classList.add('hidden');usePageTargets();powerStatus(pt('interrupted'));setCountdown(pt('interrupted'),false);setPowerReadOnlyUi(POWER_READ_ONLY);
+  }
   function onResults(results) {
+    if(!stream||poseFrameVersion!==CAMERA_VERSION||!POWER_READY||POWER_READ_ONLY||firebase.auth().currentUser?.uid!==POWER_UID||document.hidden)return;
     // draw frame
     const c = activeCanvas || canvas;
 const cctx = activeCtx || ctx;
@@ -1711,6 +1634,7 @@ if (results.image) {
     setPill(qPose, hasPose, hasPose ? "Pose: OK" : "Pose: NO");
 
     if (!hasPose) {
+      handleTrackingLoss();
       setPill(qFull, false, "Full body: —");
       setPill(qStable, false, "Stable: —");
       cctx.restore();
@@ -1737,6 +1661,8 @@ if (
     const vAnk = Math.min(vis(27), vis(28));
     const fullOk = vSh > 0.5 && vHip > 0.5 && vAnk > 0.5;
     setPill(qFull, fullOk, fullOk ? "Full body: OK" : "Full body: BAD");
+    if(testing&&!fullOk){handleTrackingLoss();cctx.restore();return;}
+    if(fullOk){if(trackingLostAt!==null&&testing&&state==='FLIGHT'){setState('GROUND');flightStartMs=null;lastJumpMs=performance.now();}trackingLostAt=null;}
 
 
     if (!fullOk && hasPose) {
@@ -2015,50 +1941,40 @@ window.pacPowerRenderHistory = () => renderHistory(getHistory());
 window.pacPowerHistory = () => getHistory();
 
 
-firebase.auth().onAuthStateChanged(async (u) => {
-  if (!u) return;
-  const scope = (typeof window.pacResolveDelegatedContext === "function")
-    ? await window.pacResolveDelegatedContext(u, { db: window.db || firebase.firestore() })
-    : {
-        allowed: true,
-        effectiveUserId: String(window.currentUserId || u.uid).trim(),
-        backHref: "coach-dashboard.html"
-      };
-  if (!scope.allowed) {
-    alert(ti("accessDeniedAthlete", "Access denied for this athlete."));
-    window.location.href = scope.backHref || "coach-dashboard.html";
-    return;
-  }
-  if (typeof window.pacRenderDelegatedIndicator === "function") {
-    window.pacRenderDelegatedIndicator(scope);
-  }
 
-  POWER_UID = String(scope.effectiveUserId || u.uid).trim();
-  POWER_READ_ONLY = Boolean(scope.isDelegated && String(scope.authUid || u.uid).trim() !== POWER_UID);
-  setPowerReadOnlyUi(POWER_READ_ONLY);
-
-  try {
-    await loadPowerHistoryFromFS(POWER_UID);
-    renderHistory(getHistory());
-  } catch (e) {
-    console.warn("Power history load failed:", e);
-  }
-});
-window.pacPowerWriteTest = async () => {
-  const entry = {
-    date: new Date().toISOString(),
-    createdAtMs: Date.now(),
-    count: 1,
-    best_cm: 10,
-    avg_cm: 10,
-    fatigue_pct: 0,
-    improve_pct: 0,
-    series: [{ t_s: 0, flight_s: 0.3, height_cm: 10, snapshot: null }],
-    final_snapshot: null
-  };
-  const saved = await addPowerTestToFS(entry);
-  window.__lastSavedPowerId = saved?._id || null;
-};
-
+function installPowerControls(){
+ const host=document.querySelector('.form-card');
+ const details=document.createElement('details');details.id='power-manual';details.className='power-manual';
+ const summary=document.createElement('summary');summary.id='power-manual-title';summary.textContent=pt('manual');
+ const note=document.createElement('p');note.id='power-manual-note';note.textContent=pt('manualNote');
+ const form=document.createElement('form');form.id='power-manual-form';
+ const label=document.createElement('label');label.id='power-height-label';label.htmlFor='power-manual-height';label.textContent=pt('height');
+ const input=document.createElement('input');input.id='power-manual-height';input.type='number';input.min='1';input.max='200';input.step='0.1';input.required=true;
+ const button=document.createElement('button');button.id='power-manual-save';button.type='submit';button.className='gold-button';button.textContent=pt('save');
+ form.append(label,input,button);details.append(summary,note,form);host.append(details);
+ form.onsubmit=async e=>{e.preventDefault();if(!canWritePowerData({notify:false})||powerSaving)return;if(pendingTest&&pendingTest.source!=='manual'){powerStatus(pt('saveError'),true);return;}const value=Number(input.value);if(!Number.isFinite(value)||value<1||value>200){powerStatus(pt('invalid'),true);return;}pendingTest={source:'manual',date:pendingTest?.date||new Date().toISOString(),createdAtMs:pendingTest?.createdAtMs||Date.now(),best_cm:value,avg_cm:value,count:1,series:[],_writeId:pendingTest?._writeId||crypto.randomUUID()};const saved=await persistPendingTest();if(saved){input.value='';window.pacPowerOpenTest(0);}};
+ const toolbar=document.createElement('div');toolbar.className='power-history-toolbar';
+ const status=document.createElement('p');status.id='power-record-status';status.setAttribute('role','status');
+ const refresh=document.createElement('button');refresh.id='power-refresh-history';refresh.type='button';refresh.className='gold-button secondary';refresh.textContent=pt('refresh');refresh.onclick=()=>POWER_UID?refreshPowerHistory():handlePowerAuth(firebase.auth().currentUser);
+ const retry=document.createElement('button');retry.id='power-retry-save';retry.type='button';retry.hidden=true;retry.className='gold-button';retry.textContent=pt('retrySave');retry.onclick=()=>pendingTest?.source==='manual'?form.requestSubmit():persistPendingTest();
+ toolbar.append(status,refresh,retry);attemptsEl.parentElement.before(toolbar);
+}
+async function refreshPowerHistory(){
+ if(!POWER_UID||powerSaving)return;const uid=POWER_UID,version=++POWER_VERSION;POWER_READY=false;hardStopCamera();resetFlowVars();POWER_HISTORY=[];uiReset();setPowerReadOnlyUi(POWER_READ_ONLY);powerStatus(pt('loading'));
+ try{await loadPowerHistoryFromFS(uid);if(version!==POWER_VERSION||uid!==POWER_UID)return;POWER_READY=true;renderHistory(getHistory());powerStatus(pendingTest?pt('saveError'):!libsOk?pt('modelError'):'');}
+ catch(e){if(version===POWER_VERSION){POWER_HISTORY=[];renderHistory([]);powerStatus(pt('readError'),true);}}
+ finally{if(version===POWER_VERSION)setPowerReadOnlyUi(POWER_READ_ONLY);}
+}
+installPowerControls();window.PACLocalizePower?.();setPowerReadOnlyUi(true);
+async function handlePowerAuth(u) {
+ const version=++POWER_VERSION;hardStopCamera();resetFlowVars();POWER_UID=null;POWER_AUTH_UID=u?.uid||null;POWER_READY=false;POWER_READ_ONLY=true;POWER_HISTORY=[];pendingTest=null;powerSaving=false;UI_LOCK=false;selectedTestIndex=null;
+ camModal?.classList.add('hidden');usePageTargets();uiReset();const shots=document.getElementById('jlShots');if(shots)shots.replaceChildren();document.getElementById('power-manual-height').value='';setPowerReadOnlyUi(true);powerStatus(u?pt('loading'):'');
+ if(!u||!u.emailVerified)return;
+ let scope;try{scope=typeof window.pacResolveDelegatedContext==='function'?await window.pacResolveDelegatedContext(u,{db:window.db||firebase.firestore()}):{allowed:true,effectiveUserId:u.uid,isDelegated:false};}catch{if(version===POWER_VERSION)powerStatus(pt('readError'),true);return;}
+ if(version!==POWER_VERSION||firebase.auth().currentUser?.uid!==u.uid)return;
+ if(!scope.allowed){powerStatus(ti('accessDeniedAthlete','Access denied for this athlete.'),true);return;}
+ window.pacRenderDelegatedIndicator?.(scope);POWER_UID=String(scope.effectiveUserId||u.uid);POWER_READ_ONLY=Boolean(scope.isDelegated&&POWER_UID!==u.uid);await refreshPowerHistory();
+}
+firebase.auth().onAuthStateChanged(handlePowerAuth);
+window.addEventListener('pac:lang-changed',()=>{window.PACLocalizePower?.();for(const [id,key]of [['power-manual-title','manual'],['power-manual-note','manualNote'],['power-height-label','height'],['power-manual-save','save'],['power-refresh-history','refresh'],['power-retry-save','retrySave']]){const n=document.getElementById(id);if(n)n.textContent=pt(key);}renderHistory(getHistory());if(selectedTestIndex===null)showPowerVerdict(null);else window.pacPowerOpenTest(selectedTestIndex);});
 })();
-

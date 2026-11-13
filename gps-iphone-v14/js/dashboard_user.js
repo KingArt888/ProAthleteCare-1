@@ -561,7 +561,7 @@
     rxpActionControl: "КОНТРОЛЬ",
     rxpActionGo: "ГО",
     rxpRecoveryLabel: "Відновлення",
-    rxpPowerLabel: "Потужність (ЦНС)",
+    rxpPowerLabel: "Висота стрибка",
     rxpActionLabel: "Дія"
   });
   Object.assign(DASH_I18N.en, {
@@ -595,7 +595,7 @@
     rxpActionControl: "CONTROL",
     rxpActionGo: "GO",
     rxpRecoveryLabel: "Recovery",
-    rxpPowerLabel: "Power (CNS)",
+    rxpPowerLabel: "Jump height",
     rxpActionLabel: "Action"
   });
   Object.assign(DASH_I18N.de, {
@@ -629,7 +629,7 @@
     rxpActionControl: "KONTROLLE",
     rxpActionGo: "GO",
     rxpRecoveryLabel: "Regeneration",
-    rxpPowerLabel: "Power (ZNS)",
+    rxpPowerLabel: "Sprunghöhe",
     rxpActionLabel: "Aktion"
   });
   Object.assign(DASH_I18N.es, {
@@ -663,7 +663,7 @@
     rxpActionControl: "CONTROL",
     rxpActionGo: "GO",
     rxpRecoveryLabel: "Recuperación",
-    rxpPowerLabel: "Potencia (SNC)",
+    rxpPowerLabel: "Altura de salto",
     rxpActionLabel: "Acción"
   });
   Object.assign(DASH_I18N.ru, {
@@ -697,7 +697,7 @@
     rxpActionControl: "КОНТРОЛЬ",
     rxpActionGo: "ГО",
     rxpRecoveryLabel: "Восстановление",
-    rxpPowerLabel: "Мощность (ЦНС)",
+    rxpPowerLabel: "Высота прыжка",
     rxpActionLabel: "Действие"
   });
   Object.assign(DASH_I18N.pt, {
@@ -731,7 +731,7 @@
     rxpActionControl: "CONTROLE",
     rxpActionGo: "GO",
     rxpRecoveryLabel: "Recuperação",
-    rxpPowerLabel: "Potência (SNC)",
+    rxpPowerLabel: "Altura do salto",
     rxpActionLabel: "Ação"
   });
   Object.assign(DASH_I18N.uk, {
@@ -1566,23 +1566,7 @@
         patchMissingSourceInCollection(uid, "weight_history", 50)
       ]);
 
-      // power_tests stored in subcollection
-      try {
-        const pSnap = await window.db.collection("power_tests").doc(uid).collection("tests").limit(50).get();
-        if (!pSnap.empty) {
-          const pBatch = window.db.batch();
-          let pChanged = 0;
-          pSnap.forEach((doc) => {
-            const d = doc.data() || {};
-            if (!d.source) {
-              pBatch.set(doc.ref, { source: "manual", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-              pChanged += 1;
-            }
-          });
-          if (pChanged > 0) await pBatch.commit();
-        }
-      } catch (_) {}
-
+      // Legacy Power provenance is unknown; never backfill it as a manual measurement.
       localStorage.setItem(key, "done");
     } catch (e) {
       console.warn("manual source backfill skipped:", e);
@@ -1664,30 +1648,12 @@
     return toNum(v);
   }
 
-  function loadJumpHistory(){
-    const key = "pac_jump_history_v1";
-    try {
-      const raw = localStorage.getItem(key);
-      const arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    } catch { return []; }
-  }
-  function powerStatusFromHistory(){
-    const hist = loadJumpHistory();
-    if (!hist.length) return { score:null, label:"NO TEST", why:[] };
-    const last3 = hist.slice(-3);
-    const avgs = last3.map(t => Number(t?.avg_cm)).filter(Number.isFinite);
-    const fats = last3.map(t => Number(t?.fatigue_pct)).filter(Number.isFinite);
-    const avg = avgs.length ? avgs.reduce((a,b)=>a+b,0) / avgs.length : null;
-    const fatigue = fats.length ? fats.reduce((a,b)=>a+b,0) / fats.length : 0;
-    let score = 80;
-    score -= Math.min(35, fatigue * 1.2);
-    score = Math.max(0, Math.min(100, Math.round(score)));
-    const label = score >= 75 ? "READY" : score >= 55 ? "UNDER LOAD" : "FATIGUED";
-    const why = [];
-    if (Number.isFinite(fatigue)) why.push(`Fatigue ${fatigue.toFixed(0)}%`);
-    if (avg != null) why.push(`Avg jump ${avg.toFixed(1)} cm`);
-    return { score, label, why };
+  function powerStatusFromHistory(signals){
+    const p=signals?.power;
+    if(!p||p.isTest===true||p.isDemo===true||['test','demo','qa','synthetic','seed'].includes(String(p.source||'').toLowerCase()))return {score:null,label:'—',why:[]};
+    const best=toNum(p.best_cm??p.best);if(best===null||best<=0)return {score:null,label:'—',why:[]};
+    // Height is a reported performance value, not an invented readiness score.
+    return {score:null,label:best.toFixed(1)+' cm',why:p.date?[String(p.date).slice(0,10)]:[]};
   }
 
   function moduleCompletion(core, signals, dailyInfo){
@@ -1959,23 +1925,23 @@
   }
 
   function renderRecoveryPowerWidget(signals){
-    const rRaw = Number(signals?.wellness?.readiness ?? signals?.wellness?.ready);
-    const r = Number.isFinite(rRaw) ? Math.round(rRaw * 10) : null;
-    const p = powerStatusFromHistory();
+    const rRaw = toNum(signals?.wellness?.readiness ?? signals?.wellness?.ready);
+    const r = rRaw>=1&&rRaw<=10 ? Math.round(rRaw * 10) : null;
+    const p = powerStatusFromHistory(signals);
     const recBand = r == null ? "unknown" : r >= 75 ? "green" : r >= 55 ? "yellow" : "red";
-    const powBand = p.score == null ? "yellow" : p.score >= 75 ? "green" : p.score >= 55 ? "yellow" : "red";
+    const powBand = p.score == null ? "unknown" : p.score >= 75 ? "green" : p.score >= 55 ? "yellow" : "red";
     const scoreBandRank = { unknown:0, green:1, yellow:2, red:3 };
     const overall = scoreBandRank[recBand] >= scoreBandRank[powBand] ? recBand : powBand;
 
     if ($("rxpPill")) {
-      $("rxpPill").dataset.traffic = overall === "red" ? "red" : overall === "yellow" ? "yellow" : "green";
-      $("rxpPill").textContent = overall === "red" ? "HIGH" : overall === "yellow" ? "MOD" : "OK";
+      $("rxpPill").dataset.traffic = overall === "unknown" ? "unknown" : overall === "red" ? "red" : overall === "yellow" ? "yellow" : "green";
+      $("rxpPill").textContent = overall === "unknown" ? "—" : overall === "red" ? "HIGH" : overall === "yellow" ? "MOD" : "OK";
     }
-    if ($("rxpTitle")) $("rxpTitle").textContent = overall === "red" ? ti("rxpTitleRed") : overall === "yellow" ? ti("rxpTitleYellow") : ti("rxpTitleGreen");
+    if ($("rxpTitle")) $("rxpTitle").textContent = overall === "unknown" ? ti("noData") : overall === "red" ? ti("rxpTitleRed") : overall === "yellow" ? ti("rxpTitleYellow") : ti("rxpTitleGreen");
     if ($("rxpSub")) $("rxpSub").textContent = `${ti("rxpRecoveryLabel")} ${r == null ? "-" : `${r}%`} • ${ti("rxpPowerLabel")} ${p.label}`;
     if ($("rxpRecovery")) $("rxpRecovery").textContent = r == null ? "-" : `${r}%`;
     if ($("rxpPower")) $("rxpPower").textContent = p.label;
-    if ($("rxpAction")) $("rxpAction").textContent = overall === "red" ? ti("rxpActionRecovery") : overall === "yellow" ? ti("rxpActionControl") : ti("rxpActionGo");
+    if ($("rxpAction")) $("rxpAction").textContent = overall === "unknown" ? ti("noData") : overall === "red" ? ti("rxpActionRecovery") : overall === "yellow" ? ti("rxpActionControl") : ti("rxpActionGo");
     renderList($("rxpWhy"), p.why);
   }
 
@@ -2180,7 +2146,8 @@
         let bestTodayCount = 0;
         powerSnap.forEach((doc) => {
           const d = doc.data() || {};
-          const dateStr = String(d?.date || "");
+          if(d.isTest===true||d.isDemo===true||d.deleted===true||d.archived===true||d.testType==='single_jump_manual'||['test','demo','qa','synthetic','seed'].includes(String(d.source||'').toLowerCase()))return;
+          const dateStr = String(d?.createdAtMs?new Date(d.createdAtMs).toLocaleDateString('en-CA'):d?.date||'');
           if (dateStr && dateStr.slice(0, 10) === tId) {
             bestTodayCount = Math.max(bestTodayCount, Math.max(0, Number(d?.count || 0)));
           }

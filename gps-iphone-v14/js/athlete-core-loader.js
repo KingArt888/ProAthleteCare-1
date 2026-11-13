@@ -156,6 +156,7 @@ const SEASON_LOAD_ZONES = {
       return null;
     }
   }
+  function usablePower(d){return d&&d.isTest!==true&&d.isDemo!==true&&d.deleted!==true&&d.archived!==true&&d.active!==false&&!['test','demo','qa','synthetic','seed'].includes(String(d.source||'').toLowerCase());}
   async function fetchLatestPowerTest(userId) {
   try {
     // твій реальний шлях:
@@ -164,13 +165,12 @@ const SEASON_LOAD_ZONES = {
       .doc(userId)
       .collection("tests")
       .orderBy("createdAtMs", "desc")
-      .limit(1)
+      .limit(50)
       .get();
 
     if (snap.empty) return null;
 
-    const doc = snap.docs[0];
-    return { _id: doc.id, ...doc.data() };
+    return snap.docs.map(doc=>({_id:doc.id,...doc.data()})).filter(d=>usablePower(d)&&Number(d.best_cm)>0).sort((a,b)=>(Number(b.createdAtMs)||Date.parse(b.date)||0)-(Number(a.createdAtMs)||Date.parse(a.date)||0)).find(d=>(Number(d.createdAtMs)||Date.parse(d.date)||0)<=Date.now()+300000)||null;
   } catch (e) {
     console.warn("[AthleteCore] fetchLatestPowerTest failed", e);
     return null;
@@ -255,10 +255,10 @@ function powerSummary(power) {
   return {
     date: power.date || null,
     count: Number(power.count || 0),
-    best_cm: Number(power.best_cm ?? 0),
-    avg_cm: Number(power.avg_cm ?? 0),
-    fatigue_pct: Number(power.fatigue_pct ?? 0),
-    improve_pct: Number(power.improve_pct ?? 0),
+    best_cm: power.best_cm==null?null:Number(power.best_cm),
+    avg_cm: power.avg_cm==null?null:Number(power.avg_cm),
+    fatigue_pct: power.fatigue_pct==null?null:Number(power.fatigue_pct),
+    improve_pct: power.improve_pct==null?null:Number(power.improve_pct),
   };
 }
 
@@ -308,25 +308,7 @@ function powerSummary(power) {
   // POWER (CMJ) — latest from per-user collection
   // Path: power_tests/{uid}/tests/{docId}
   // =========================
-  async function fetchLatestPower(uid) {
-    try {
-      const db = window.db || firebase.firestore();
-      const snap = await db
-        .collection("power_tests")
-        .doc(uid)
-        .collection("tests")
-        .orderBy("createdAtMs", "desc")
-        .limit(1)
-        .get();
-
-      if (snap.empty) return null;
-      const doc = snap.docs[0];
-      return { _id: doc.id, ...(doc.data() || {}) };
-    } catch (e) {
-      console.warn("[AthleteCore] fetchLatestPower failed", e);
-      return null;
-    }
-  }
+  async function fetchLatestPower(uid) { return fetchLatestPowerTest(uid); }
 
   async function fetchRecentByUserId(collectionName, userId, daysBack = 28, hardCap = 160) {
     if(collectionName==='load_season_reports'){

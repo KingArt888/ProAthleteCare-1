@@ -1,6 +1,7 @@
 (function(){
 const langs=['uk','en','de','es','ru','pt'];
 const rows={
+ replaceAction:['Замінити','Replace','Ersetzen','Sustituir','Заменить','Substituir'],
  increase:['Додати','Add','Hinzufügen','Añadir','Добавить','Adicionar'],
  decrease:['Зменшити','Decrease','Verringern','Reducir','Уменьшить','Diminuir'],
  litre:['л','L','l','l','л','l'],

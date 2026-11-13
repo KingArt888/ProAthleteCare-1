@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-meal-days-v1",
-  "builtAt": "2026-11-13T13:28:45.176Z",
+  "build": "daily-phone-20261113-food-row-confirm-v1",
+  "builtAt": "2026-11-13T13:31:46.736Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -727,8 +727,8 @@
     },
     {
       "file": "css/food-diary.css",
-      "bytes": 4960,
-      "sha256": "a1bc7f0e7a299a9e35a07fe9d75d823c08aab6c020a92fee82aa55145d6f67e0"
+      "bytes": 5803,
+      "sha256": "c042ba63fbc282ef3934e7f8d511b64110dd8d954811a80f505b91a405783030"
     },
     {
       "file": "css/index.css",
@@ -1077,13 +1077,13 @@
     },
     {
       "file": "js/food-diary-i18n.js",
-      "bytes": 12223,
-      "sha256": "172a225c1882831668a0a1cbf4902ac1f01a5ee810174e8a923552feb984f289"
+      "bytes": 12325,
+      "sha256": "c1484cbfdfe1fc047dc31bec9e2868d162fa052fc3704b9bd0e9677859b44cca"
     },
     {
       "file": "js/food-diary.js",
-      "bytes": 25560,
-      "sha256": "e862840999c61d5372c5fd0ade088a3333d037703c875ce2c9ca8af50d250634"
+      "bytes": 25942,
+      "sha256": "771c2bd42a43842797e8cc1ea710f880da421377fbfa9025190770d2bb5745b6"
     },
     {
       "file": "js/injury.js",
@@ -1412,8 +1412,8 @@
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 16173,
-      "sha256": "1d8bde353ee9b12bd275fbe75667d634c635803a06c02b524d9263e4b06a8aaa"
+      "bytes": 16285,
+      "sha256": "5c0592e52acd57b096f80aff63015de986141456cfe384f2451a318938253cb7"
     },
     {
       "file": "pages/wellness.html",
@@ -1452,8 +1452,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3390,
-      "sha256": "fd5398abd1caad8c9efb280291c8bad3e16e7bf7cf4e8ffcae266674e7da2ee5"
+      "bytes": 3397,
+      "sha256": "119d3574b38cc01d255c9d55fd348bbc510fcfa8a4f3d95d5b8c3f939b257472"
     },
     {
       "file": "styles.css",

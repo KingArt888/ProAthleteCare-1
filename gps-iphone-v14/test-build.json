@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261113-power-qa-v1+performance-db-v1",
-  "builtAt": "2026-11-13T07:35:22.057Z",
+  "builtAt": "2026-11-13T07:37:24.556Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -897,8 +897,8 @@
     },
     {
       "file": "index.html",
-      "bytes": 13594,
-      "sha256": "664a48c5b5482857a10451a0db81c2e81238f5fd45f6477ee600d343737d86c9"
+      "bytes": 13595,
+      "sha256": "4cd359e2aa416504f13b292e15183e2d5d41b712d6fc0aa82e3834af5cae4ed0"
     },
     {
       "file": "js/admin.js",
@@ -1307,8 +1307,8 @@
     },
     {
       "file": "pages/coach-dashboard.html",
-      "bytes": 9183,
-      "sha256": "5aaea2ece7bf1610da098e8901314f4662def215692e4e5e13d6502a1f9fef5d"
+      "bytes": 8479,
+      "sha256": "91e7b95ed905e75a15848aa67508d8e14c3d1c2537bb658324e350a86418f40c"
     },
     {
       "file": "pages/coach-date-plan.html",

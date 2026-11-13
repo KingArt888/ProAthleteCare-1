@@ -1268,7 +1268,7 @@
     const eaten = actual ? {k:actual.kcal,p:actual.p,f:actual.f,c:actual.c} : sumPlanNutrients(currentDailyPlan, { onlyEaten: true });
     const targets = activeDayTargets(an);
     const left = {
-      k: Math.max(0, Math.round(targets.k - eaten.k)),
+      k: Math.round(targets.k - eaten.k),
       p: Math.max(0, Math.round(targets.p - eaten.p)),
       f: Math.max(0, Math.round(targets.f - eaten.f)),
       c: Math.max(0, Math.round(targets.c - eaten.c))
@@ -1290,7 +1290,7 @@
     }
     const goal = targets || activeDayTargets(an);
     if (totalEl) totalEl.textContent = `${t("saved")}: ${Math.round(goal.k)} kcal`;
-    if (leftEl) leftEl.textContent = `${t("left")}: ${left.k??'—'} kcal`;
+    if (leftEl) leftEl.textContent = `${left.k<0?window.PACFoodDiaryText("excess",lang()):t("left")}: ${left.k===null?'—':Math.abs(left.k)} kcal`;
     if (bjuEl) bjuEl.textContent = `${t("p")}: ${left.p??'—'}g | ${t("f")}: ${left.f??'—'}g | ${t("c")}: ${left.c??'—'}g`;
   }
 
@@ -1382,8 +1382,8 @@
     if (top) {
       if (an) {
         const { left, targets } = totals(an);
-        top.innerHTML = `<div style="background:#000; padding:18px; border-radius:15px; border:1px solid #FFC72C; box-shadow:0 0 10px rgba(255,199,44,0.1);"><div style="font-size:10px; color:${an.statusColor}; text-transform:uppercase; font-weight:700; margin-bottom:12px;">${t("analytics")} | ${modeLabel(an.modeCode)}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:10px;"><div><div class="kcal-anim" style="font-size:36px; color:#fff; font-weight:900; line-height:1;">0</div><div style="font-size:11px; color:#FFC72C; font-weight:600; margin-top:5px;">${t("kcalLeft")}</div></div><div style="text-align:right;"><div style="font-size:18px; color:#fff; font-weight:800;">\uD83D\uDCA7 ${Number(an.water || 0).toFixed(1)}L</div></div></div><div style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px solid #1a1a1a;"><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("p")}</div><div class="p-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("f")}</div><div class="f-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("c")}</div><div class="c-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div></div></div>`;
-        for(const [selector,key,suffix]of [['.kcal-anim','k',''],['.p-anim','p','g'],['.f-anim','f','g'],['.c-anim','c','g']]){const node=top.querySelector(selector);if(left[key]===null)node.textContent='—';else animateValue(node,0,left[key],700,suffix,0);}
+        top.innerHTML = `<div style="background:#000; padding:18px; border-radius:15px; border:1px solid #FFC72C; box-shadow:0 0 10px rgba(255,199,44,0.1);"><div style="font-size:10px; color:${an.statusColor}; text-transform:uppercase; font-weight:700; margin-bottom:12px;">${t("analytics")} | ${modeLabel(an.modeCode)}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:10px;"><div><div class="kcal-anim" style="font-size:36px; color:#fff; font-weight:900; line-height:1;">0</div><div style="font-size:11px; color:#FFC72C; font-weight:600; margin-top:5px;">${left.k<0?window.PACFoodDiaryText("excess",lang()):t("kcalLeft")}</div></div><div style="text-align:right;"><div style="font-size:18px; color:#fff; font-weight:800;">\uD83D\uDCA7 ${Number(an.water || 0).toFixed(1)}L</div></div></div><div style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px solid #1a1a1a;"><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("p")}</div><div class="p-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("f")}</div><div class="f-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div><div style="flex:1; text-align:center;"><div style="font-size:8px; color:#666;">${t("c")}</div><div class="c-anim" style="font-size:14px; color:#fff; font-weight:800;">0g</div></div></div></div>`;
+        for(const [selector,key,suffix]of [['.kcal-anim','k',''],['.p-anim','p','g'],['.f-anim','f','g'],['.c-anim','c','g']]){const node=top.querySelector(selector);if(left[key]===null)node.textContent='—';else animateValue(node,0,Math.abs(left[key]),700,suffix,0);}
         updateFooter(an, left, targets);
       } else {
         top.innerHTML = `<div style="padding:25px; text-align:center; color:#555; border:1px dashed #333; border-radius:15px; background:rgba(255,199,44,0.02);"><div style="font-size:11px; letter-spacing:1px; font-weight:600;">${t("noScan")}</div></div>`;
@@ -2056,20 +2056,21 @@
     box.replaceChildren();
     const text=recipeText();
     for(const m of meals){
+      const replacement=window.PACFoodDiary?.replacementFor(m.uid),shown=replacement?{...m,...replacement,name:replacement.food.name,...Object.fromEntries(Object.entries(replacement.food.names||{}).map(([l,n])=>['name_'+l,n])),portionGrams:replacement.grams,recipeId:null}:m;
       const recorded=window.PACFoodDiary?.isReady()?window.PACFoodDiary.planState(m.uid):null;if(recorded!==null)m.eaten=recorded;
       const row=document.createElement('article');row.className='recipe-card';
       const main=document.createElement('div');main.className='recipe-main';
-      const title=document.createElement('h3');title.textContent=mealLabelWithPortion(m);
-      const macros=document.createElement('p');macros.className='recipe-macros';macros.textContent=`${t('p')}: ${m.p} · ${t('f')}: ${m.f} · ${t('c')}: ${m.c} · ≈ ${m.kcal} kcal`;
+      const title=document.createElement('h3');title.textContent=replacement?`${replacement.food.names?.[lang()]||replacement.food.name} · ${replacement.amount} ${window.PACFoodDiaryText(replacement.unit,lang())}`:mealLabelWithPortion(m);
+      const macros=document.createElement('p');macros.className='recipe-macros';macros.textContent=`${t('p')}: ${shown.p??'—'} · ${t('f')}: ${shown.f??'—'} · ${t('c')}: ${shown.c??'—'} · ≈ ${shown.kcal} kcal`;
       main.append(title,macros);
-      if(m.recipeId && Array.isArray(m.ingredients)){
+      if(!replacement && m.recipeId && Array.isArray(m.ingredients)){
         const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=`${text[0]} · ${m.minutes} ${text[1]}`;details.append(summary);
         const list=document.createElement('ul'),scale=mealScaleFactor(m,activeTab);
         for(const i of m.ingredients){const li=document.createElement('li');li.textContent=`${i.names?.[lang()]||i.names?.en||i.key}: ${Math.round(Number(i.grams)*scale)} ${text[2]}`;list.append(li);}
         const steps=document.createElement('p');steps.textContent=m.instructions?.[lang()]||m.instructions?.en||'';details.append(list,steps);main.append(details);
       }
-      const button=document.createElement('button');button.type='button';button.className='recipe-done';button.textContent=t('done');button.setAttribute('aria-pressed',String(Boolean(m.eaten)));button.disabled=isDelegatedReadOnly||Boolean(window.PACFoodDiary&&(!window.PACFoodDiary.isReady()||window.PACFoodDiary.isBusy()));button.addEventListener('click',()=>window.toggleMealStatus(m.uid));
-      row.append(main,button);box.append(row);
+      const button=document.createElement('button');button.type='button';button.className='recipe-done';button.textContent=window.PACFoodDiaryText('eaten',lang());button.setAttribute('aria-pressed',String(replacement?replacement.consumed!==false:Boolean(m.eaten)));button.disabled=isDelegatedReadOnly||Boolean(window.PACFoodDiary&&(!window.PACFoodDiary.isReady()||window.PACFoodDiary.isBusy()));button.addEventListener('click',()=>window.toggleMealStatus(m.uid));
+      const actions=document.createElement('div');actions.className='recipe-food-actions';actions.append(button);for(const key of ['own',...(replacement?['restore']:[])]){const action=document.createElement('button');action.type='button';action.className='recipe-food-link';action.textContent=window.PACFoodDiaryText(key,lang());action.disabled=button.disabled;action.onclick=()=>key==='own'?window.PACFoodDiary.openReplacement(m,activeTab):window.PACFoodDiary.restore(m);actions.append(action);}row.append(main,actions);box.append(row);
     }
     const note=document.createElement('p');note.className='recipe-note';note.textContent=text[3];box.append(note);
     const reset=document.createElement('button');reset.type='button';reset.className='recipe-reset';reset.textContent=t('resetBtn');reset.disabled=isDelegatedReadOnly;reset.addEventListener('click',()=>window.resetDailyPlan());box.append(reset);
@@ -2112,7 +2113,7 @@
         .concat(Array.isArray(cleanPlan.lnc) ? cleanPlan.lnc : [])
         .concat(Array.isArray(cleanPlan.din) ? cleanPlan.din : []);
       const actual=window.PACFoodDiary?.projection();
-      const done = DAY_SLOTS.reduce((n,slot)=>n+(cleanPlan[slot]||[]).filter(m=>m.eaten||actual?.replacedSlots.includes(slot)).length,0);
+      const done = DAY_SLOTS.reduce((n,slot)=>n+(cleanPlan[slot]||[]).filter(m=>window.PACFoodDiary?.replacementFor(m.uid)?window.PACFoodDiary.replacementFor(m.uid).consumed!==false:m.eaten||actual?.replacedSlots.includes(slot)).length,0);
       const completionPct = allMeals.length ? Math.round((done / allMeals.length) * 100) : 0;
       const eatenKcal = allMeals
         .filter((m) => Boolean(m?.eaten))

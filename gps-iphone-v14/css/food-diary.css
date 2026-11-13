@@ -18,3 +18,5 @@
 .food-diary-dialog form>h4{margin:12px 0 0;font-size:17px}.food-diary-dialog form>.food-diary-note{margin:6px 0 12px}.food-field{min-width:0}
 #food-diary-save{position:sticky;bottom:0;box-shadow:0 0 12px #080808;margin:6px 0}
 @media(max-width:480px){.food-diary-entry{flex-direction:column}.food-diary-heading{align-items:flex-start}.food-diary-heading h3{font-size:15px}.food-diary-dialog{padding:14px}}
+
+.food-diary[hidden]{display:none}.recipe-food-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:90px}.recipe-food-link{font-size:12px!important;padding:6px!important;background:transparent!important;border:0!important;color:#ffc72c!important;white-space:normal}.recipe-food-actions .recipe-done{width:100%}.food-diary{border:0;padding:0;margin:0}

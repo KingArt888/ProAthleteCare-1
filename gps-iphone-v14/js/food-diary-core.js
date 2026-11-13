@@ -20,11 +20,12 @@
     const records=Object.values(entries).filter(e=>e&&e.version===1&&slots.includes(e.slot));
     const actual=records.filter(e=>!e.deleted),seen=new Set(records.filter(e=>e.kind==='plan'&&e.plannedMealId).map(e=>String(e.plannedMealId)));
     const replaced=new Set(actual.filter(e=>e.kind!=='plan'&&e.replaceSlot).map(e=>e.slot));
-    const planned=['brf','lnc','din'].flatMap(slot=>replaced.has(slot)?[]:(plan[slot]||[]).filter(m=>m.eaten&&(!m.uid||!seen.has(String(m.uid)))));
+    const replacements=new Map();for(const e of actual.filter(e=>e.kind==='replacement'&&e.plannedMealId).sort((a,b)=>String(a.updatedAt).localeCompare(String(b.updatedAt))))replacements.set(String(e.plannedMealId),e);
+    const planned=['brf','lnc','din'].flatMap(slot=>replaced.has(slot)?[]:(plan[slot]||[]).filter(m=>m.eaten&&!replacements.has(String(m.uid))&&(!m.uid||!seen.has(String(m.uid)))));
     const totals={kcal:0,p:0,f:0,c:0},unknown={kcal:false,p:false,f:false,c:false};
-    for(const row of [...planned,...actual.filter(e=>e.kind!=='plan'||!replaced.has(e.slot))])for(const k of metrics){const v=number(row[k]);if(v===null)unknown[k]=true;else totals[k]+=v;}
+    for(const row of [...planned,...actual.filter(e=>e.consumed!==false&&(e.kind==='replacement'?replacements.get(String(e.plannedMealId))===e:e.kind==='plan'?!replaced.has(e.slot)&&!replacements.has(String(e.plannedMealId)):true))])for(const k of metrics){const v=number(row[k]);if(v===null)unknown[k]=true;else totals[k]+=v;}
     metrics.forEach(k=>totals[k]=Number(totals[k].toFixed(2)));
-    return {...totals,unknown,entries:actual,replacedSlots:[...replaced],plannedCount:planned.length};
+    return {...totals,unknown,entries:actual,replacedSlots:[...replaced],replacedMealIds:[...replacements.keys()],consumedReplacementMealIds:[...replacements].filter(([,e])=>e.consumed!==false).map(([id])=>id),plannedCount:planned.length};
   }
   function normal(s){return String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').trim();}
   // Native-language query aliases; original USDA descriptions remain available as source text.

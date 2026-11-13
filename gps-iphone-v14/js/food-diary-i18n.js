@@ -1,6 +1,10 @@
 (function(){
 const langs=['uk','en','de','es','ru','pt'];
 const rows={
+ eaten:['З’їв','Eaten','Gegessen','Comido','Съел','Comido'],
+ own:['З’їв інше','Ate something else','Etwas anderes gegessen','Comí otra cosa','Съел другое','Comi outra coisa'],
+ restore:['Повернути страву плану','Restore planned dish','Geplantes Gericht wiederherstellen','Restaurar plato previsto','Вернуть блюдо плана','Restaurar prato planejado'],
+ excess:['Перевищено на','Over target by','Ziel überschritten um','Objetivo superado en','Превышено на','Meta excedida em'],
  title:['Щоденник харчування','Food diary','Ernährungstagebuch','Diario de alimentación','Дневник питания','Diário alimentar'],
  add:['Додати їжу','Add food','Essen hinzufügen','Añadir comida','Добавить еду','Adicionar comida'],
  search:['Пошук їжі','Search foods','Lebensmittel suchen','Buscar alimentos','Поиск еды','Pesquisar alimentos'],

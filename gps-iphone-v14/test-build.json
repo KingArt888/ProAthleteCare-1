@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-power-qa-v1+coach-performance-preview-1",
-  "builtAt": "2026-11-13T13:12:45.320Z",
+  "build": "daily-phone-20261113-food-inline-v1",
+  "builtAt": "2026-11-13T13:15:45.450Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -687,8 +687,13 @@
     },
     {
       "file": "css/coach-dashboard.css",
-      "bytes": 4867,
-      "sha256": "ae79335317360cf49e11ab2c5eacb30c5b88744f6b5c6365c0ff97d11c1c6658"
+      "bytes": 2869,
+      "sha256": "2464b9b7e544dcbfb46f29caa3e47c02cb26873456ee44b9222e4ec76b211330"
+    },
+    {
+      "file": "css/coach-performance.css",
+      "bytes": 6841,
+      "sha256": "d7f1f572e335fc6a5e63492f7fe3daa7f0ba10129992e7479b665174dd6acbab"
     },
     {
       "file": "css/daily-execution.css",
@@ -722,8 +727,8 @@
     },
     {
       "file": "css/food-diary.css",
-      "bytes": 3280,
-      "sha256": "fec1a087be59059ca6be7cab851c227426e018663c6df50948f0cd87ef31132d"
+      "bytes": 3659,
+      "sha256": "1a6b656372de53d8bdb83c525e40e66601a353dbbfd5c46567b84296ba51ab24"
     },
     {
       "file": "css/index.css",
@@ -897,8 +902,8 @@
     },
     {
       "file": "index.html",
-      "bytes": 13180,
-      "sha256": "7de31aa18a039424249740d0a6d6995ecba070ee2d52e33f8dfafc2774864092"
+      "bytes": 13420,
+      "sha256": "377be9a14b97aa52a731f8a630f138d7f854147ef9a0c07d85aab9290879ad8d"
     },
     {
       "file": "js/admin.js",
@@ -942,13 +947,13 @@
     },
     {
       "file": "js/coach-dashboard-i18n.js",
-      "bytes": 46318,
-      "sha256": "708d130bc839a37a3f21daa2bc1877158c60a3a027342a3e73e172aee47032de"
+      "bytes": 49447,
+      "sha256": "29be046519c66c63ce9a525b7fb116bee9e82c2e87cea6c4a10f1174d76f0ea5"
     },
     {
       "file": "js/coach-dashboard.js",
-      "bytes": 35231,
-      "sha256": "c53d1bf1c5d5ebbff733458857361172a450bc4a44fc4821f079537a0b3bd789"
+      "bytes": 32353,
+      "sha256": "2cf4c801c79f4e0407c7666d2324f4857e2556f3bea042ccc7992d2501cc24de"
     },
     {
       "file": "js/coach-date-plan.js",
@@ -957,8 +962,13 @@
     },
     {
       "file": "js/coach-monitor.js",
-      "bytes": 5681,
-      "sha256": "d24ac472fff6455a29030961805613413d8f815ca6d366387d157c2fcc0a2b98"
+      "bytes": 6501,
+      "sha256": "641e3e5ad749f7504c236db06853c26df7ddab851d3633ff2e047127f2c239af"
+    },
+    {
+      "file": "js/coach-performance-preview.js",
+      "bytes": 9477,
+      "sha256": "48a7d256b927bf0c91dfb710f72d3889a9658674ddfbccf7ca36a711666d3b4f"
     },
     {
       "file": "js/coach-week-editor.js",
@@ -1062,18 +1072,18 @@
     },
     {
       "file": "js/food-diary-core.js",
-      "bytes": 8228,
-      "sha256": "11644c7b23be942f5eaaf4b1de100e295a6bcde0888f8e289eddfa798dfd695e"
+      "bytes": 8757,
+      "sha256": "f8411b7b50cf2c1256e91a9e7c6f4e462bd8ca6781c689e7529af89b0f35bb7a"
     },
     {
       "file": "js/food-diary-i18n.js",
-      "bytes": 11434,
-      "sha256": "007d5fe6951c2d980d5aea3710fd2239a5f26fe51bca7417411da29a6ce5c5ab"
+      "bytes": 12000,
+      "sha256": "54c45377b68eda602b4d086b4a2102237ede5bb96d4fa85da569e1d62c6cca16"
     },
     {
       "file": "js/food-diary.js",
-      "bytes": 22237,
-      "sha256": "a22275dbac94bb3f3332c01e0da9f24bb8dc7b82cf95a5aaa5011a8696537815"
+      "bytes": 22130,
+      "sha256": "57d53dfa0e003547183b30c56523aa5516d5dbfce63f6aaf21c459c46d4a8721"
     },
     {
       "file": "js/injury.js",
@@ -1272,8 +1282,8 @@
     },
     {
       "file": "js/weight.js",
-      "bytes": 134096,
-      "sha256": "22aea9fe8b83165f251e91af0cefb2112466b32c65beb98a6f8aa6d9017438d3"
+      "bytes": 135359,
+      "sha256": "ac334d9a911b76822a52370b75aa1d97f22fade03fbf664ff323f1ef5c941893"
     },
     {
       "file": "js/wellness.js",
@@ -1307,13 +1317,18 @@
     },
     {
       "file": "pages/coach-dashboard.html",
-      "bytes": 8142,
-      "sha256": "7f6200bcfabc40e51ee3046e5875c3f4e9d22748e98357493c6b6f26902464f1"
+      "bytes": 8143,
+      "sha256": "6a9ad7c0bec4b5bb24ce3ccff3b48309ecf77b97589e026ef0ec74536503a7c0"
     },
     {
       "file": "pages/coach-date-plan.html",
       "bytes": 4310,
       "sha256": "8213955bf8443ed1b63491e06942ce46e8d135182ace8832a4b04e136ecefa7f"
+    },
+    {
+      "file": "pages/coach-performance.html",
+      "bytes": 6902,
+      "sha256": "cca5426bd844c0abf6351fd2bd31ed9447fa872bafa69d4ed22323dfbcdeb1ce"
     },
     {
       "file": "pages/coach-week-editor.html",
@@ -1397,8 +1412,8 @@
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 16207,
-      "sha256": "ff762d7050c01d5267038b090befbe8f383ea35706dc5bb6099021a06ab05e63"
+      "bytes": 16175,
+      "sha256": "a6eec617c3f5d081ed50197722fad00c5c0e4d657aa83672c0e38ea160376264"
     },
     {
       "file": "pages/wellness.html",
@@ -1437,8 +1452,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3391,
-      "sha256": "152a6797fa5fa4cfe19444c9ecf4793b316bef9a041cef8e9430325ffadb277b"
+      "bytes": 3392,
+      "sha256": "642acd4054fb8417f5668566ef0fdf17650aaa96683d65c0f022f396c0174f4a"
     },
     {
       "file": "styles.css",
@@ -1484,21 +1499,6 @@
       "file": "vendor/leaflet/leaflet.js",
       "bytes": 147552,
       "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
-    },
-    {
-      "file": "pages/coach-performance.html",
-      "bytes": 6849,
-      "sha256": "f19e7a165297c9de4157d9810b4043f19d93f7268a74af4fb197acfaacd43d47"
-    },
-    {
-      "file": "css/coach-performance.css",
-      "bytes": 6820,
-      "sha256": "6daf8f21c2ae636101d72e065354c98271541f3dc58befbac27b66277a07d5ec"
-    },
-    {
-      "file": "js/coach-performance-preview.js",
-      "bytes": 9416,
-      "sha256": "5e2ff62998792fba77a68b35191fbbc7a1b1fe14dd8752ce9ab24cdc2a330de3"
     }
   ],
   "coachPerformancePreview": {

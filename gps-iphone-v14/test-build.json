@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-food-quick-v1",
-  "builtAt": "2026-11-13T13:22:41.510Z",
+  "build": "daily-phone-20261113-meal-days-v1",
+  "builtAt": "2026-11-13T13:28:45.176Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -1282,8 +1282,8 @@
     },
     {
       "file": "js/weight.js",
-      "bytes": 135359,
-      "sha256": "ac334d9a911b76822a52370b75aa1d97f22fade03fbf664ff323f1ef5c941893"
+      "bytes": 135480,
+      "sha256": "aef994faf318107d72aa34971036353ba48514e8d2fbb7b1c38bf82a2aeeec9c"
     },
     {
       "file": "js/wellness.js",
@@ -1412,8 +1412,8 @@
     },
     {
       "file": "pages/weight-control.html",
-      "bytes": 16159,
-      "sha256": "28f33a722c495b4019f6910e436060570059455ab532d87e7eb1c25bb162801e"
+      "bytes": 16173,
+      "sha256": "1d8bde353ee9b12bd275fbe75667d634c635803a06c02b524d9263e4b06a8aaa"
     },
     {
       "file": "pages/wellness.html",
@@ -1452,8 +1452,8 @@
     },
     {
       "file": "service-worker.js",
-      "bytes": 3391,
-      "sha256": "632a683bd0bec721c100a121c8af72d31b86501b097b95346a07ca7f472b3e33"
+      "bytes": 3390,
+      "sha256": "fd5398abd1caad8c9efb280291c8bad3e16e7bf7cf4e8ffcae266674e7da2ee5"
     },
     {
       "file": "styles.css",

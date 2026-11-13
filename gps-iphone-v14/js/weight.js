@@ -617,7 +617,7 @@
     if (!m) return "--";
     const d = new Date(+m[1], +m[2] - 1, +m[3]);
     try {
-      return new Intl.DateTimeFormat(locale(), { weekday: "short" }).format(d).replace(".", "");
+      return new Intl.DateTimeFormat(locale(), { weekday: "short" }).format(d).replace(".", "").slice(0,3);
     } catch {
       return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()];
     }
@@ -1886,6 +1886,7 @@
   function setActiveDay(dayId, { forceSave = false } = {}) {
     const day = String(dayId || "");
     if (!day || !weeklyPlan[day]) return;
+    if(activeDayId!==day)activeTab="brf";
     activeDayId = day;
     currentDailyPlan = sanitizePlan(weeklyPlan[day] || {});
     weeklyPlan[day] = currentDailyPlan;
@@ -1916,8 +1917,8 @@
     box.innerHTML = days.map((id) => {
       const active = id === activeDayId;
       const status = String(weeklyStatuses[id] || "TRAIN").toUpperCase();
-      return `<button type="button" data-day-id="${id}" class="speed-btn"
-        style="min-width:72px; padding:8px 10px; border:1px solid ${active ? "#FFC72C" : "#333"}; background:${active ? "rgba(255,199,44,0.14)" : "#111"}; color:${active ? "#FFC72C" : "#aaa"}; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">
+      return `<button type="button" data-day-id="${id}" aria-label="${fmtDate(id)}" aria-current="${active ? "date" : "false"}" class="speed-btn"
+        style="min-width:0; padding:8px 2px; border:1px solid ${active ? "#FFC72C" : "#333"}; background:${active ? "rgba(255,199,44,0.14)" : "#111"}; color:${active ? "#FFC72C" : "#aaa"}; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">
         <div>${dayShort(id)}</div>
         <div style="font-size:9px; opacity:.85;">${status}</div>
       </button>`;

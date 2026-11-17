@@ -1577,8 +1577,8 @@
     },
     {
       "file": "css/coach-athlete-preview.css",
-      "bytes": 6971,
-      "sha256": "3ce03cfe317a87bdee6b8fa388f6f141681c9b285d45bf9ff80f2ced94dcb118"
+      "bytes": 10530,
+      "sha256": "a46ee5555eb6bb926c58f43fd0943deb8e4d9045643aca3a95dbadf000286048"
     },
     {
       "file": "js/coach-athlete-preview.js",
@@ -1587,13 +1587,13 @@
     },
     {
       "file": "pages/coach-athlete.html",
-      "bytes": 7006,
-      "sha256": "932799033beedc46b1f3e7e6f31e36417b0b4898d6154c58bbfd0c714ac4eede"
+      "bytes": 7328,
+      "sha256": "b4a7413b5b8d77f0072ba05a45381d797a51716f866c714eac32b13b896c5a75"
     },
     {
       "file": "js/coach-athlete.js",
-      "bytes": 18326,
-      "sha256": "7db9de64613c404bb5641a1cf9af31d79afdb358b9c42b9a7f653f094333f7ce"
+      "bytes": 18935,
+      "sha256": "712a0a138112418bb0593c17c275c7ee1427f38aa3cdb886b58aeb1ba157a440"
     }
   ],
   "coachPerformancePreview": {

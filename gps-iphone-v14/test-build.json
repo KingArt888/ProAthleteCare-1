@@ -1577,8 +1577,8 @@
     },
     {
       "file": "css/coach-athlete-preview.css",
-      "bytes": 14104,
-      "sha256": "d76ad3168afeef3d518425d427b853a9aebf5a21e8eae3734809d1d38758a59c"
+      "bytes": 16418,
+      "sha256": "1ece502184a14b047a048e371fd143df6c2f9b54eebf8d6b11f7a526c780ba99"
     },
     {
       "file": "js/coach-athlete-preview.js",
@@ -1587,33 +1587,38 @@
     },
     {
       "file": "pages/coach-athlete.html",
-      "bytes": 7328,
-      "sha256": "73e64403d418c2d66385e7434d814c307eaa2084831d3296f08cf672c7085c12"
+      "bytes": 8896,
+      "sha256": "6e99dd1588385c25c25025b10c483be79662ebfe19d7e82b739cf158b11f9b21"
     },
     {
       "file": "js/coach-athlete.js",
-      "bytes": 26967,
-      "sha256": "5caa71b412fa961b282847176038df86d4e9f3a58d1ea0dcfd6578e6ce1f9ae9"
+      "bytes": 34984,
+      "sha256": "04155d7792e2ef70e3950fd4c3afe2b9858adeb89b1ec7fd52183d320091b841"
     },
     {
       "file": "pages/coach-athlete-demo.html",
-      "bytes": 7383,
-      "sha256": "82ac694d33725ad84771f0bcf101e23670c38ee1a05ed8f7f4b606ffac7ee218"
+      "bytes": 8853,
+      "sha256": "9eec9088c3343fa3f66106961fc0a12e7510dc5d15e67df6046fb4273721a72a"
     },
     {
       "file": "js/coach-athlete-demo.js",
-      "bytes": 1350,
-      "sha256": "b00f30c06f15a798c9769d54224fa6d6c4c4a25cea20a1807023f0e462cc3149"
+      "bytes": 1407,
+      "sha256": "6dfee4ecba82c9229aaf346ca99819302d18d87b3fccbb268491ad93f920bcfe"
     },
     {
       "file": "assets/demo/athlete-fixtures.json",
-      "bytes": 363965,
-      "sha256": "51c277917597f91b11a40d7f87b79286cd3e1b5d72aff21b8fbaacca9f618f89"
+      "bytes": 366905,
+      "sha256": "ebcbec84cdab4222546980ee6ebb7d0fd05ebf30bfc906fc86d7c2cf19112c13"
     },
     {
       "file": "assets/images/athlete-demo.svg",
       "bytes": 1173,
       "sha256": "cbac8fc144d4c2686c768f56eeaed79c58b10bb2119c0c6d909f64fe2e0a1091"
+    },
+    {
+      "file": "js/coach-athlete-analysis.js",
+      "bytes": 1966,
+      "sha256": "3b8478b6f1f522e3124c3d45d762d49c84e0d99d3395b016b413db17130edb02"
     }
   ],
   "coachPerformancePreview": {
@@ -1637,9 +1642,16 @@
     "teamDashboardChanged": false
   },
   "athleteReader": {
+    "version": "2026-11-18.2",
     "path": "pages/coach-athlete.html",
     "mode": "authenticated-read-only",
     "teamDashboardChanged": false,
     "newFirestoreWrites": false
+  },
+  "athleteDemo": {
+    "path": "pages/coach-athlete-demo.html",
+    "synthetic": true,
+    "firebaseSDK": false,
+    "backendWrites": false
   }
 }

@@ -1577,13 +1577,23 @@
     },
     {
       "file": "css/coach-athlete-preview.css",
-      "bytes": 4773,
-      "sha256": "3dfac68a8527bb578e8bbe3e9b168497fef9324dc09256ab93065f6ac9e73cac"
+      "bytes": 6971,
+      "sha256": "3ce03cfe317a87bdee6b8fa388f6f141681c9b285d45bf9ff80f2ced94dcb118"
     },
     {
       "file": "js/coach-athlete-preview.js",
       "bytes": 6027,
       "sha256": "0336da32970ca8f62eeccecf258e6ad37023fce468455e975b9be0f69ba6ba96"
+    },
+    {
+      "file": "pages/coach-athlete.html",
+      "bytes": 7006,
+      "sha256": "932799033beedc46b1f3e7e6f31e36417b0b4898d6154c58bbfd0c714ac4eede"
+    },
+    {
+      "file": "js/coach-athlete.js",
+      "bytes": 18326,
+      "sha256": "7db9de64613c404bb5641a1cf9af31d79afdb358b9c42b9a7f653f094333f7ce"
     }
   ],
   "coachPerformancePreview": {
@@ -1605,5 +1615,11 @@
     "path": "pages/coach-athlete-preview.html",
     "mode": "synthetic-ui-preview",
     "teamDashboardChanged": false
+  },
+  "athleteReader": {
+    "path": "pages/coach-athlete.html",
+    "mode": "authenticated-read-only",
+    "teamDashboardChanged": false,
+    "newFirestoreWrites": false
   }
 }

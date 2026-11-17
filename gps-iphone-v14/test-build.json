@@ -1577,8 +1577,8 @@
     },
     {
       "file": "css/coach-athlete-preview.css",
-      "bytes": 10530,
-      "sha256": "a46ee5555eb6bb926c58f43fd0943deb8e4d9045643aca3a95dbadf000286048"
+      "bytes": 14104,
+      "sha256": "d76ad3168afeef3d518425d427b853a9aebf5a21e8eae3734809d1d38758a59c"
     },
     {
       "file": "js/coach-athlete-preview.js",
@@ -1588,12 +1588,32 @@
     {
       "file": "pages/coach-athlete.html",
       "bytes": 7328,
-      "sha256": "b4a7413b5b8d77f0072ba05a45381d797a51716f866c714eac32b13b896c5a75"
+      "sha256": "73e64403d418c2d66385e7434d814c307eaa2084831d3296f08cf672c7085c12"
     },
     {
       "file": "js/coach-athlete.js",
-      "bytes": 18935,
-      "sha256": "712a0a138112418bb0593c17c275c7ee1427f38aa3cdb886b58aeb1ba157a440"
+      "bytes": 26967,
+      "sha256": "5caa71b412fa961b282847176038df86d4e9f3a58d1ea0dcfd6578e6ce1f9ae9"
+    },
+    {
+      "file": "pages/coach-athlete-demo.html",
+      "bytes": 7383,
+      "sha256": "82ac694d33725ad84771f0bcf101e23670c38ee1a05ed8f7f4b606ffac7ee218"
+    },
+    {
+      "file": "js/coach-athlete-demo.js",
+      "bytes": 1350,
+      "sha256": "b00f30c06f15a798c9769d54224fa6d6c4c4a25cea20a1807023f0e462cc3149"
+    },
+    {
+      "file": "assets/demo/athlete-fixtures.json",
+      "bytes": 363965,
+      "sha256": "51c277917597f91b11a40d7f87b79286cd3e1b5d72aff21b8fbaacca9f618f89"
+    },
+    {
+      "file": "assets/images/athlete-demo.svg",
+      "bytes": 1173,
+      "sha256": "cbac8fc144d4c2686c768f56eeaed79c58b10bb2119c0c6d909f64fe2e0a1091"
     }
   ],
   "coachPerformancePreview": {

@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261113-meal-short-actions-v1+coach-performance-preview-4+performance-hub-phase2",
-  "builtAt": "2026-11-17T22:43:37.298Z",
+  "builtAt": "2026-11-17T22:46:47.990Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -1332,8 +1332,8 @@
     },
     {
       "file": "pages/coach-dashboard.html",
-      "bytes": 8124,
-      "sha256": "e5e8a438b832b2873b0ed600684244532b7c4ad9f7c40a395b2aaac1571a17b4"
+      "bytes": 8130,
+      "sha256": "f2cbc5c12440c2d8ccd7230253d8e4969fa32d7fd7f91c478b4535072789d013"
     },
     {
       "file": "pages/coach-date-plan.html",
@@ -1342,8 +1342,8 @@
     },
     {
       "file": "pages/coach-performance.html",
-      "bytes": 484,
-      "sha256": "9d1c8f0aba96b413b3643f1847400eb8fb7269a7ba8f99fa1caa1805a7addfe8"
+      "bytes": 15317,
+      "sha256": "cc4de2bab449df2511502ee9ffcced30aceac688bd118962815c41130d2a042c"
     },
     {
       "file": "pages/coach-week-editor.html",

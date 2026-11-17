@@ -1569,6 +1569,21 @@
       "file": "js/performance-hub-comparison-chart.js",
       "bytes": 1975,
       "sha256": "d7d2aa612118ddd54fe5646bc96c2cd4b08e2f206c3403edb61440733fb42b86"
+    },
+    {
+      "file": "pages/coach-athlete-preview.html",
+      "bytes": 5584,
+      "sha256": "06a01d813243d9487818168cdd02ba3f2e1c0bcd51316f1a4324722a490ce2de"
+    },
+    {
+      "file": "css/coach-athlete-preview.css",
+      "bytes": 4773,
+      "sha256": "3dfac68a8527bb578e8bbe3e9b168497fef9324dc09256ab93065f6ac9e73cac"
+    },
+    {
+      "file": "js/coach-athlete-preview.js",
+      "bytes": 6027,
+      "sha256": "0336da32970ca8f62eeccecf258e6ad37023fce468455e975b9be0f69ba6ba96"
     }
   ],
   "coachPerformancePreview": {
@@ -1585,5 +1600,10 @@
     "newFirestoreRules": false,
     "newFirestoreCollections": false,
     "sourceWorkbooksPublished": false
+  },
+  "athletePreview": {
+    "path": "pages/coach-athlete-preview.html",
+    "mode": "synthetic-ui-preview",
+    "teamDashboardChanged": false
   }
 }

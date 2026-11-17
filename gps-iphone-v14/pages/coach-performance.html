@@ -5,7 +5,7 @@
   <title>Database · Coach | ProAthleteCare</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/navigation-mobile.css">
-  <link rel="stylesheet" href="../css/coach-performance.css?v=preview-4">
+  <link rel="stylesheet" href="../css/coach-performance.css?v=profile-1">
 </head>
 <body class="performance-preview">
 <header>
@@ -37,6 +37,9 @@
       <div class="cp-profile-main"><p class="cp-eyebrow" id="cp-profile-kind">TEAM PROFILE</p><h3 id="cp-profile-name">U19 · DEMO TEAM</h3><p id="cp-profile-description" class="cp-note"></p><dl id="cp-profile-fields" class="cp-profile-fields"></dl></div>
       <div class="cp-profile-media"><label class="cp-button" for="cp-profile-file" id="cp-profile-upload-label">Додати логотип</label><input id="cp-profile-file" type="file" accept="image/png,image/jpeg,image/webp" hidden><p id="cp-profile-media-status" class="cp-note">Фото/логотип — локальний перегляд до reload. На сервер не надсилається.</p></div>
     </section>
+    <nav class="cp-profile-nav" aria-label="Розділи профілю"><a class="cp-button" href="#cp-metrics">Підсумок</a><a class="cp-button" href="#cp-window-start">День / тренування</a><a class="cp-button" href="#cp-compare-panel">Порівняти гравців</a><a class="cp-button" href="#cp-readiness">Самопочуття</a></nav>
+    <section id="cp-readiness" class="cp-card"><div class="cp-card-heading"><h3>Готовність і самопочуття</h3><span class="cp-tag">За обраний період</span></div><div class="cp-readiness-grid"><div>Сон<strong>Немає записів</strong></div><div>Втома<strong>Немає записів</strong></div><div>М’язовий біль<strong>Немає записів</strong></div><div>Стрес<strong>Немає записів</strong></div></div><p class="cp-note">Опитування ще не підключені до цього макета. Відсутність записів не означає хороше самопочуття.</p></section>
+    <section id="cp-compare-panel" class="cp-card"><div class="cp-card-heading"><div><p class="cp-eyebrow">PLAYER COMPARISON · ДЕМО</p><h3>Гравець проти гравця</h3></div><label>Порівняти з<select id="cp-compare-player"></select></label></div><p id="cp-compare-caption" class="cp-note"></p><div class="cp-table-wrap"><table><thead><tr><th>Показник</th><th id="cp-compare-a">Гравець A</th><th id="cp-compare-b">Гравець B</th><th>Різниця A − B</th></tr></thead><tbody id="cp-compare-rows"></tbody></table></div><p class="cp-note">Той самий період для обох. Більше не означає краще. Усі значення тут демонстраційні.</p></section>
     <section id="cp-detail" hidden aria-labelledby="cp-detail-title">
       <a href="coach-performance.html?v=preview-3" id="cp-detail-back" class="cp-back">← До огляду</a>
       <div class="cp-section-heading"><div><p class="cp-eyebrow">METRIC EXPLORER · МІКРО → МАКРО</p><h3 id="cp-detail-title"></h3></div><span class="cp-tag" id="cp-detail-owner"></span></div>
@@ -75,6 +78,6 @@
 <script src="../js/coach-performance-series.js?v=preview-3"></script>
 <script src="../js/coach-performance-detail.js?v=preview-3"></script>
 <script src="../js/coach-performance-window.js?v=preview-4"></script>
-<script src="../js/coach-performance-dashboard.js?v=preview-4"></script>
+<script src="../js/coach-performance-dashboard.js?v=profile-1"></script>
 <script src="../js/coach-performance-preview.js?v=preview-4"></script>
 </body></html>

@@ -1,6 +1,6 @@
 {
   "build": "daily-phone-20261113-meal-short-actions-v1+coach-performance-preview-4+performance-hub-phase2",
-  "builtAt": "2026-11-17T22:46:47.990Z",
+  "builtAt": "2026-11-17T22:53:28.740Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -692,8 +692,8 @@
     },
     {
       "file": "css/coach-performance.css",
-      "bytes": 11832,
-      "sha256": "86eaa9a33689484e244985a59303e3acd0fc0998d34288ace7a3a7807ea5f0c9"
+      "bytes": 12213,
+      "sha256": "9ca3325d74926943f9be242e2ca2300dd5189d615ad5b79a179e9d9ba60abad4"
     },
     {
       "file": "css/daily-execution.css",
@@ -1342,8 +1342,8 @@
     },
     {
       "file": "pages/coach-performance.html",
-      "bytes": 15317,
-      "sha256": "cc4de2bab449df2511502ee9ffcced30aceac688bd118962815c41130d2a042c"
+      "bytes": 17157,
+      "sha256": "04b7492b8830cd52efb0627a5be7dbd45daa359e8b54a01c9414d6ab03fddc5d"
     },
     {
       "file": "pages/coach-week-editor.html",
@@ -1522,8 +1522,8 @@
     },
     {
       "file": "js/coach-performance-dashboard.js",
-      "bytes": 17353,
-      "sha256": "9bb7965fafc399730e1e17df6ad3c2ea062c60ef7c902e33ab589a38ef28c5ed"
+      "bytes": 18767,
+      "sha256": "0c5789cde50a70ffd777424c424c424f814f547b609a41535619727344d75392"
     },
     {
       "file": "assets/images/performance-demo-team.svg",
@@ -1562,8 +1562,8 @@
     },
     {
       "file": "pages/coach-performance-demo.html",
-      "bytes": 15317,
-      "sha256": "cc4de2bab449df2511502ee9ffcced30aceac688bd118962815c41130d2a042c"
+      "bytes": 17157,
+      "sha256": "04b7492b8830cd52efb0627a5be7dbd45daa359e8b54a01c9414d6ab03fddc5d"
     },
     {
       "file": "js/performance-hub-comparison-chart.js",

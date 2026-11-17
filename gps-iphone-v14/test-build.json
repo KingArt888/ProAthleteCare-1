@@ -1,6 +1,6 @@
 {
-  "build": "daily-phone-20261113-meal-short-actions-v1+coach-performance-preview-4+performance-hub-phase1",
-  "builtAt": "2026-11-17T22:09:24.354Z",
+  "build": "daily-phone-20261113-meal-short-actions-v1+coach-performance-preview-4+performance-hub-phase2",
+  "builtAt": "2026-11-17T22:43:37.298Z",
   "base": "/ProAthleteCare-1/gps-iphone-v14/",
   "calibrationStorage": "pac-gps-field-calibrations-v1",
   "sessionStorage": "pac-gps",
@@ -1333,7 +1333,7 @@
     {
       "file": "pages/coach-dashboard.html",
       "bytes": 8124,
-      "sha256": "13d06675ff0d059f69b8f069986d6931a19bf21410907ee7da68c159f38a1a77"
+      "sha256": "e5e8a438b832b2873b0ed600684244532b7c4ad9f7c40a395b2aaac1571a17b4"
     },
     {
       "file": "pages/coach-date-plan.html",
@@ -1343,7 +1343,7 @@
     {
       "file": "pages/coach-performance.html",
       "bytes": 484,
-      "sha256": "e47e71f3f4e564933fe6e3737b2e026e72f85b73f96a43a4abeb767c5d34e721"
+      "sha256": "9d1c8f0aba96b413b3643f1847400eb8fb7269a7ba8f99fa1caa1805a7addfe8"
     },
     {
       "file": "pages/coach-week-editor.html",
@@ -1537,33 +1537,38 @@
     },
     {
       "file": "pages/performance-hub.html",
-      "bytes": 7968,
-      "sha256": "bd2c7aab270e7511dc7af4597cce6cc14ca270095d39f12c0803bc356bf104ea"
+      "bytes": 9621,
+      "sha256": "9cf13a807b3d4d771f5a44784893fe966a964ba711eb87763ffba3c9739b4490"
     },
     {
       "file": "css/performance-hub.css",
-      "bytes": 5845,
-      "sha256": "fce7abbccaea86bd9a086dd41cc3d434ee0fdbe6ab45e27d3ba19da2d893b009"
+      "bytes": 7003,
+      "sha256": "8a718db00dac4129f566bb2567e07f99f954b753b41baace439daaf4f46c47d3"
     },
     {
       "file": "js/performance-hub-core.js",
-      "bytes": 3986,
-      "sha256": "536d74abfc1d527db85fbf5c3c8d5094a0dfbba65739befde9153da4b9c7d7dd"
+      "bytes": 6597,
+      "sha256": "efbb82fe5a19f8b3907c518413ed32cfc76091771af344328a8c1a12f50a2caf"
     },
     {
       "file": "js/performance-hub-repository.js",
-      "bytes": 4700,
-      "sha256": "69a7d354862dcb561f2865c71a5fd90d20daeaa2662386b8d6c714b3afa02614"
+      "bytes": 6743,
+      "sha256": "c1db1ef853b3d4d8df0a9c874536eeae911e1da0ea454527e188bd4129f81694"
     },
     {
       "file": "js/performance-hub.js",
-      "bytes": 28284,
-      "sha256": "b906bc2c67a17934855908301fa4e4e613fc017ded9c4d8398ca6e5a9f4a8089"
+      "bytes": 38947,
+      "sha256": "cb3f35175f10b74eb75a7d7a990cf89c2bc3140426e4ec181606ce1bd16d66fd"
     },
     {
       "file": "pages/coach-performance-demo.html",
       "bytes": 15317,
       "sha256": "cc4de2bab449df2511502ee9ffcced30aceac688bd118962815c41130d2a042c"
+    },
+    {
+      "file": "js/performance-hub-comparison-chart.js",
+      "bytes": 1975,
+      "sha256": "d7d2aa612118ddd54fe5646bc96c2cd4b08e2f206c3403edb61440733fb42b86"
     }
   ],
   "coachPerformancePreview": {
@@ -1574,7 +1579,7 @@
     "liveFirebaseChanged": false
   },
   "performanceHub": {
-    "phase": 1,
+    "phase": 2,
     "path": "pages/performance-hub.html",
     "mode": "authenticated-read-only",
     "newFirestoreRules": false,

@@ -1588,17 +1588,17 @@
     {
       "file": "pages/coach-athlete.html",
       "bytes": 8896,
-      "sha256": "6e99dd1588385c25c25025b10c483be79662ebfe19d7e82b739cf158b11f9b21"
+      "sha256": "0299bf53dcf37b5272d08cc26baefe3077679796fa0f226655f99cedd4441458"
     },
     {
       "file": "js/coach-athlete.js",
-      "bytes": 34984,
-      "sha256": "04155d7792e2ef70e3950fd4c3afe2b9858adeb89b1ec7fd52183d320091b841"
+      "bytes": 37359,
+      "sha256": "272b072a041e888d78f5a37bd14865ce09307bc048dc3c8c5849d347dd14f73d"
     },
     {
       "file": "pages/coach-athlete-demo.html",
       "bytes": 8853,
-      "sha256": "9eec9088c3343fa3f66106961fc0a12e7510dc5d15e67df6046fb4273721a72a"
+      "sha256": "a858cdce2a8a80e1812ba5b5c85510ec52839009869fb1a34a6af85af3fa8176"
     },
     {
       "file": "js/coach-athlete-demo.js",
@@ -1642,7 +1642,7 @@
     "teamDashboardChanged": false
   },
   "athleteReader": {
-    "version": "2026-11-18.2",
+    "version": "2026-11-18.3",
     "path": "pages/coach-athlete.html",
     "mode": "authenticated-read-only",
     "teamDashboardChanged": false,
